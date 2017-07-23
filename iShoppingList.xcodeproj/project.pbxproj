@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3746AC441F23E46500D1B988 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC431F23E46500D1B988 /* CoreDataStack.swift */; };
+		3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC471F24094500D1B988 /* AddNewItemView.swift */; };
+		3746AC4A1F240B8400D1B988 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC491F240B8400D1B988 /* Extensions.swift */; };
+		3746AC4C1F241DEE00D1B988 /* ShoppingListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC4B1F241DEE00D1B988 /* ShoppingListTableViewController.swift */; };
+		3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */; };
+		3746AC5B1F2446CD00D1B988 /* ShoppingList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC571F2446CD00D1B988 /* ShoppingList+CoreDataClass.swift */; };
+		3746AC5C1F2446CD00D1B988 /* ShoppingList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC581F2446CD00D1B988 /* ShoppingList+CoreDataProperties.swift */; };
+		3746AC5D1F2446CD00D1B988 /* GroceryItems+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC591F2446CD00D1B988 /* GroceryItems+CoreDataClass.swift */; };
+		3746AC5E1F2446CD00D1B988 /* GroceryItems+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC5A1F2446CD00D1B988 /* GroceryItems+CoreDataProperties.swift */; };
 		378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97501F23B2F900C526D9 /* AppDelegate.swift */; };
 		378E97531F23B2F900C526D9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97521F23B2F900C526D9 /* ViewController.swift */; };
 		378E97561F23B2F900C526D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 378E97541F23B2F900C526D9 /* Main.storyboard */; };
@@ -15,6 +24,9 @@
 		378E975E1F23B2F900C526D9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 378E975C1F23B2F900C526D9 /* LaunchScreen.storyboard */; };
 		378E97691F23B2F900C526D9 /* iShoppingListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97681F23B2F900C526D9 /* iShoppingListTests.swift */; };
 		378E97741F23B2F900C526D9 /* iShoppingListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97731F23B2F900C526D9 /* iShoppingListUITests.swift */; };
+		378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */; };
+		378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97831F23B47F00C526D9 /* TableViewDataSource.swift */; };
+		378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +47,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3746AC431F23E46500D1B988 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		3746AC471F24094500D1B988 /* AddNewItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewItemView.swift; sourceTree = "<group>"; };
+		3746AC491F240B8400D1B988 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3746AC4B1F241DEE00D1B988 /* ShoppingListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListTableViewController.swift; sourceTree = "<group>"; };
+		3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroceryItemsTableViewController.swift; sourceTree = "<group>"; };
+		3746AC571F2446CD00D1B988 /* ShoppingList+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShoppingList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3746AC581F2446CD00D1B988 /* ShoppingList+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShoppingList+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3746AC591F2446CD00D1B988 /* GroceryItems+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GroceryItems+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3746AC5A1F2446CD00D1B988 /* GroceryItems+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GroceryItems+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		378E974D1F23B2F900C526D9 /* iShoppingList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iShoppingList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		378E97501F23B2F900C526D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		378E97521F23B2F900C526D9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +70,9 @@
 		378E976F1F23B2F900C526D9 /* iShoppingListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iShoppingListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		378E97731F23B2F900C526D9 /* iShoppingListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iShoppingListUITests.swift; sourceTree = "<group>"; };
 		378E97751F23B2F900C526D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObjectType.swift; sourceTree = "<group>"; };
+		378E97831F23B47F00C526D9 /* TableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
+		378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +103,10 @@
 		378E97441F23B2F900C526D9 = {
 			isa = PBXGroup;
 			children = (
+				3746AC571F2446CD00D1B988 /* ShoppingList+CoreDataClass.swift */,
+				3746AC581F2446CD00D1B988 /* ShoppingList+CoreDataProperties.swift */,
+				3746AC591F2446CD00D1B988 /* GroceryItems+CoreDataClass.swift */,
+				3746AC5A1F2446CD00D1B988 /* GroceryItems+CoreDataProperties.swift */,
 				378E974F1F23B2F900C526D9 /* iShoppingList */,
 				378E97671F23B2F900C526D9 /* iShoppingListTests */,
 				378E97721F23B2F900C526D9 /* iShoppingListUITests */,
@@ -106,6 +134,14 @@
 				378E975C1F23B2F900C526D9 /* LaunchScreen.storyboard */,
 				378E975F1F23B2F900C526D9 /* Info.plist */,
 				378E97571F23B2F900C526D9 /* iShoppingList.xcdatamodeld */,
+				378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */,
+				378E97831F23B47F00C526D9 /* TableViewDataSource.swift */,
+				378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */,
+				3746AC431F23E46500D1B988 /* CoreDataStack.swift */,
+				3746AC471F24094500D1B988 /* AddNewItemView.swift */,
+				3746AC491F240B8400D1B988 /* Extensions.swift */,
+				3746AC4B1F241DEE00D1B988 /* ShoppingListTableViewController.swift */,
+				3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */,
 			);
 			path = iShoppingList;
 			sourceTree = "<group>";
@@ -265,8 +301,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3746AC441F23E46500D1B988 /* CoreDataStack.swift in Sources */,
+				3746AC4A1F240B8400D1B988 /* Extensions.swift in Sources */,
+				3746AC5B1F2446CD00D1B988 /* ShoppingList+CoreDataClass.swift in Sources */,
+				378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */,
+				3746AC5C1F2446CD00D1B988 /* ShoppingList+CoreDataProperties.swift in Sources */,
+				378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */,
 				378E97531F23B2F900C526D9 /* ViewController.swift in Sources */,
+				3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */,
+				3746AC4C1F241DEE00D1B988 /* ShoppingListTableViewController.swift in Sources */,
+				3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */,
+				378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */,
+				3746AC5E1F2446CD00D1B988 /* GroceryItems+CoreDataProperties.swift in Sources */,
 				378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */,
+				3746AC5D1F2446CD00D1B988 /* GroceryItems+CoreDataClass.swift in Sources */,
 				378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,6 +568,7 @@
 				378E977A1F23B2F900C526D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		378E977B1F23B2F900C526D9 /* Build configuration list for PBXNativeTarget "iShoppingListTests" */ = {
 			isa = XCConfigurationList;
@@ -528,6 +577,7 @@
 				378E977D1F23B2F900C526D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		378E977E1F23B2F900C526D9 /* Build configuration list for PBXNativeTarget "iShoppingListUITests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +586,7 @@
 				378E97801F23B2F900C526D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
