@@ -55,6 +55,15 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         return addNewItemView
     }
 
+    // Add empty view as footer to hide the extra rows
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView(frame: CGRect.zero)
+    }
+    
     
     private func addNewGroceryItem(title: String) {
         guard let shoppingList = getShoppingListOf(storeName: self.storeName) else {

@@ -32,10 +32,16 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         
         self.backgroundColor = UIColor.lightGray
         
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: 44))
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: 48))
         headerView.backgroundColor = UIColor.groupTableViewBackground
         
-        let textField = UITextField(frame: headerView.frame)
+        let textField = UITextField(frame: CGRect(x: 8, y: 4, width: headerView.frame.size.width - 16, height: 40))
+        textField.backgroundColor = UIColor.white
+        textField.textColor = UIColor.darkGray
+        textField.layer.cornerRadius = 20.0
+        textField.layer.borderWidth = 1.0
+        textField.layer.borderColor = UIColor.lightGray.cgColor
+        
         textField.placeholder = self.placeHolderText
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         textField.leftViewMode = .always

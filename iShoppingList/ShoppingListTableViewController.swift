@@ -42,7 +42,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
 
     // Mark: TableViewDelegate 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 44
+        return 48
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -55,6 +55,13 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         return addNewItemView
     }
     
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView(frame: CGRect.zero)
+    }
     
     private func addNewShoppingList(title: String) {
         
