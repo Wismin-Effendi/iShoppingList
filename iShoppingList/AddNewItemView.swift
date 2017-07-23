@@ -33,7 +33,7 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         self.backgroundColor = UIColor.lightGray
         
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: 44))
-        headerView.backgroundColor = UIColor.lightText
+        headerView.backgroundColor = UIColor.groupTableViewBackground
         
         let textField = UITextField(frame: headerView.frame)
         textField.placeholder = self.placeHolderText
@@ -45,6 +45,7 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         headerView.addSubview(textField)
         
         self.addSubview(headerView)
+    
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -52,8 +53,9 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         let text = textField.text!
         
         self.addNewItemViewClosure(text)
+        textField.text = ""
         
-        return textField.resignFirstResponder()
+        return true
     }
     
 }

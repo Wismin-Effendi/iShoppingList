@@ -31,9 +31,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         
         self.fetchedResultsProvider = FetchedResultsProvider(managedObjectContext: self.managedObjectContext)
         self.dataSource = TableViewDataSource(cellIdentifier: "ShoppingListTableViewCell", tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
-            
             cell.textLabel?.text = model.title
             cell.backgroundColor = UIColor.orange
+            cell.accessoryType = .disclosureIndicator
         }
         
         self.tableView.dataSource = self.dataSource
@@ -47,11 +47,11 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        let addNewItemView = AddNewItemView(controller: self, placeHolderText: "Enter new Shopping List") { (title) in
+        let addNewItemView = AddNewItemView(controller: self, placeHolderText: "Enter new Store name") { (title) in
             
             self.addNewShoppingList(title: title)
         }
-        
+                
         return addNewItemView
     }
     
