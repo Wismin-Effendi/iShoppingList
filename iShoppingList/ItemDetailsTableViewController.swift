@@ -12,22 +12,24 @@ class ItemDetailsTableViewController: UITableViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var repeatSwitch: UISwitch!
-    @IBOutlet weak var repetitionInterval: UIPickerView!
+    @IBOutlet weak var repetitionIntervalPicker: UIPickerView!
     @IBOutlet weak var reminderSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
 
     
-    let rangeForDuration = Array(1...26).map { String($0) }
-    let durationUnits = ["Day","Week","Month"]
+    let rangeForRepeatInterval = Array(1...26).map { String($0) }
+    let repeatIntervalUnits = ["Day","Week","Month"]
 
+    var repeatInterval = "2"
+    var repeatIntervalUnit = "Week"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        repetitionInterval.dataSource = self
-        repetitionInterval.delegate = self
-        repetitionInterval.selectRow(1, inComponent: 0, animated: true)
-        repetitionInterval.selectRow(1, inComponent: 1, animated: true)
+        repetitionIntervalPicker.dataSource = self
+        repetitionIntervalPicker.delegate = self
+        repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
+        repetitionIntervalPicker.selectRow(1, inComponent: 1, animated: true)
 
     }
     
@@ -123,17 +125,21 @@ extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDe
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return component == 0 ?  rangeForDuration.count : durationUnits.count
+        return component == 0 ?  rangeForRepeatInterval.count : repeatIntervalUnits.count
     }
     
     // delegate 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return component == 0 ? rangeForDuration[row] : durationUnits[row]
+        return component == 0 ? rangeForRepeatInterval[row] : repeatIntervalUnits[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let value = component == 0 ? rangeForDuration[row] : durationUnits[row]
-        
-        print("Selected \(value)")
+        switch component {
+        case 0:
+            repeatInterval = rangeForRepeatInterval[row]
+        default:
+            repeatIntervalUnit = repeatIntervalUnit[row]
+        }
+        print("Selected \(repeatInterval) \(repeatIntervalUnit)")
     }
 }
