@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -50,13 +51,38 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="GroceryItemsTableViewCell" id="Oed-nb-3zc" customClass="OddEvenTableViewCell" customModule="iShoppingList" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="GroceryItemsTableViewCell" id="Oed-nb-3zc" customClass="TaskItemCell" customModule="iShoppingList" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Oed-nb-3zc" id="kg9-ZW-g2O">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjQ-NI-kJu">
+                                            <rect key="frame" x="28" y="11" width="21" height="22"/>
+                                            <state key="normal" image="uncheck"/>
+                                            <connections>
+                                                <action selector="completionButtonTapped:" destination="Oed-nb-3zc" eventType="touchUpInside" id="KZi-yN-jWc"/>
+                                            </connections>
+                                        </button>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YLj-a8-nDp">
+                                            <rect key="frame" x="74" y="11.5" width="42" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="YLj-a8-nDp" firstAttribute="leading" secondItem="kjQ-NI-kJu" secondAttribute="trailing" constant="25" id="TFI-HY-Irn"/>
+                                        <constraint firstItem="kjQ-NI-kJu" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="20" id="bK8-08-gfj"/>
+                                        <constraint firstItem="YLj-a8-nDp" firstAttribute="centerY" secondItem="kjQ-NI-kJu" secondAttribute="centerY" id="ipQ-6J-Ywe"/>
+                                        <constraint firstItem="kjQ-NI-kJu" firstAttribute="centerY" secondItem="kg9-ZW-g2O" secondAttribute="centerY" id="saN-BS-9l1"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="completionButton" destination="kjQ-NI-kJu" id="qbA-6c-xOi"/>
+                                    <outlet property="titleLabel" destination="YLj-a8-nDp" id="K1M-HK-AXt"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -67,7 +93,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KYZ-Zq-QlG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1746" y="80"/>
+            <point key="canvasLocation" x="1744.8" y="79.610194902548727"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="wbW-rd-CUh">
@@ -88,4 +114,7 @@
             <point key="canvasLocation" x="-2.3999999999999999" y="79.610194902548727"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="uncheck" width="21" height="21"/>
+    </resources>
 </document>

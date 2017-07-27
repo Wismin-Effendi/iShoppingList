@@ -17,6 +17,7 @@ UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObject
     var configureCell: (Cell, Model) -> ()
     var tableView: UITableView!
     
+    
     init(cellIdentifier: String, tableView: UITableView, fetchedResultsProvider: FetchedResultsProvider<Model>,
          configureCell: @escaping (Cell, Model) -> ()) {
         

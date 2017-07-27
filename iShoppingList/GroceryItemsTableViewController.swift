@@ -12,7 +12,7 @@ import CoreData
 class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegate {
 
     var fetchedResultsProvider: FetchedResultsProvider<GroceryItems>!
-    var dataSource: TableViewDataSource<UITableViewCell, GroceryItems>!
+    var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
     var managedObjectContext: NSManagedObjectContext!
     var storeName: String!
     
@@ -30,10 +30,13 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         self.dataSource = TableViewDataSource(cellIdentifier: "GroceryItemsTableViewCell",
                                               tableView: self.tableView,
-                                              fetchedResultsProvider: self.fetchedResultsProvider) { cell,model in
-         
-            cell.textLabel?.text = model.title
+                                              fetchedResultsProvider: self.fetchedResultsProvider)
+        { cell, model in
+            cell.titleLabel?.text = model.title
+            cell.completed = model.completed
             cell.backgroundColor = UIColor.green
+            cell.accessoryType = .detailButton
+            cell.delegate = self   // for ItemCellCompletionStateDelegate
         }
         
         self.tableView.dataSource = self.dataSource
@@ -101,7 +104,22 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         // Dispose of any resources that can be recreated.
     }
 
+}
 
-    
 
+extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
+    func persist(title: String, completed: Bool) {
+        let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
+        
+        do {
+            let results = try managedObjectContext.fetch(currentItemFetch)
+            if let item = results.first {
+                item.completed = completed
+                try self.managedObjectContext.save()
+            }
+        } catch let error as NSError {
+            fatalError("Failed to save updated item. \(error.localizedDescription)")
+        }
+    }
 }
