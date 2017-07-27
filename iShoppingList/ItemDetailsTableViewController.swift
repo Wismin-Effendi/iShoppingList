@@ -26,7 +26,7 @@ class ItemDetailsTableViewController: UITableViewController {
     var item: GroceryItems!
     
     var managedObjectContext: NSManagedObjectContext!
-    var coreDataObjectID: NSManagedObjectID!
+    var itemIdentifier: String!
     
     let rangeForRepeatInterval = Array(1...26).map { String($0) }
     let repeatIntervalUnits = ["Day","Week","Month"]
@@ -36,13 +36,16 @@ class ItemDetailsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        retrieveItemDetailsAndPopulate()
-        
+
         repetitionIntervalPicker.dataSource = self
         repetitionIntervalPicker.delegate = self
         repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
         repetitionIntervalPicker.selectRow(1, inComponent: 1, animated: true)
         
+        retrieveItemDetailsAndPopulate()
+        
+        let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(ItemDetailsTableViewController.persistItemDetails))
+        navigationItem.rightBarButtonItem = saveButton
     }
     
 
@@ -97,6 +100,16 @@ extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDe
             repeatIntervalUnit = repeatIntervalUnits[row]
         }
         print("Selected \(repeatInterval) \(repeatIntervalUnit)")
+        
+        switch (repeatInterval, repeatIntervalUnit) {
+        case let (n,"Week"):
+            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneWeek
+        case let (n, "Day"):
+            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneDay
+        case let (n, "Month"):
+            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneMonth
+        default: break
+        }
     }
 }
 
@@ -104,16 +117,31 @@ extension ItemDetailsTableViewController {
     
     fileprivate func retrieveItemDetailsAndPopulate() {
         let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.objectID), coreDataObjectID)
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), itemIdentifier)
         
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)
-            if let item = results.first {
-                populateItemDetails(item)
+            if let firstItem = results.first {
+                item = firstItem
+                populateItemDetails(firstItem)
             }
         } catch let error as NSError {
             fatalError("Failed to retrieved item from coreData. \(error.localizedDescription)")
         }
+    }
+    
+    func persistItemDetails() {
+        item.isRepeatedItem = repeatSwitch.isOn
+        item.hasReminder = repeatSwitch.isOn
+        item.reminderDate = datePicker.date as NSDate
+        
+        // item.repetitionInterval is updated in pickerView delegate
+        do {
+            try self.managedObjectContext.save()
+        } catch let error as NSError {
+            fatalError("Failed to save item details \(error.localizedDescription)")
+        }
+        self.dismiss(animated: true, completion: nil)
     }
     
     private func populateItemDetails(_ item: GroceryItems) {
@@ -129,6 +157,9 @@ extension ItemDetailsTableViewController {
             setRepetitionIntervalPicker(from: item.repetitionInterval)
         }
     }
+    
+    
+
     
     private func setRepetitionIntervalPicker(from interval: Float) {
         if interval.truncatingRemainder(dividingBy: TimeIntervalConst.oneMonth) == 0.0 {

@@ -3,6 +3,7 @@
     <entity name="GroceryItems" representedClassName="GroceryItems" syncable="YES">
         <attribute name="completionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="hasReminder" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isArchived" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isRepeatedItem" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -17,7 +18,7 @@
         <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GroceryItems" syncable="YES"/>
     </entity>
     <elements>
-        <element name="GroceryItems" positionX="-576" positionY="-18" width="128" height="195"/>
+        <element name="GroceryItems" positionX="-576" positionY="-18" width="128" height="210"/>
         <element name="ShoppingList" positionX="-63" positionY="-18" width="128" height="73"/>
     </elements>
 </model>

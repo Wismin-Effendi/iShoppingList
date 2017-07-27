@@ -33,7 +33,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
                                               fetchedResultsProvider: self.fetchedResultsProvider)
         { cell, model in
             cell.titleLabel?.text = model.title
-            cell.coreDataObjectID = model.objectID
+            cell.itemIdentifier = model.identifier
             cell.completed = model.isCompleted
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
@@ -86,7 +86,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         let detailViewController = storyboard.instantiateViewController(withIdentifier: "ItemDetailsTableViewController") as! ItemDetailsTableViewController
         
         detailViewController.managedObjectContext = managedObjectContext
-        detailViewController.coreDataObjectID = tableCell.coreDataObjectID
+        detailViewController.itemIdentifier = tableCell.itemIdentifier
         
         detailViewController.modalPresentationStyle = .popover
         let popover: UIPopoverPresentationController = detailViewController.popoverPresentationController!
@@ -107,6 +107,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         let groceryItem = GroceryItems(context: self.managedObjectContext)
         groceryItem.title = title
+        groceryItem.identifier = UUID().uuidString
         groceryItem.storeName = shoppingList
         
         do {
@@ -140,9 +141,9 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
 
 extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
-    func persist(objectID: NSManagedObjectID, completed: Bool) {
+    func persist(identifier: String, completed: Bool) {
         let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.objectID), objectID)
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
         
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)
