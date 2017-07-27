@@ -151,6 +151,7 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
                 item.isCompleted = completed
                 if completed {
                     item.completionDate = Date.init() as NSDate
+                    item.hasReminder = false 
                 }
                 try self.managedObjectContext.save()
             }

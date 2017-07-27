@@ -96,14 +96,13 @@ class ItemDetailsTableViewController: UITableViewController {
         case 1:
             return item.isRepeatedItem ?  2 : 1
          case 2:
-            return item.hasReminder ? 2 : 1
+            return item.isCompleted ?  0 : (item.hasReminder ? 2 : 1)
         default:
             return 0
         }
     }
 
 }
-
 
 
 extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDelegate {
@@ -232,24 +231,13 @@ extension ItemDetailsTableViewController {
 
 
 
-// MARK: - Show or hide more details option conditionally
+// MARK: - Show or hide details option conditionally
 
-//extension ItemDetailsTableViewController {
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        
-//        switch (indexPath.section, indexPath.row) {
-//        case (0,0):
-//            return StaticCellHeight.section0[0]
-//        case (1,0):
-//            return StaticCellHeight.section1[0]
-//        case (1,1):
-//            return item.isRepeatedItem ? StaticCellHeight.section1[1] : 0
-//        case (2,0):
-//            return StaticCellHeight.section2[0]
-//        case (2,1):
-//            return item.hasReminder ? StaticCellHeight.section2[1] : 0
-//        default: return 0
-//        }
-//    }
-//}
-
+extension ItemDetailsTableViewController {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Section 2 is for reminder. Completed items don't need reminder anymore. So hide the section.
+        guard  section == 2 else { return 44 }
+        
+        return item.isCompleted ? 0 : 44
+    }
+}
