@@ -149,6 +149,9 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
             let results = try managedObjectContext.fetch(currentItemFetch)
             if let item = results.first {
                 item.isCompleted = completed
+                if completed {
+                    item.completionDate = Date.init() as NSDate
+                }
                 try self.managedObjectContext.save()
             }
         } catch let error as NSError {

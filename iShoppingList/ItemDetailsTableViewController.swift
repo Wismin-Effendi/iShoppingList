@@ -17,12 +17,20 @@ class ItemDetailsTableViewController: UITableViewController {
         static let oneMonth: Float = 30.0 * oneDay
     }
     
+    struct IndexPathOfCell {
+        static let completionDate           = IndexPath.init(row: 1, section: 0)
+        static let repetitionIntervalPicker = IndexPath.init(row: 1, section: 1)
+        static let reminderDatePicker       = IndexPath.init(row: 1, section: 2)
+    }
+    
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var repeatSwitch: UISwitch!
     @IBOutlet weak var repetitionIntervalPicker: UIPickerView!
     @IBOutlet weak var reminderSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
 
+    @IBOutlet weak var completionDate: UILabel!
+    
     var item: GroceryItems!
     
     var managedObjectContext: NSManagedObjectContext!
@@ -54,6 +62,27 @@ class ItemDetailsTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    
+    @IBAction func repeatItemSwitch(_ sender: UISwitch) {
+        item.isRepeatedItem = sender.isOn
+        insertOrDeleteRow(indexPath: IndexPathOfCell.repetitionIntervalPicker, state: sender.isOn)
+    }
+    
+    @IBAction func reminderSwitch(_ sender: UISwitch) {
+        item.hasReminder = sender.isOn
+        insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: sender.isOn)
+    }
+    
+    
+    private func insertOrDeleteRow(indexPath: IndexPath, state: Bool) {
+        switch state {
+        case true:
+            tableView.insertRows(at: [indexPath], with: .automatic)
+        case false:
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -63,11 +92,11 @@ class ItemDetailsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            return item.isCompleted ?  2 : 1
         case 1:
-            return 2
-        case 2:
-            return 2
+            return item.isRepeatedItem ?  2 : 1
+         case 2:
+            return item.hasReminder ? 2 : 1
         default:
             return 0
         }
@@ -156,10 +185,20 @@ extension ItemDetailsTableViewController {
         if item.isRepeatedItem {
             setRepetitionIntervalPicker(from: item.repetitionInterval)
         }
+        
+        if item.isCompleted {
+            setCompletionDate(item.completionDate! as Date)
+        }
     }
     
-    
-
+    private func setCompletionDate(_ date: Date) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        dateFormatter.locale = Locale(identifier: "en_US")
+        
+        completionDate.text = dateFormatter.string(from: date)
+    }
     
     private func setRepetitionIntervalPicker(from interval: Float) {
         if interval.truncatingRemainder(dividingBy: TimeIntervalConst.oneMonth) == 0.0 {
@@ -188,4 +227,29 @@ extension ItemDetailsTableViewController {
         repetitionIntervalPicker.selectRow(index, inComponent: 1, animated: true)
     }
 
+    
 }
+
+
+
+// MARK: - Show or hide more details option conditionally
+
+//extension ItemDetailsTableViewController {
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        
+//        switch (indexPath.section, indexPath.row) {
+//        case (0,0):
+//            return StaticCellHeight.section0[0]
+//        case (1,0):
+//            return StaticCellHeight.section1[0]
+//        case (1,1):
+//            return item.isRepeatedItem ? StaticCellHeight.section1[1] : 0
+//        case (2,0):
+//            return StaticCellHeight.section2[0]
+//        case (2,1):
+//            return item.hasReminder ? StaticCellHeight.section2[1] : 0
+//        default: return 0
+//        }
+//    }
+//}
+
