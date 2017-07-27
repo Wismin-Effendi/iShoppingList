@@ -15,18 +15,20 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
     var managedObjectContext: NSManagedObjectContext!
     var storeName: String!
+    var storeNamePredicate: NSPredicate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.title = storeName
-        populateGroceryItems()
+        storeNamePredicate = NSPredicate(format: "storeName.title == %@", storeName)
+        populateGroceryItems(predicate: storeNamePredicate)
     }
     
-    private func populateGroceryItems() {
+    private func populateGroceryItems(predicate: NSPredicate) {
         
         self.fetchedResultsProvider = FetchedResultsProvider<GroceryItems>(managedObjectContext: self.managedObjectContext,
-                                                                           forItemsOf: storeName)
+                                                                           additionalPredicate: predicate)
         
         self.dataSource = TableViewDataSource(cellIdentifier: "GroceryItemsTableViewCell",
                                               tableView: self.tableView,

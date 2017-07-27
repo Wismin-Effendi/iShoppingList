@@ -21,11 +21,12 @@ where T: ManagedObjectType {
     var managedObjectContext: NSManagedObjectContext!
     var fetchedResultsController: NSFetchedResultsController<T>! = nil 
     
-    init(managedObjectContext: NSManagedObjectContext, forItemsOf shoppingListTitle: String? = nil) {
+    init(managedObjectContext: NSManagedObjectContext, additionalPredicate: NSPredicate? = nil) {
+
         self.managedObjectContext = managedObjectContext
     
         super.init()
-        self.setupFetchResultsController(forItemsOf: shoppingListTitle)
+        self.setupFetchResultsController(additionalPredicate: additionalPredicate)
         self.fetchedResultsController.delegate = self
 
         do {
@@ -35,17 +36,20 @@ where T: ManagedObjectType {
         }
     }
     
-    private func setupFetchResultsController(forItemsOf shoppingListTitle: String? = nil) {
+    private func setupFetchResultsController(additionalPredicate: NSPredicate? = nil) {
+        
         let request = NSFetchRequest<T>(entityName: T.entityName)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        if let shoppingListTitle = shoppingListTitle {
-            let predicate = NSPredicate(format: "storeName.title == %@", shoppingListTitle)
+        
+        if let predicate = additionalPredicate {
             request.predicate = predicate
         }
         
         self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
     }
+    
+    
     
     func delete(model: T) {
         self.managedObjectContext.delete(model)
