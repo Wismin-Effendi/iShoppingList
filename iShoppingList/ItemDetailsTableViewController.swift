@@ -138,7 +138,7 @@ extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDe
         case 0:
             repeatInterval = rangeForRepeatInterval[row]
         default:
-            repeatIntervalUnit = repeatIntervalUnit[row]
+            repeatIntervalUnit = repeatIntervalUnits[row]
         }
         print("Selected \(repeatInterval) \(repeatIntervalUnit)")
     }

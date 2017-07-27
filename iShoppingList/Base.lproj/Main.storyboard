@@ -252,7 +252,7 @@
                         <outlet property="datePicker" destination="obT-a2-mER" id="Laf-5J-I9x"/>
                         <outlet property="reminderSwitch" destination="MhR-hA-hCm" id="fnb-YG-5gI"/>
                         <outlet property="repeatSwitch" destination="UFf-sM-NmM" id="AB3-Ba-cia"/>
-                        <outlet property="repetitionInterval" destination="zsB-wX-uCW" id="Upf-9V-lsb"/>
+                        <outlet property="repetitionIntervalPicker" destination="zsB-wX-uCW" id="Roa-A2-zSd"/>
                         <outlet property="titleLabel" destination="Bf4-uY-QqR" id="1ls-rZ-kmv"/>
                     </connections>
                 </tableViewController>
