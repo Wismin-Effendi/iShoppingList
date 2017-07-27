@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import CoreData
 
 protocol ItemCellCompletionStateDelegate: class {
-    func persist(title: String, completed: Bool)
+    func persist(objectID: NSManagedObjectID, completed: Bool)
 }
 
 
@@ -20,6 +21,8 @@ class TaskItemCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     
     weak var delegate: ItemCellCompletionStateDelegate?
+    
+    var coreDataObjectID: NSManagedObjectID!
     
     var completed = false {
         didSet {
@@ -40,9 +43,7 @@ class TaskItemCell: UITableViewCell {
     
     @IBAction func completionButtonTapped(_ sender: UIButton) {
         completed = !completed
-        
-        guard let title = titleLabel.text else { return }
-        delegate?.persist(title: title, completed: completed)
+        delegate?.persist(objectID: coreDataObjectID, completed: completed)
     }
     
     private func setCompletionCheckBoxWithAnimation() {

@@ -2,7 +2,7 @@
 //  GroceryItems+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 7/26/17.
+//  Created by Wismin Effendi on 7/27/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -16,12 +16,15 @@ extension GroceryItems {
         return NSFetchRequest<GroceryItems>(entityName: "GroceryItems")
     }
 
-    @NSManaged public var title: String
-    @NSManaged public var completed: Bool
-    @NSManaged public var repeatDuration: Int32
+    @NSManaged public var title: String?
+    @NSManaged public var isCompleted: Bool
+    @NSManaged public var repetitionInterval: Float
     @NSManaged public var completionDate: NSDate?
     @NSManaged public var uploaded: Bool
     @NSManaged public var isArchived: Bool
+    @NSManaged public var isRepeatedItem: Bool
+    @NSManaged public var reminderDate: NSDate?
+    @NSManaged public var hasReminder: Bool
     @NSManaged public var storeName: ShoppingList?
 
 }

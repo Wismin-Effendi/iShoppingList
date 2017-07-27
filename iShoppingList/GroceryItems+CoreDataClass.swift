@@ -2,7 +2,7 @@
 //  GroceryItems+CoreDataClass.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 7/22/17.
+//  Created by Wismin Effendi on 7/26/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 

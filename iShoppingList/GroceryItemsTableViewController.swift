@@ -33,7 +33,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
                                               fetchedResultsProvider: self.fetchedResultsProvider)
         { cell, model in
             cell.titleLabel?.text = model.title
-            cell.completed = model.completed
+            cell.coreDataObjectID = model.objectID
+            cell.completed = model.isCompleted
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
             cell.delegate = self   // for ItemCellCompletionStateDelegate
@@ -69,7 +70,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let tableCell = tableView.cellForRow(at: indexPath)!
+        guard let tableCell = tableView.cellForRow(at: indexPath) as? TaskItemCell  else { return }
+
         var accessoryView = tableCell.accessoryView
         if accessoryView == nil {
             for subView in tableCell.subviews {
@@ -82,6 +84,10 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let detailViewController = storyboard.instantiateViewController(withIdentifier: "ItemDetailsTableViewController") as! ItemDetailsTableViewController
+        
+        detailViewController.managedObjectContext = managedObjectContext
+        detailViewController.coreDataObjectID = tableCell.coreDataObjectID
+        
         detailViewController.modalPresentationStyle = .popover
         let popover: UIPopoverPresentationController = detailViewController.popoverPresentationController!
         popover.sourceView = accessoryView
@@ -134,14 +140,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
 
 extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
-    func persist(title: String, completed: Bool) {
+    func persist(objectID: NSManagedObjectID, completed: Bool) {
         let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.objectID), objectID)
         
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)
             if let item = results.first {
-                item.completed = completed
+                item.isCompleted = completed
                 try self.managedObjectContext.save()
             }
         } catch let error as NSError {
