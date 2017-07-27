@@ -68,6 +68,32 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let tableCell = tableView.cellForRow(at: indexPath)!
+        var accessoryView = tableCell.accessoryView
+        if accessoryView == nil {
+            for subView in tableCell.subviews {
+                if let button = subView as? UIButton {
+                    accessoryView = button
+                    break
+                }
+            }
+        }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let detailViewController = storyboard.instantiateViewController(withIdentifier: "ItemDetailsTableViewController") as! ItemDetailsTableViewController
+        detailViewController.modalPresentationStyle = .popover
+        let popover: UIPopoverPresentationController = detailViewController.popoverPresentationController!
+        popover.sourceView = accessoryView
+        popover.sourceRect = accessoryView!.bounds
+        popover.delegate = self
+        present(detailViewController, animated: true, completion: nil)
+    }
+
+    
+    
+    // MARK: Private
+    
     private func addNewGroceryItem(title: String) {
         guard let shoppingList = getShoppingListOf(storeName: self.storeName) else {
             fatalError("Cannot save new item to non existing Shopping List")
@@ -121,5 +147,28 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
         } catch let error as NSError {
             fatalError("Failed to save updated item. \(error.localizedDescription)")
         }
+    }
+}
+
+
+
+extension GroceryItemsTableViewController: UIPopoverPresentationControllerDelegate {
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .fullScreen
+    }
+    
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
+        
+        let navigationController = UINavigationController(rootViewController: controller.presentedViewController)
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(GroceryItemsTableViewController.dismissPopoverViewController))
+        navigationController.topViewController?.navigationItem.leftBarButtonItem = cancelButton
+        
+        return navigationController
+    }
+    
+    // MARK: - Helper
+    func dismissPopoverViewController() {
+        self.dismiss(animated: true, completion: nil)
     }
 }
