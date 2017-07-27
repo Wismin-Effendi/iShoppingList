@@ -23,8 +23,7 @@ class TaskItemCell: UITableViewCell {
     
     var completed = false {
         didSet {
-            let image: UIImage = completed ? #imageLiteral(resourceName: "check_icon") : #imageLiteral(resourceName: "uncheck")
-            completionButton.setImage(image, for: .normal)
+            setCompletionCheckBoxWithAnimation()
         }
     }
     
@@ -46,4 +45,20 @@ class TaskItemCell: UITableViewCell {
         delegate?.persist(title: title, completed: completed)
     }
     
+    private func setCompletionCheckBoxWithAnimation() {
+        let image: UIImage = completed ?  #imageLiteral(resourceName: "check_icon") : #imageLiteral(resourceName: "uncheck")
+        let oldImage: UIImage = completed ? #imageLiteral(resourceName: "uncheck") : #imageLiteral(resourceName: "check_icon")
+        let button = self.completionButton
+        UIView.animate(withDuration: 0.15, animations: {
+            button?.alpha = 0.0
+        }, completion: { finished in
+            button?.imageView?.animationImages = [oldImage, image]
+            button?.imageView?.startAnimating()
+            UIView.animate(withDuration: 0.25, animations: {
+                button?.alpha = 1.0
+                button?.imageView?.stopAnimating()
+            })
+            self.completionButton.setImage(image, for: .normal)
+        })
+    }
 }
