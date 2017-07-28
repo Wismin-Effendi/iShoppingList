@@ -15,14 +15,16 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
     var managedObjectContext: NSManagedObjectContext!
     var storeName: String!
-    var storeNamePredicate: NSPredicate!
+    var storeNameAndNotPendingDeletionPredicate: NSPredicate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.title = storeName
-        storeNamePredicate = NSPredicate(format: "storeName.title == %@", storeName)
-        populateGroceryItems(predicate: storeNamePredicate)
+        let storeNamePredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.storeName.title),storeName)
+        let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.pendingDeletion))
+        storeNameAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate, notPendingDeletionPredicate])
+        populateGroceryItems(predicate: storeNameAndNotPendingDeletionPredicate)
     }
     
     private func populateGroceryItems(predicate: NSPredicate) {
@@ -113,6 +115,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString
         groceryItem.storeName = shoppingList
+        groceryItem.pendingDeletion = false
         
         do {
             try self.managedObjectContext.save()
@@ -141,10 +144,10 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         switch category {
         case .todo:
             let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.isCompleted))
-            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate,categoryPredicate])
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNameAndNotPendingDeletionPredicate,categoryPredicate])
         case .completed:
             let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.isCompleted))
-            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate,categoryPredicate])
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNameAndNotPendingDeletionPredicate,categoryPredicate])
         }
         populateGroceryItems(predicate: combinedPredicate)
         tableView.reloadData()
