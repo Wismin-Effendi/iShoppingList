@@ -86,3 +86,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     }
 
 }
+
+extension ShoppingListTableViewController {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 52
+    }
+}

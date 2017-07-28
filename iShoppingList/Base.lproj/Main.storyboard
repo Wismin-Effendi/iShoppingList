@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ShoppingListTableViewCell" id="XHd-I6-mkv" customClass="OddEvenTableViewCell" customModule="iShoppingList" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ShoppingListTableViewCell" id="XHd-I6-mkv">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XHd-I6-mkv" id="HdH-g1-46b">
@@ -59,22 +59,22 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kjQ-NI-kJu">
-                                            <rect key="frame" x="28" y="10.5" width="23" height="23"/>
+                                            <rect key="frame" x="20" y="1" width="42" height="42"/>
                                             <state key="normal" image="uncheck"/>
                                             <connections>
                                                 <action selector="completionButtonTapped:" destination="Oed-nb-3zc" eventType="touchUpInside" id="KZi-yN-jWc"/>
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YLj-a8-nDp">
-                                            <rect key="frame" x="64" y="11.5" width="42" height="21"/>
+                                            <rect key="frame" x="78" y="11.5" width="42" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="YLj-a8-nDp" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="56" id="0bB-sL-t9A"/>
-                                        <constraint firstItem="kjQ-NI-kJu" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="20" id="bK8-08-gfj"/>
+                                        <constraint firstItem="YLj-a8-nDp" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="70" id="0bB-sL-t9A"/>
+                                        <constraint firstItem="kjQ-NI-kJu" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="12" id="bK8-08-gfj"/>
                                         <constraint firstItem="YLj-a8-nDp" firstAttribute="centerY" secondItem="kjQ-NI-kJu" secondAttribute="centerY" id="ipQ-6J-Ywe"/>
                                         <constraint firstItem="kjQ-NI-kJu" firstAttribute="centerY" secondItem="kg9-ZW-g2O" secondAttribute="centerY" id="saN-BS-9l1"/>
                                     </constraints>
@@ -316,6 +316,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="uncheck" width="23" height="23"/>
+        <image name="uncheck" width="42" height="42"/>
     </resources>
 </document>

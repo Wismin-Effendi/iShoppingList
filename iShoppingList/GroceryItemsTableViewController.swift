@@ -61,13 +61,15 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         return addNewItemView
     }
 
-    // Add empty view as footer to hide the extra rows
+    
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 1
+        return 96
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView(frame: CGRect.zero)
+        return FilterItemView(controller: self) {[weak self] (category) in
+            self?.filterItemsBy(category: category)
+        }
     }
     
     
@@ -131,7 +133,21 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         } catch let error as NSError {
             fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
         }
+    }
+    
+    private func filterItemsBy(category: ItemCategory) {
+        let combinedPredicate: NSPredicate
         
+        switch category {
+        case .todo:
+            let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.isCompleted))
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate,categoryPredicate])
+        case .completed:
+            let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.isCompleted))
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate,categoryPredicate])
+        }
+        populateGroceryItems(predicate: combinedPredicate)
+        tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -183,5 +199,11 @@ extension GroceryItemsTableViewController: UIPopoverPresentationControllerDelega
     // MARK: - Helper
     func dismissPopoverViewController() {
         self.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension GroceryItemsTableViewController {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 56
     }
 }
