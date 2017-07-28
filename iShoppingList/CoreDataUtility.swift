@@ -40,4 +40,17 @@ class CoreDataUtil {
         }
     }
     
+    public static func deleteItemFromWarehouse(title: String, moc: NSManagedObjectContext) {
+        let warehouseItemFetch: NSFetchRequest<WarehouseGroceryItems> = WarehouseGroceryItems.fetchRequest()
+        warehouseItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(WarehouseGroceryItems.title), title)
+        do {
+            let results = try moc.fetch(warehouseItemFetch)
+            for result in results {
+                moc.delete(result)
+            }
+            try moc.save()
+        } catch let error as NSError {
+            fatalError("Failed to delete item from warehouse. \(error.localizedDescription)")
+        }
+    }
 }

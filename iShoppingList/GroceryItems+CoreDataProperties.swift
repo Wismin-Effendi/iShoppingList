@@ -22,11 +22,11 @@ extension GroceryItems {
     @NSManaged public var isArchived: Bool
     @NSManaged public var isCompleted: Bool
     @NSManaged public var isRepeatedItem: Bool
+    @NSManaged public var pendingDeletion: Bool
     @NSManaged public var reminderDate: NSDate?
     @NSManaged public var repetitionInterval: Double
     @NSManaged public var title: String
     @NSManaged public var uploaded: Bool
-    @NSManaged public var pendingDeletion: Bool
-    @NSManaged public var storeName: ShoppingList
+    @NSManaged public var storeName: ShoppingList?
 
 }
