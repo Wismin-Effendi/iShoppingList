@@ -26,6 +26,7 @@ class CloneItemToWarehouse {
         self.prototype = prototype
         self.managedObjectContext = moc
         warehouseGroceryItem = WarehouseGroceryItems(context: managedObjectContext)
+        CoreDataUtil.deleteItemFromWarehouse(title: prototype.title, moc: managedObjectContext)
         createCloneFromPrototype()
     }
     

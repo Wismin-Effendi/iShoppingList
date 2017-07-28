@@ -45,10 +45,11 @@ class CoreDataUtil {
         warehouseItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(WarehouseGroceryItems.title), title)
         do {
             let results = try moc.fetch(warehouseItemFetch)
+            print("Count: \(results.count)")
             for result in results {
+                print("going to delete \(result.title) with id \(result.identifier)" )
                 moc.delete(result)
             }
-            try moc.save()
         } catch let error as NSError {
             fatalError("Failed to delete item from warehouse. \(error.localizedDescription)")
         }

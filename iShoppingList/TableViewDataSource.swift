@@ -60,6 +60,7 @@ UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObject
         let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdentifier, for: indexPath) as! Cell
         let model: Model = self.fetchedResultsProvider.objectAt(indexPath: indexPath)
         
+        cell.selectionStyle = .none
         self.configureCell(cell, model)
         
         return cell
