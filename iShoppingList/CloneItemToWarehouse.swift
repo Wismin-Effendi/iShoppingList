@@ -12,13 +12,19 @@ import CoreData
 
 class CloneItemToWarehouse {
     
-    var managedObjectContext: NSManagedObjectContext!
+    var managedObjectContext: NSManagedObjectContext
     
     var warehouseGroceryItem: WarehouseGroceryItems
     var prototype: GroceryItems
     
-    init(prototype: GroceryItems) {
+    init(identifier: String, moc: NSManagedObjectContext) {
+        guard let prototype = CoreDataUtil.getGroceryItem(identifier: identifier,
+                                                          moc: moc)
+            else {
+                fatalError("Failed to retrieve grocery item for \(identifier)")
+            }
         self.prototype = prototype
+        self.managedObjectContext = moc
         warehouseGroceryItem = WarehouseGroceryItems(context: managedObjectContext)
         createCloneFromPrototype()
     }

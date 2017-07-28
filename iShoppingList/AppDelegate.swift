@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("ShoppingListTableViewController not found")
         }
         
+        shoppingListTVC.coreDataStack = coreDataStack
         shoppingListTVC.managedObjectContext = coreDataStack.managedObjectContext
         
         return true

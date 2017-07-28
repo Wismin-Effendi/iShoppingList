@@ -11,6 +11,7 @@ import CoreData
 
 protocol ItemCellCompletionStateDelegate: class {
     func persist(identifier: String, completed: Bool)
+    func cloneToWarehouseIfRepeatedItem(identifier: String, completed: Bool)
 }
 
 
@@ -44,6 +45,7 @@ class TaskItemCell: UITableViewCell {
     @IBAction func completionButtonTapped(_ sender: UIButton) {
         completed = !completed
         delegate?.persist(identifier: itemIdentifier, completed: completed)
+        delegate?.cloneToWarehouseIfRepeatedItem(identifier: itemIdentifier, completed: completed)
     }
     
     private func setCompletionCheckBoxWithAnimation() {

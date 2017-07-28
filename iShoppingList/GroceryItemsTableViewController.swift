@@ -13,6 +13,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
     var fetchedResultsProvider: FetchedResultsProvider<GroceryItems>!
     var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
+    var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
     var storeName: String!
     var storeNameAndNotPendingDeletionPredicate: NSPredicate!
@@ -168,6 +169,14 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
             }
         } catch let error as NSError {
             fatalError("Failed to save updated item. \(error.localizedDescription)")
+        }
+    }
+    
+    func cloneToWarehouseIfRepeatedItem(identifier: String, completed: Bool) {
+        guard completed else { return }
+        
+        coreDataStack.performBackgroundTask { (backgroundContext) in
+            CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
         }
     }
 }

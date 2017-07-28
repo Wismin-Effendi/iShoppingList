@@ -11,12 +11,6 @@ import CoreData
 
 class ItemDetailsTableViewController: UITableViewController {
     
-    struct TimeIntervalConst {
-        static let oneDay: Double = 3600.0 * 24.0
-        static let oneWeek: Double  = 7.0 * oneDay
-        static let oneMonth: Double = 30.0 * oneDay
-    }
-    
     struct IndexPathOfCell {
         static let completionDate           = IndexPath.init(row: 1, section: 0)
         static let repetitionIntervalPicker = IndexPath.init(row: 1, section: 1)

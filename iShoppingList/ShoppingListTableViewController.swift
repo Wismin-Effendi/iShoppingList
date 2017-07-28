@@ -19,6 +19,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     var fetchedResultsProvider: FetchedResultsProvider<ShoppingList>!
     var dataSource: TableViewDataSource<UITableViewCell, ShoppingList>!
     
+    var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
 
     override func viewDidLoad() {
@@ -80,6 +81,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         if segue.identifier == SegueIdentifier.groceryItemsTableViewController.rawValue,
             let groceryItemsTVC = segue.destination as? GroceryItemsTableViewController {
             
+            groceryItemsTVC.coreDataStack = self.coreDataStack
             groceryItemsTVC.managedObjectContext = self.managedObjectContext
             groceryItemsTVC.storeName = (sender as? UITableViewCell)?.textLabel?.text
         }

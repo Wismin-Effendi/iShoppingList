@@ -26,4 +26,18 @@ class CoreDataUtil {
         }
     }
     
+    public static func getGroceryItem(identifier: String, moc: NSManagedObjectContext) -> GroceryItems? {
+        let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        groceryItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
+        
+        do {
+            let results = try moc.fetch(groceryItemFetch)
+            if results.count > 0 {
+                return results.first!
+            } else { return nil }
+        } catch let error as NSError {
+            fatalError("Failed to fetch grocery item by identifier. \(error.localizedDescription)")
+        }
+    }
+    
 }
