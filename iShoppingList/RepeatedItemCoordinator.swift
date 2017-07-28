@@ -94,12 +94,7 @@ class RepeatedItemsCoordinator {
             fatalError("Failed to save grocery item in coreData. \(error.localizedDescription)")
         }
         
-        do {
-           backgroundContext.delete(item)
-           try backgroundContext.save()
-        } catch let error as NSError {
-            fatalError("Failed to save grocery item in coreData. \(error.localizedDescription)")
-        }
+        backgroundContext.delete(item)
     }
 }
 

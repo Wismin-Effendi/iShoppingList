@@ -92,6 +92,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let detailViewController = storyboard.instantiateViewController(withIdentifier: "ItemDetailsTableViewController") as! ItemDetailsTableViewController
         
+        detailViewController.coreDataStack = coreDataStack 
         detailViewController.managedObjectContext = managedObjectContext
         detailViewController.itemIdentifier = tableCell.itemIdentifier
         
@@ -176,7 +177,7 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
         guard completed else { return }
         
         coreDataStack.performBackgroundTask { (backgroundContext) in
-            CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
+           _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
         }
     }
 }

@@ -27,6 +27,7 @@ class ItemDetailsTableViewController: UITableViewController {
     
     var item: GroceryItems!
     
+    var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
     var itemIdentifier: String!
     
@@ -163,8 +164,30 @@ extension ItemDetailsTableViewController {
         } catch let error as NSError {
             fatalError("Failed to save item details \(error.localizedDescription)")
         }
+        // need to check if item was completed and we update the repeatSwitch or repetitionInterval
+        synchronizeCloneToWarehouseAction()
         self.dismiss(animated: true, completion: nil)
     }
+    
+    private func synchronizeCloneToWarehouseAction() {
+        let completed = item.isCompleted
+        let repeatNewValue = item.isRepeatedItem
+        let title = item.title
+        let identifier = item.identifier
+        
+        switch (completed, repeatNewValue) {
+        case (false, _): break
+        case (true, false):
+            coreDataStack.performBackgroundTask  { (backgroundContext) in
+                CoreDataUtil.deleteItemFromWarehouse(title: title, moc: backgroundContext)
+            }
+        case (true, true):
+            coreDataStack.performBackgroundTask { (backgroundContext) in
+                _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
+            }
+        }
+    }
+    
     
     private func populateItemDetails(_ item: GroceryItems) {
         titleLabel.text = item.title
@@ -219,8 +242,6 @@ extension ItemDetailsTableViewController {
         guard let index = repeatIntervalUnits.index(of: value) else { return }
         repetitionIntervalPicker.selectRow(index, inComponent: 1, animated: true)
     }
-
-    
 }
 
 
