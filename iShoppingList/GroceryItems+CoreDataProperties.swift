@@ -2,7 +2,7 @@
 //  GroceryItems+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 7/27/17.
+//  Created by Wismin Effendi on 7/28/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -23,7 +23,7 @@ extension GroceryItems {
     @NSManaged public var isCompleted: Bool
     @NSManaged public var isRepeatedItem: Bool
     @NSManaged public var reminderDate: NSDate?
-    @NSManaged public var repetitionInterval: Float
+    @NSManaged public var repetitionInterval: Double
     @NSManaged public var title: String
     @NSManaged public var uploaded: Bool
     @NSManaged public var pendingDeletion: Bool

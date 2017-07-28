@@ -107,34 +107,24 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     // MARK: Private
     
     private func addNewGroceryItem(title: String) {
-        guard let shoppingList = getShoppingListOf(storeName: self.storeName) else {
+        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeName: self.storeName, moc: managedObjectContext) else {
             fatalError("Cannot save new item to non existing Shopping List")
         }
         
         let groceryItem = GroceryItems(context: self.managedObjectContext)
         groceryItem.title = title
-        groceryItem.identifier = UUID().uuidString
-        groceryItem.storeName = shoppingList
+        groceryItem.identifier = UUID().uuidString        
         groceryItem.pendingDeletion = false
+        groceryItem.isRepeatedItem = false
+        groceryItem.isCompleted = false
+        groceryItem.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        groceryItem.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        shoppingList.addToItems(groceryItem)
         
         do {
             try self.managedObjectContext.save()
         } catch let error as NSError {
             fatalError("Failed to save new grocery item to core data. \(error.localizedDescription)")
-        }
-    }
-    
-    private func getShoppingListOf(storeName: String) -> ShoppingList? {
-        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
-        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
-        
-        do {
-            let results = try managedObjectContext.fetch(shoppingListFetch)
-            if results.count > 0 {
-                return results.first!
-            } else { return nil }
-        } catch let error as NSError {
-            fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
         }
     }
     

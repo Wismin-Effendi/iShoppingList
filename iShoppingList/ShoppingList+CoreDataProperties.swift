@@ -2,7 +2,7 @@
 //  ShoppingList+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 7/26/17.
+//  Created by Wismin Effendi on 7/28/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -16,7 +16,7 @@ extension ShoppingList {
         return NSFetchRequest<ShoppingList>(entityName: "ShoppingList")
     }
 
-    @NSManaged public var title: String?
+    @NSManaged public var title: String
     @NSManaged public var items: NSSet?
 
 }

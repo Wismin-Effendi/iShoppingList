@@ -12,9 +12,9 @@ import CoreData
 class ItemDetailsTableViewController: UITableViewController {
     
     struct TimeIntervalConst {
-        static let oneDay: Float = 3600.0 * 24.0
-        static let oneWeek: Float  = 7.0 * oneDay
-        static let oneMonth: Float = 30.0 * oneDay
+        static let oneDay: Double = 3600.0 * 24.0
+        static let oneWeek: Double  = 7.0 * oneDay
+        static let oneMonth: Double = 30.0 * oneDay
     }
     
     struct IndexPathOfCell {
@@ -129,13 +129,13 @@ extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDe
         }
         print("Selected \(repeatInterval) \(repeatIntervalUnit)")
         
-        switch (repeatInterval, repeatIntervalUnit) {
+        switch (Double(repeatInterval)!, repeatIntervalUnit) {
         case let (n,"Week"):
-            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneWeek
+            item.repetitionInterval = n * TimeIntervalConst.oneWeek
         case let (n, "Day"):
-            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneDay
+            item.repetitionInterval = n * TimeIntervalConst.oneDay
         case let (n, "Month"):
-            item.repetitionInterval = Float(n)! * TimeIntervalConst.oneMonth
+            item.repetitionInterval = n * TimeIntervalConst.oneMonth
         default: break
         }
     }
@@ -199,7 +199,7 @@ extension ItemDetailsTableViewController {
         completionDate.text = dateFormatter.string(from: date)
     }
     
-    private func setRepetitionIntervalPicker(from interval: Float) {
+    private func setRepetitionIntervalPicker(from interval: Double) {
         if interval.truncatingRemainder(dividingBy: TimeIntervalConst.oneMonth) == 0.0 {
             let number = Int(interval / TimeIntervalConst.oneMonth)
             setRepetitionIntervalOnPicker(for: number)

@@ -1,5 +1,5 @@
 //
-//  ShoppingList+CoreDataClass.swift
+//  WarehouseGroceryItems+CoreDataClass.swift
 //  iShoppingList
 //
 //  Created by Wismin Effendi on 7/28/17.
@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(ShoppingList)
-public class ShoppingList: NSManagedObject {
-
+@objc(WarehouseGroceryItems)
+public class WarehouseGroceryItems: NSManagedObject {
+    
 }

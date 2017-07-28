@@ -24,6 +24,7 @@ class CoreDataStack {
        return self.storeContainer.viewContext
     }()
     
+    
     private lazy var storeContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -51,6 +52,7 @@ class CoreDataStack {
         return container
     }()
     
+    
     // MARK: - Core Data Saving support
     
     func saveContext () {
@@ -66,4 +68,5 @@ class CoreDataStack {
         }
         
     }
+    
 }
