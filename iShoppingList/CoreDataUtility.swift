@@ -106,6 +106,19 @@ class CoreDataUtil {
             fatalError("Failed to delete from groceryItems. \(error.localizedDescription)")
         }
     }
+
+    public static func deleteAllGroceryItems(moc: NSManagedObjectContext) {
+        let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        do {
+            let results = try moc.fetch(groceryItemFetch)
+            for result in results {
+                moc.delete(result)
+                try moc.save()
+            }
+        } catch let error as NSError {
+            fatalError("Failed to delete from groceryItems. \(error.localizedDescription)")
+        }
+    }
     
     public static func createOneSampleShoppingList(title: String, moc: NSManagedObjectContext) {
         let item = ShoppingList(context: moc)
@@ -122,10 +135,10 @@ class CoreDataUtil {
         let item = WarehouseGroceryItems(context: moc)
         item.identifier = UUID().uuidString
         item.isRepeatedItem = true
-        item.repetitionInterval = TimeIntervalConst.oneWeek
+        item.repetitionInterval = TimeIntervalConst.fourWeeks
         item.title = title
-        item.deliveryDate = Date(timeIntervalSinceNow: TimeIntervalConst.fourWeeks) as NSDate
-        item.shoppingListTitle = "Costco"
+        item.deliveryDate = NSDate()
+        item.shoppingListTitle = title
         
         do {
             try moc.save()
@@ -149,6 +162,18 @@ class CoreDataUtil {
             try moc.save()
         } catch let error as NSError {
             fatalError("Failed to create sample Warehouse item. \(error.localizedDescription)")
+        }
+    }
+
+    public static func getWarehouseItem(title: String, moc: NSManagedObjectContext) -> WarehouseGroceryItems? {
+        let currentItemFetch: NSFetchRequest<WarehouseGroceryItems> = WarehouseGroceryItems.fetchRequest()
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(WarehouseGroceryItems.title), title)
+        
+        do {
+            let results = try moc.fetch(currentItemFetch)
+            return results.first
+        } catch let error as NSError {
+            fatalError("Failed to retrieved item from coreData. \(error.localizedDescription)")
         }
     }
     

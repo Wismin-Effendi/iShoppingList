@@ -27,6 +27,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.pendingDeletion))
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
+        filterItemsBy(category: ItemCategory.todo)
     }
     
     private func populateGroceryItems(predicate: NSPredicate) {

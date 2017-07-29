@@ -56,10 +56,9 @@ class RepeatedItemsCoordinator {
         return (startofDay as NSDate, endOfDay as NSDate)
     }
     
-    fileprivate func todayPredicate() -> NSPredicate {
+    fileprivate func beforeTomorrowPredicate() -> NSPredicate {
         let (startOfDay, endOfDay) = getStartAndEndOfDay()
-        let predicate = NSPredicate(format: "%K >= %@ AND %K < %@ ",
-                                    #keyPath(WarehouseGroceryItems.deliveryDate), startOfDay,
+        let predicate = NSPredicate(format: "%K < %@ ",
                                     #keyPath(WarehouseGroceryItems.deliveryDate), endOfDay)
         return predicate
     }
@@ -67,7 +66,7 @@ class RepeatedItemsCoordinator {
     fileprivate func getDeliveryItemsForToday() -> [WarehouseGroceryItems] {
         let warehouseTodayFetch = NSFetchRequest<WarehouseGroceryItems>(entityName: "WarehouseGroceryItems")
         let sortOrder = NSSortDescriptor(key: "deliveryDate", ascending: true)
-        let predicate = todayPredicate()
+        let predicate = beforeTomorrowPredicate()
         warehouseTodayFetch.sortDescriptors = [sortOrder]
         warehouseTodayFetch.predicate = predicate
         
@@ -83,6 +82,7 @@ class RepeatedItemsCoordinator {
     
     func transferTodayItemsToActiveGroceryItems() {
         let warehouseTodayItems = getDeliveryItemsForToday()
+        print("Found \(warehouseTodayItems.count) items for delivery.")
         for warehouseItem in warehouseTodayItems {
             transferOneItemToActiveGroceryItems(item: warehouseItem)
         }

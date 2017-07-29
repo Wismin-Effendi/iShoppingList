@@ -58,10 +58,11 @@ class iShoppingListTests: XCTestCase {
     }
     
     
-    func testCreateOneGroceryItemThenCloneToWarehouseAndDeleteBoth() {
+    func testCreateOneGroceryItemThenCloneToWarehouseDeliverItemsToActiveGroceryItems() {
         let storeName = "Costco"
         let groceryItem = "Banana"
         
+        CoreDataUtil.deleteAllGroceryItems(moc: moc)
         CoreDataUtil.deleteShoppingList(title: storeName, moc: moc)
         CoreDataUtil.createOneSampleShoppingList(title: storeName, moc: moc)
         
@@ -73,14 +74,18 @@ class iShoppingListTests: XCTestCase {
         _ = CloneItemToWarehouse(identifier: identifier, moc: moc, completion: { print("completed cloning2") } )
         var count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
         XCTAssertEqual(count, 1)
-        CoreDataUtil.deleteItemFromWarehouse(title: groceryItem, moc: moc)
+        let warehouseItem = CoreDataUtil.getWarehouseItem(title: groceryItem, moc: moc)!
+        print(warehouseItem)
+        // CoreDataUtil.deleteItemFromWarehouse(title: groceryItem, moc: moc)
+        
+        RepeatedItemsCoordinator.shared(backgroundContext: moc).transferTodayItemsToActiveGroceryItems()
         count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
         XCTAssertEqual(count, 0)
         count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
-        XCTAssertEqual(count, 1)
-        CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
+        XCTAssertEqual(count, 2)
+       //  CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
         count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
-        XCTAssertEqual(count, 0)
+        XCTAssertEqual(count, 2)
         
     }
     

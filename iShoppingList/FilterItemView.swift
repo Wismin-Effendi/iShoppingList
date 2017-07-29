@@ -9,7 +9,7 @@
 import UIKit
 
 class FilterItemView: UIView {
-
+    
     var filterItemViewClosure: (ItemCategory) -> ()
     
     init(controller: UIViewController, filterItemViewClosure: @escaping (ItemCategory) -> ()) {
@@ -19,6 +19,7 @@ class FilterItemView: UIView {
         super.init(frame: controller.view.frame)
         
         setup()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -42,9 +43,10 @@ class FilterItemView: UIView {
         mySegmentedControl.layer.borderWidth = 1.0
         mySegmentedControl.layer.masksToBounds = true
         
+        mySegmentedControl.isMomentary = false
         
-        mySegmentedControl.tintColor = UIColor.darkGray
-        mySegmentedControl.backgroundColor = UIColor.white
+        mySegmentedControl.tintColor = UIColor.green
+        mySegmentedControl.backgroundColor = UIColor.darkGray
                 
         // Add function to handle Value Changed events
         mySegmentedControl.addTarget(self, action: #selector(FilterItemView.segmentedValueChanged(_:)), for: .valueChanged)
@@ -57,6 +59,7 @@ class FilterItemView: UIView {
     func segmentedValueChanged(_ sender:UISegmentedControl!)
     {
         let index = sender.selectedSegmentIndex
+    
         print("Selected Segment Index is : \(index)")
         
         filterItemViewClosure(ItemCategory.byIndex(index))
