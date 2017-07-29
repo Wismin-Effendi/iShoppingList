@@ -15,17 +15,18 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
-    var storeName: String!
-    var storeNameAndNotPendingDeletionPredicate: NSPredicate!
+    var storeIdentifier: String!
+    var storeNameTitle: String!
+    var storeIdentifierAndNotPendingDeletionPredicate: NSPredicate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = storeName
-        let storeNamePredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.storeName.title),storeName)
+        navigationItem.title = storeNameTitle
+        let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.storeName.identifier), storeIdentifier)
         let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.pendingDeletion))
-        storeNameAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNamePredicate, notPendingDeletionPredicate])
-        populateGroceryItems(predicate: storeNameAndNotPendingDeletionPredicate)
+        storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
+        populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
     }
     
     private func populateGroceryItems(predicate: NSPredicate) {
@@ -109,11 +110,12 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     // MARK: Private
     
     private func addNewGroceryItem(title: String) {
-        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeName: self.storeName, moc: managedObjectContext) else {
+        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: storeIdentifier, moc: managedObjectContext) else {
             fatalError("Cannot save new item to non existing Shopping List")
         }
         
         let groceryItem = GroceryItems(context: self.managedObjectContext)
+        shoppingList.addToItems(groceryItem)
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString        
         groceryItem.pendingDeletion = false
@@ -121,7 +123,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         groceryItem.isCompleted = false
         groceryItem.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         groceryItem.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        shoppingList.addToItems(groceryItem)
+        
         
         do {
             try self.managedObjectContext.save()
@@ -136,10 +138,10 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         switch category {
         case .todo:
             let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.isCompleted))
-            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNameAndNotPendingDeletionPredicate,categoryPredicate])
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         case .completed:
             let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.isCompleted))
-            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeNameAndNotPendingDeletionPredicate,categoryPredicate])
+            combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         }
         populateGroceryItems(predicate: combinedPredicate)
         tableView.reloadData()

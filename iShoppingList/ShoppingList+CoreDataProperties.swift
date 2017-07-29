@@ -2,7 +2,7 @@
 //  ShoppingList+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 7/28/17.
+//  Created by Wismin Effendi on 7/29/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -17,6 +17,7 @@ extension ShoppingList {
     }
 
     @NSManaged public var title: String
+    @NSManaged public var identifier: String
     @NSManaged public var items: NSSet?
 
 }

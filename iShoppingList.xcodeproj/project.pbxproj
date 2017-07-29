@@ -36,6 +36,7 @@
 		378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */; };
 		378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97831F23B47F00C526D9 /* TableViewDataSource.swift */; };
 		378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */; };
+		378EE8A21F2CB819008F5669 /* ShoppingListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObjectType.swift; sourceTree = "<group>"; };
 		378E97831F23B47F00C526D9 /* TableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
 		378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsProvider.swift; sourceTree = "<group>"; };
+		378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 				370E9ABA1F2AF204008EF197 /* RepeatedItemCoordinator.swift */,
 				370E9ADD1F2B7A70008EF197 /* CoreDataUtility.swift */,
 				370E9ADF1F2B7C56008EF197 /* CloneItemToWarehouse.swift */,
+				378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */,
 			);
 			path = iShoppingList;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				378E97531F23B2F900C526D9 /* ViewController.swift in Sources */,
 				3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */,
 				3746AC4C1F241DEE00D1B988 /* ShoppingListTableViewController.swift in Sources */,
+				378EE8A21F2CB819008F5669 /* ShoppingListCell.swift in Sources */,
 				3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */,
 				378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */,
 				378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */,

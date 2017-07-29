@@ -12,9 +12,9 @@ import CoreData
 
 class CoreDataUtil {
     
-    public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
+    public static func getShoppingListOf(storeIdentifier: String, moc: NSManagedObjectContext) -> ShoppingList? {
         let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
-        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
+        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.identifier), storeIdentifier)
         
         do {
             let results = try moc.fetch(shoppingListFetch)
@@ -62,6 +62,20 @@ class CoreDataUtil {
     }
     
     // MARK: For Testing 
+    
+    public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
+        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
+        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
+        
+        do {
+            let results = try moc.fetch(shoppingListFetch)
+            if results.count > 0 {
+                return results.first!
+            } else { return nil }
+        } catch let error as NSError {
+            fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
+        }
+    }
     
     public static func deleteShoppingList(title: String, moc: NSManagedObjectContext) {
         let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()

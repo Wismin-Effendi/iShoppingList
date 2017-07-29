@@ -17,7 +17,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     
     var fetchedResultsProvider: FetchedResultsProvider<ShoppingList>!
-    var dataSource: TableViewDataSource<UITableViewCell, ShoppingList>!
+    var dataSource: TableViewDataSource<ShoppingListCell, ShoppingList>!
     
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
@@ -35,6 +35,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
             cell.textLabel?.text = model.title
             cell.backgroundColor = UIColor.orange
             cell.accessoryType = .disclosureIndicator
+            cell.coreDataIdentifier = model.identifier 
         }
         
         self.tableView.dataSource = self.dataSource
@@ -68,6 +69,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         
         let shoppingList = ShoppingList(context: managedObjectContext)
         shoppingList.title = title
+        shoppingList.identifier = UUID().uuidString
         do {
             try self.managedObjectContext.save()
         } catch let error as NSError {
@@ -83,7 +85,8 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
             
             groceryItemsTVC.coreDataStack = self.coreDataStack
             groceryItemsTVC.managedObjectContext = self.managedObjectContext
-            groceryItemsTVC.storeName = (sender as? UITableViewCell)?.textLabel?.text
+            groceryItemsTVC.storeNameTitle = (sender as? UITableViewCell)?.textLabel?.text
+            groceryItemsTVC.storeIdentifier = (sender as? ShoppingListCell)?.coreDataIdentifier
         }
     }
 
