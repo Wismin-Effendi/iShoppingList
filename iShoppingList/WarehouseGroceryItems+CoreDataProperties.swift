@@ -20,7 +20,7 @@ extension WarehouseGroceryItems {
     @NSManaged public var isRepeatedItem: Bool
     @NSManaged public var repetitionInterval: Double
     @NSManaged public var title: String
-    @NSManaged public var deliveryDate: NSDate?
+    @NSManaged public var deliveryDate: NSDate
     @NSManaged public var shoppingListTitle: String
 
 }

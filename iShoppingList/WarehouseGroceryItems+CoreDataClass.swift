@@ -13,6 +13,6 @@ import CoreData
 public class WarehouseGroceryItems: NSManagedObject {
     
     public override var description: String {
-        return "Store: \(shoppingListTitle)  Title: \(title)  deliveryDate: \((deliveryDate! as Date))"
+        return "Store: \(shoppingListTitle)  Title: \(title)  deliveryDate: \((deliveryDate as Date))"
     }
 }
