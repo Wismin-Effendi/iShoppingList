@@ -41,7 +41,7 @@ class CloneItemToWarehouse {
         warehouseGroceryItem.repetitionInterval = prototype.repetitionInterval
         // initialize the rest
         warehouseGroceryItem.identifier = UUID().uuidString
-        print("Created item in warehouse with title: \(warehouseGroceryItem.title) for store: \(warehouseGroceryItem.shoppingListTitle)")
+        print("Created item in warehouse with title: \(warehouseGroceryItem.title) for store: \(warehouseGroceryItem.shoppingListTitle) with deliveryDate: \((warehouseGroceryItem.deliveryDate! as Date).toString())")
         
         do {
             try self.managedObjectContext.save()

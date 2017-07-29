@@ -49,6 +49,11 @@ class CoreDataUtil {
             for result in results {
                 print("going to delete \(result.title) with id \(result.identifier)" )
                 moc.delete(result)
+                do {
+                    try moc.save()
+                } catch let error as NSError {
+                    fatalError("Failed to perform managed object save after deletion. \(error.localizedDescription)")
+                }
             }
         } catch let error as NSError {
             fatalError("Failed to delete item from warehouse. \(error.localizedDescription)")

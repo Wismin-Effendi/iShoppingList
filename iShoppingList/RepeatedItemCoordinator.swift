@@ -28,6 +28,7 @@ class RepeatedItemsCoordinator {
 
     private var backgroundContext: NSManagedObjectContext!
     
+    
     private static var sharedInstance: RepeatedItemsCoordinator!
     
     private init(moc: NSManagedObjectContext) {
@@ -48,14 +49,14 @@ class RepeatedItemsCoordinator {
     // Check the warehouse for item to be delivered today 
     
     
-    func getStartAndEndOfDay() -> (startOfDay: NSDate, endOfDay: NSDate) {
+    fileprivate func getStartAndEndOfDay() -> (startOfDay: NSDate, endOfDay: NSDate) {
         let calendar = Calendar.current
         let startofDay = calendar.startOfDay(for: Date())
         let endOfDay = startofDay + TimeIntervalConst.oneDay
         return (startofDay as NSDate, endOfDay as NSDate)
     }
     
-    func todayPredicate() -> NSPredicate {
+    fileprivate func todayPredicate() -> NSPredicate {
         let (startOfDay, endOfDay) = getStartAndEndOfDay()
         let predicate = NSPredicate(format: "%K >= %@ AND %K < %@ ",
                                     #keyPath(WarehouseGroceryItems.deliveryDate), startOfDay,
@@ -63,7 +64,7 @@ class RepeatedItemsCoordinator {
         return predicate
     }
     
-    func getDeliveryItemsForToday() -> [WarehouseGroceryItems] {
+    fileprivate func getDeliveryItemsForToday() -> [WarehouseGroceryItems] {
         let warehouseTodayFetch = NSFetchRequest<WarehouseGroceryItems>(entityName: "WarehouseGroceryItems")
         let sortOrder = NSSortDescriptor(key: "deliveryDate", ascending: true)
         let predicate = todayPredicate()
@@ -87,7 +88,7 @@ class RepeatedItemsCoordinator {
         }
     }
     
-    func transferOneItemToActiveGroceryItems(item: WarehouseGroceryItems) {
+    fileprivate func transferOneItemToActiveGroceryItems(item: WarehouseGroceryItems) {
         let groceryItem = GroceryItems(context: backgroundContext)
         let storeName = item.shoppingListTitle
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: backgroundContext) {
@@ -108,6 +109,11 @@ class RepeatedItemsCoordinator {
         }
         
         backgroundContext.delete(item)
+        do {
+            try backgroundContext.save()
+        } catch let error as NSError {
+            fatalError("Failed to perform managed object save after deletion. \(error.localizedDescription)")
+        }
     }
 }
 

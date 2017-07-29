@@ -22,4 +22,13 @@ extension GroceryItems: ManagedObjectType {
         return "GroceryItems"
     }
 }
- 
+
+extension Date {
+    
+    func toString(dateFormat format: String = "MMM-dd yyyy HH:mm:ss") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
+    }
+    
+}
