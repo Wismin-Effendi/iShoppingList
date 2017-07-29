@@ -57,7 +57,7 @@ class RepeatedItemsCoordinator {
     }
     
     fileprivate func beforeTomorrowPredicate() -> NSPredicate {
-        let (startOfDay, endOfDay) = getStartAndEndOfDay()
+        let (_, endOfDay) = getStartAndEndOfDay()
         let predicate = NSPredicate(format: "%K < %@ ",
                                     #keyPath(WarehouseGroceryItems.deliveryDate), endOfDay)
         return predicate
@@ -93,21 +93,28 @@ class RepeatedItemsCoordinator {
         let storeName = item.shoppingListTitle
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: backgroundContext) {
             shoppingList.addToItems(groceryItem)
+            
+            // set default first, then override as needed
+            groceryItem.setDefaultValues()
             groceryItem.identifier = UUID().uuidString
             groceryItem.title = item.title
             groceryItem.isRepeatedItem = item.isRepeatedItem
             groceryItem.repetitionInterval = item.repetitionInterval
-            groceryItem.setDefaultValues()
+            groceryItem.lastCompletionDate = item.protoCompletionDate
         } else {
             fatalError("Not able to retrieve shoppingList for grocery item")
         }
-       
+        
         do {
             try backgroundContext.save()
         } catch let error as NSError {
             fatalError("Failed to save grocery item in coreData. \(error.localizedDescription)")
         }
         
+        // Delete the proto to avoid confusion when new item completed too. 
+        CoreDataUtil.deleteGroceryItem(identifier: item.protoIdentifier, moc: backgroundContext)
+        
+        // Now delete the WarehouseItem
         backgroundContext.delete(item)
         do {
             try backgroundContext.save()

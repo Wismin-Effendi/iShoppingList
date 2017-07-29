@@ -87,11 +87,11 @@ class ItemDetailsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return item.isCompleted ?  2 : 1
+            return item.completed ? 2 : 1
         case 1:
             return item.isRepeatedItem ?  2 : 1
          case 2:
-            return item.isCompleted ?  0 : (item.hasReminder ? 2 : 1)
+            return item.completed ? 0 : (item.hasReminder ? 2 : 1)
         default:
             return 0
         }
@@ -170,7 +170,7 @@ extension ItemDetailsTableViewController {
     }
     
     private func synchronizeCloneToWarehouseAction() {
-        let completed = item.isCompleted
+        let completed = item.completed
         let repeatNewValue = item.isRepeatedItem
         let title = item.title
         let identifier = item.identifier
@@ -201,7 +201,7 @@ extension ItemDetailsTableViewController {
             setRepetitionIntervalPicker(from: item.repetitionInterval)
         }
         
-        if item.isCompleted {
+        if item.completed {
             setCompletionDate(item.completionDate! as Date)
         }
     }
@@ -252,6 +252,6 @@ extension ItemDetailsTableViewController {
         // Section 2 is for reminder. Completed items don't need reminder anymore. So hide the section.
         guard  section == 2 else { return 44 }
         
-        return item.isCompleted ? 0 : 44
+        return item.completed ? 0 : 44
     }
 }

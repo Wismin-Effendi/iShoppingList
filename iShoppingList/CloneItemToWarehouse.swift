@@ -34,12 +34,16 @@ class CloneItemToWarehouse {
     fileprivate func createCloneFromPrototype() {
         // store shoppingList name to be use during delivery day
         warehouseGroceryItem.shoppingListTitle = prototype.storeName!.title
+        
         // set deliveryDate to be checked periodically for time to deliver (i.e. move to active GroceryItems)
         warehouseGroceryItem.deliveryDate = calculateDeliveryDate() as NSDate
+        
         // copy mandatory fields
         warehouseGroceryItem.title = prototype.title
         warehouseGroceryItem.isRepeatedItem = prototype.isRepeatedItem
         warehouseGroceryItem.repetitionInterval = prototype.repetitionInterval
+        warehouseGroceryItem.protoIdentifier = prototype.identifier
+        
         // initialize the rest
         warehouseGroceryItem.identifier = UUID().uuidString
         print("Created item in warehouse with title: \(warehouseGroceryItem.title) for store: \(warehouseGroceryItem.shoppingListTitle) with deliveryDate: \((warehouseGroceryItem.deliveryDate as Date).toString())")

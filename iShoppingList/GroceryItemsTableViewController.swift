@@ -41,7 +41,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         { cell, model in
             cell.titleLabel?.text = model.title
             cell.itemIdentifier = model.identifier
-            cell.completed = model.isCompleted
+            cell.completed = model.completed
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
             cell.delegate = self   // for ItemCellCompletionStateDelegate
@@ -121,7 +121,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         groceryItem.identifier = UUID().uuidString        
         groceryItem.pendingDeletion = false
         groceryItem.isRepeatedItem = false
-        groceryItem.isCompleted = false
+        groceryItem.completed = false
         groceryItem.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         groceryItem.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         
@@ -138,10 +138,10 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         switch category {
         case .todo:
-            let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.isCompleted))
+            let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.completed))
             combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         case .completed:
-            let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.isCompleted))
+            let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.completed))
             combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         }
         populateGroceryItems(predicate: combinedPredicate)
@@ -164,7 +164,7 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)
             if let item = results.first {
-                item.isCompleted = completed
+                item.completed = completed
                 if completed {
                     item.completionDate = Date.init() as NSDate
                     item.hasReminder = false 

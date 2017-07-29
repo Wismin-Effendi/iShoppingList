@@ -14,6 +14,7 @@ struct TimeIntervalConst {
     static let threeDays: Double = oneDay * 3.0
     static let fourDays: Double = oneDay * 4.0
     static let oneWeek: Double = oneDay * 7.0
+    static let twoWeeks: Double = oneWeek * 2.0
     static let fourWeeks: Double = oneWeek * 4.0
     static let oneMonth: Double = oneDay * 30.0
     static let twentySixMonths: Double = oneMonth * 26.0

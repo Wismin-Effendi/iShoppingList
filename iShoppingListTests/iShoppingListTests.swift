@@ -67,16 +67,18 @@ class iShoppingListTests: XCTestCase {
         CoreDataUtil.createOneSampleShoppingList(title: storeName, moc: moc)
         
         CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
-        CoreDataUtil.createOneSampleGroceryItem(storeName: storeName, title: groceryItem, moc: moc)
+        
+        // set to one day for immediate delivery post cloning
+        CoreDataUtil.createOneSampleGroceryItem(storeName: storeName, title: groceryItem, repetitionInterval: TimeIntervalConst.oneDay, moc: moc)
         
         let identifier = CoreDataUtil.getGroceryItemIdentifierFromTitle(title: groceryItem, moc: moc)!
         _ = CloneItemToWarehouse(identifier: identifier, moc: moc, completion: { print("completed cloning1") } )
         _ = CloneItemToWarehouse(identifier: identifier, moc: moc, completion: { print("completed cloning2") } )
         var count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
         XCTAssertEqual(count, 1)
+        
         let warehouseItem = CoreDataUtil.getWarehouseItem(title: groceryItem, moc: moc)!
         print(warehouseItem)
-        // CoreDataUtil.deleteItemFromWarehouse(title: groceryItem, moc: moc)
         
         RepeatedItemsCoordinator.shared(backgroundContext: moc).transferTodayItemsToActiveGroceryItems()
         count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)

@@ -61,6 +61,21 @@ class CoreDataUtil {
         }
     }
     
+    public static func deleteGroceryItem(identifier: String, moc: NSManagedObjectContext) {
+        let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
+        groceryItemFetch.predicate = predicate
+        do {
+            let results = try moc.fetch(groceryItemFetch)
+            for result in results {
+                moc.delete(result)
+                try moc.save()
+            }
+        } catch let error as NSError {
+            fatalError("Failed to delete from groceryItems. \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: For Testing 
     
     public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
@@ -135,7 +150,7 @@ class CoreDataUtil {
         let item = WarehouseGroceryItems(context: moc)
         item.identifier = UUID().uuidString
         item.isRepeatedItem = true
-        item.repetitionInterval = TimeIntervalConst.fourWeeks
+        item.repetitionInterval = TimeIntervalConst.fourDays
         item.title = title
         item.deliveryDate = NSDate()
         item.shoppingListTitle = title
@@ -147,16 +162,18 @@ class CoreDataUtil {
         }
     }
     
-    public static func createOneSampleGroceryItem(storeName: String, title: String, moc: NSManagedObjectContext) {
+    public static func createOneSampleGroceryItem(storeName: String, title: String, repetitionInterval: TimeInterval = TimeIntervalConst.twoWeeks, moc: NSManagedObjectContext) {
         let item = GroceryItems(context: moc)
         
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: moc) {
             shoppingList.addToItems(item)
+            item.setDefaultValues()
             item.identifier = UUID().uuidString
             item.isRepeatedItem = true
-            item.repetitionInterval = TimeIntervalConst.oneWeek
+            item.repetitionInterval = repetitionInterval
+            item.completionDate = NSDate()
             item.title = title
-            item.setDefaultValues()
+            
         }
         do {
             try moc.save()

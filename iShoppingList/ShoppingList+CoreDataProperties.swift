@@ -16,8 +16,10 @@ extension ShoppingList {
         return NSFetchRequest<ShoppingList>(entityName: "ShoppingList")
     }
 
-    @NSManaged public var title: String
     @NSManaged public var identifier: String
+    @NSManaged public var title: String
+    @NSManaged public var synced: Bool
+    @NSManaged public var remoteRecordID: String?
     @NSManaged public var items: NSSet?
 
 }
