@@ -69,12 +69,15 @@ class CoreDataStack {
         
     }
     
-    // MARK: - Expose performbackgroundTask
+    // MARK: - Expose performbackgroundTask and newBackgroundContext
     
     func performBackgroundTask(block: @escaping (NSManagedObjectContext) -> Void) {
         
         self.storeContainer.performBackgroundTask(block)
+    }
     
+    func newBackgroundContext() -> NSManagedObjectContext {
+        return self.storeContainer.newBackgroundContext()
     }
     
 }

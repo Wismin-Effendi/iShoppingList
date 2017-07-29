@@ -7,13 +7,22 @@
 //
 
 import XCTest
+import CoreData
+
 @testable import iShoppingList
 
 class iShoppingListTests: XCTestCase {
     
+    var moc: NSManagedObjectContext!
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        moc = getBackgroundContext()
+    }
+    
+    private func getBackgroundContext() -> NSManagedObjectContext {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.coreDataStack.newBackgroundContext()
     }
     
     override func tearDown() {
@@ -21,16 +30,59 @@ class iShoppingListTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testCreateDeleteOneItemFromWareHouse() {
+        let title = "Avocado"
+        
+        CoreDataUtil.createOneSampleItemInWarehouse(title: title, moc: moc)
+        var warehouseCountForItem = CoreDataUtil.getWarehouseItemsCount(title: title, moc: moc)
+        XCTAssertEqual(warehouseCountForItem, 1)
+        
+        CoreDataUtil.deleteItemFromWarehouse(title: title, moc: moc)
+        warehouseCountForItem = CoreDataUtil.getWarehouseItemsCount(title: title, moc: moc)
+        XCTAssertEqual(warehouseCountForItem, 0)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    func testCreateDeleteMultipleItemFromWareHouse() {
+        let title = "Bread"
+        
+        for _ in 1...3 {
+            CoreDataUtil.createOneSampleItemInWarehouse(title: title, moc: moc)
         }
+        var warehouseCountForItem = CoreDataUtil.getWarehouseItemsCount(title: title, moc: moc)
+        XCTAssertEqual(warehouseCountForItem, 3)
+        
+        CoreDataUtil.deleteItemFromWarehouse(title: title, moc: moc)
+        warehouseCountForItem = CoreDataUtil.getWarehouseItemsCount(title: title, moc: moc)
+        XCTAssertEqual(warehouseCountForItem, 0)
     }
+    
+    
+    func testCreateOneGroceryItemThenCloneToWarehouseAndDeleteBoth() {
+        let storeName = "Costco"
+        let groceryItem = "Banana"
+        
+        CoreDataUtil.deleteShoppingList(title: storeName, moc: moc)
+        CoreDataUtil.createOneSampleShoppingList(title: storeName, moc: moc)
+        
+        CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
+        CoreDataUtil.createOneSampleGroceryItem(storeName: storeName, title: groceryItem, moc: moc)
+        
+        let identifier = CoreDataUtil.getGroceryItemIdentifierFromTitle(title: groceryItem, moc: moc)!
+        _ = CloneItemToWarehouse(identifier: identifier, moc: moc, completion: { print("completed cloning1") } )
+        _ = CloneItemToWarehouse(identifier: identifier, moc: moc, completion: { print("completed cloning2") } )
+        var count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
+        XCTAssertEqual(count, 1)
+        CoreDataUtil.deleteItemFromWarehouse(title: groceryItem, moc: moc)
+        count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
+        XCTAssertEqual(count, 0)
+        count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
+        XCTAssertEqual(count, 1)
+        CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
+        count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
+        XCTAssertEqual(count, 0)
+        
+    }
+    
     
 }

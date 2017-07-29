@@ -17,7 +17,7 @@ class CloneItemToWarehouse {
     var warehouseGroceryItem: WarehouseGroceryItems
     var prototype: GroceryItems
     
-    init(identifier: String, moc: NSManagedObjectContext) {
+    init(identifier: String, moc: NSManagedObjectContext, completion: () -> ()) {
         guard let prototype = CoreDataUtil.getGroceryItem(identifier: identifier,
                                                           moc: moc)
             else {
@@ -28,6 +28,7 @@ class CloneItemToWarehouse {
         warehouseGroceryItem = WarehouseGroceryItems(context: managedObjectContext)
         CoreDataUtil.deleteItemFromWarehouse(title: prototype.title, moc: managedObjectContext)
         createCloneFromPrototype()
+        completion()
     }
     
     fileprivate func createCloneFromPrototype() {

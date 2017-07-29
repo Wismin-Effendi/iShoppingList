@@ -178,13 +178,12 @@ extension ItemDetailsTableViewController {
         switch (completed, repeatNewValue) {
         case (false, _): break
         case (true, false):
-            coreDataStack.performBackgroundTask  { (backgroundContext) in
-                CoreDataUtil.deleteItemFromWarehouse(title: title, moc: backgroundContext)
-            }
+            let backgroundContext = coreDataStack.newBackgroundContext()
+            CoreDataUtil.deleteItemFromWarehouse(title: title, moc: backgroundContext)
+            
         case (true, true):
-            coreDataStack.performBackgroundTask { (backgroundContext) in
-                _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
-            }
+            let backgroundContext = coreDataStack.newBackgroundContext()
+            _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext, completion: { print("cloning finished")} )
         }
     }
     

@@ -173,12 +173,12 @@ extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
         }
     }
     
-    func cloneToWarehouseIfRepeatedItem(identifier: String, completed: Bool) {
-        guard completed else { return }
+    func cloneToWarehouseIfRepeatedItem(identifier: String) {
+        guard let item = CoreDataUtil.getGroceryItem(identifier: identifier, moc: coreDataStack.newBackgroundContext()), item.isRepeatedItem else { return }
         
-        coreDataStack.performBackgroundTask { (backgroundContext) in
-           _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext)
-        }
+        let backgroundContext = coreDataStack.newBackgroundContext()
+        _ = CloneItemToWarehouse(identifier: identifier, moc: backgroundContext, completion: { print("cloning finished") } )
+        
     }
 }
 

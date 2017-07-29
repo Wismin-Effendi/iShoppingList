@@ -93,7 +93,7 @@ class RepeatedItemsCoordinator {
         let storeName = item.shoppingListTitle
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: backgroundContext) {
             shoppingList.addToItems(groceryItem)
-            groceryItem.identifier = item.identifier
+            groceryItem.identifier = UUID().uuidString
             groceryItem.title = item.title
             groceryItem.isRepeatedItem = item.isRepeatedItem
             groceryItem.repetitionInterval = item.repetitionInterval
