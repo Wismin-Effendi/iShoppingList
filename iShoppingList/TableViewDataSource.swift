@@ -47,6 +47,21 @@ UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObject
         return self.fetchedResultsProvider.numberOfRowsInSection(section: section)
     }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        
+        let model = self.fetchedResultsProvider.objectAt(indexPath: indexPath)
+        
+        // prevent delete action on ShoppingList unless the GroceryItem is empty
+        if let shoppingList = model as? ShoppingList,
+            shoppingList.items?.count != 0
+        {
+            return false
+        } else {
+            return true
+        }
+        
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {

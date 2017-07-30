@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 extension ShoppingList: ManagedObjectType {
     
@@ -31,4 +32,15 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
+}
+
+
+extension UIViewController {
+    
+    func showAlertWarning(message: String) {
+        let alert = UIAlertController.init(title: "Warning", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let defaultAction = UIAlertAction.init(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+        alert.addAction(defaultAction)
+        self.present(alert, animated: true, completion: nil)
+    }
 }

@@ -19,6 +19,9 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     var storeNameTitle: String!
     var storeIdentifierAndNotPendingDeletionPredicate: NSPredicate!
     
+    var hasToDoItems = false
+    var hasCompletedItems = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,6 +31,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
+        
     }
     
     private func populateGroceryItems(predicate: NSPredicate) {
@@ -38,13 +42,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         self.dataSource = TableViewDataSource(cellIdentifier: "GroceryItemsTableViewCell",
                                               tableView: self.tableView,
                                               fetchedResultsProvider: self.fetchedResultsProvider)
-        { cell, model in
+        {[weak self] cell, model in
+            guard let strongSelf = self else { return }
             cell.titleLabel?.text = model.title
             cell.itemIdentifier = model.identifier
             cell.completed = model.completed
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
-            cell.delegate = self   // for ItemCellCompletionStateDelegate
+            cell.delegate = strongSelf   // for ItemCellCompletionStateDelegate
         }
         
         self.tableView.dataSource = self.dataSource
@@ -68,12 +73,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 96
+        return  96 
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         return FilterItemView(controller: self) {[weak self] (category) in
-            self?.filterItemsBy(category: category)
+            guard let strongSelf = self else { return }
+            
+            strongSelf.filterItemsBy(category: category)
         }
     }
     
