@@ -32,7 +32,6 @@ enum ItemCategory: String {
     }
 }
 
-
 struct EntityName {
     static let GroceryItems = "GroceryItems"
     static let ShoppingList = "ShoppingList"
@@ -41,4 +40,12 @@ struct EntityName {
 enum ItemsFilter: String {
     case todo = "To Do"
     case completed = "Completed"
+}
+
+struct CloudKitZone {
+    static let iShoppingList = "iShoppingListZone"
+}
+
+struct UserDefaultsKey {
+    static let iShoppingListZoneID = "iShoppingListZoneID"
 }

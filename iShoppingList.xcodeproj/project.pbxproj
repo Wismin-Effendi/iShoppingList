@@ -25,6 +25,10 @@
 		3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */; };
 		3746AD2E1F292F0E00D1B988 /* TaskItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AD2D1F292F0E00D1B988 /* TaskItemCell.swift */; };
 		3746AD321F2987EB00D1B988 /* ItemDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AD311F2987EB00D1B988 /* ItemDetailsTableViewController.swift */; };
+		37760C2B1F2F7AD600A3B586 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37760C2A1F2F7AD600A3B586 /* CloudKit.framework */; };
+		37760C2D1F2F7B6C00A3B586 /* CloudKitSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */; };
+		37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */; };
+		37760C321F2FB61900A3B586 /* CloudKitUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C311F2FB61900A3B586 /* CloudKitUtil.swift */; };
 		378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97501F23B2F900C526D9 /* AppDelegate.swift */; };
 		378E97531F23B2F900C526D9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97521F23B2F900C526D9 /* ViewController.swift */; };
 		378E97561F23B2F900C526D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 378E97541F23B2F900C526D9 /* Main.storyboard */; };
@@ -56,6 +60,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3751431B1F2F481C00C6D93E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		370E9AB61F2AA8B1008EF197 /* FilterItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterItemView.swift; sourceTree = "<group>"; };
 		370E9AB81F2AB031008EF197 /* GlobalEnums_and_Struct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalEnums_and_Struct.swift; sourceTree = "<group>"; };
@@ -75,6 +91,15 @@
 		3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroceryItemsTableViewController.swift; sourceTree = "<group>"; };
 		3746AD2D1F292F0E00D1B988 /* TaskItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskItemCell.swift; sourceTree = "<group>"; };
 		3746AD311F2987EB00D1B988 /* ItemDetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDetailsTableViewController.swift; sourceTree = "<group>"; };
+		375143171F2F47D700C6D93E /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = ../../../Carthage_workdir/Quick/Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		375143191F2F47E300C6D93E /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = ../../../Carthage_workdir/Quick/Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
+		3751431C1F2F485400C6D93E /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Quick.framework; sourceTree = "<group>"; };
+		3751431E1F2F485E00C6D93E /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Nimble.framework; sourceTree = "<group>"; };
+		37760C291F2F7AD300A3B586 /* iShoppingList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iShoppingList.entitlements; sourceTree = "<group>"; };
+		37760C2A1F2F7AD600A3B586 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitSyncTests.swift; sourceTree = "<group>"; };
+		37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
+		37760C311F2FB61900A3B586 /* CloudKitUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitUtil.swift; sourceTree = "<group>"; };
 		378E974D1F23B2F900C526D9 /* iShoppingList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iShoppingList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		378E97501F23B2F900C526D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		378E97521F23B2F900C526D9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37760C2B1F2F7AD600A3B586 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,13 +159,34 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
+		375143161F2F47D700C6D93E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37760C2A1F2F7AD600A3B586 /* CloudKit.framework */,
+				375143191F2F47E300C6D93E /* Quick.framework */,
+				375143171F2F47D700C6D93E /* Nimble.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37760C2E1F2F7BE000A3B586 /* CloudKit */ = {
+			isa = PBXGroup;
+			children = (
+				37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */,
+			);
+			name = CloudKit;
+			sourceTree = "<group>";
+		};
 		378E97441F23B2F900C526D9 = {
 			isa = PBXGroup;
 			children = (
+				3751431E1F2F485E00C6D93E /* Nimble.framework */,
+				3751431C1F2F485400C6D93E /* Quick.framework */,
 				378E974F1F23B2F900C526D9 /* iShoppingList */,
 				378E97671F23B2F900C526D9 /* iShoppingListTests */,
 				378E97721F23B2F900C526D9 /* iShoppingListUITests */,
 				378E974E1F23B2F900C526D9 /* Products */,
+				375143161F2F47D700C6D93E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +203,8 @@
 		378E974F1F23B2F900C526D9 /* iShoppingList */ = {
 			isa = PBXGroup;
 			children = (
+				37760C2E1F2F7BE000A3B586 /* CloudKit */,
+				37760C291F2F7AD300A3B586 /* iShoppingList.entitlements */,
 				370E9ADC1F2B79BF008EF197 /* CoreData */,
 				378E97501F23B2F900C526D9 /* AppDelegate.swift */,
 				378E97521F23B2F900C526D9 /* ViewController.swift */,
@@ -180,6 +229,7 @@
 				370E9ADD1F2B7A70008EF197 /* CoreDataUtility.swift */,
 				370E9ADF1F2B7C56008EF197 /* CloneItemToWarehouse.swift */,
 				378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */,
+				37760C311F2FB61900A3B586 /* CloudKitUtil.swift */,
 			);
 			path = iShoppingList;
 			sourceTree = "<group>";
@@ -189,6 +239,7 @@
 			children = (
 				378E97681F23B2F900C526D9 /* iShoppingListTests.swift */,
 				378E976A1F23B2F900C526D9 /* Info.plist */,
+				37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */,
 			);
 			path = iShoppingListTests;
 			sourceTree = "<group>";
@@ -229,6 +280,7 @@
 				378E97601F23B2F900C526D9 /* Sources */,
 				378E97611F23B2F900C526D9 /* Frameworks */,
 				378E97621F23B2F900C526D9 /* Resources */,
+				3751431B1F2F481C00C6D93E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -272,6 +324,17 @@
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = WZFHSP6QD4;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					378E97631F23B2F900C526D9 = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -345,6 +408,7 @@
 				3746AC4A1F240B8400D1B988 /* Extensions.swift in Sources */,
 				370E9AD71F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */,
 				370E9ADA1F2B786D008EF197 /* ShoppingList+CoreDataClass.swift in Sources */,
+				37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */,
 				370E9ADE1F2B7A70008EF197 /* CoreDataUtility.swift in Sources */,
 				3746AD321F2987EB00D1B988 /* ItemDetailsTableViewController.swift in Sources */,
 				378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */,
@@ -359,6 +423,7 @@
 				378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */,
 				370E9AD81F2B786D008EF197 /* GroceryItems+CoreDataClass.swift in Sources */,
 				370E9AD91F2B786D008EF197 /* GroceryItems+CoreDataProperties.swift in Sources */,
+				37760C321F2FB61900A3B586 /* CloudKitUtil.swift in Sources */,
 				370E9AE01F2B7C56008EF197 /* CloneItemToWarehouse.swift in Sources */,
 				378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */,
 				370E9ADB1F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift in Sources */,
@@ -372,6 +437,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				378E97691F23B2F900C526D9 /* iShoppingListTests.swift in Sources */,
+				37760C2D1F2F7B6C00A3B586 /* CloudKitSyncTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,6 +583,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iShoppingList/iShoppingList.entitlements;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = WZFHSP6QD4;
 				INFOPLIST_FILE = iShoppingList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -530,6 +598,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iShoppingList/iShoppingList.entitlements;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = WZFHSP6QD4;
 				INFOPLIST_FILE = iShoppingList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -545,6 +615,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = WZFHSP6QD4;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(SRCROOT)/**";
 				INFOPLIST_FILE = iShoppingListTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingListTests;

@@ -138,7 +138,8 @@ class CoreDataUtil {
     public static func createOneSampleShoppingList(title: String, moc: NSManagedObjectContext) {
         let item = ShoppingList(context: moc)
         item.title = title
-
+        item.identifier = UUID().uuidString
+        item.synced = false
         do {
             try moc.save()
         } catch let error as NSError {
