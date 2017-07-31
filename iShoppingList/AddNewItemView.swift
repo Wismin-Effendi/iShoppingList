@@ -41,6 +41,7 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         textField.layer.cornerRadius = 20.0
         textField.layer.borderWidth = 1.0
         textField.layer.borderColor = UIColor.lightGray.cgColor
+        textField.returnKeyType = UIReturnKeyType.done
         
         textField.placeholder = self.placeHolderText
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
