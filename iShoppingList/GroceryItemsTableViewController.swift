@@ -19,19 +19,36 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     var storeNameTitle: String!
     var storeIdentifierAndNotPendingDeletionPredicate: NSPredicate!
     
-    var hasToDoItems = false
-    var hasCompletedItems = false
+    var currentItemsFilter = ItemsFilter.todo
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.title = storeNameTitle
+        let filterItemTitle = UIBarButtonItem(title: ItemsFilter.completed.rawValue, style: .plain, target: self, action: #selector(GroceryItemsTableViewController.filterItems))
+        navigationItem.rightBarButtonItem = filterItemTitle
         let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.storeName.identifier), storeIdentifier)
         let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.pendingDeletion))
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
         
+    }
+    
+    func filterItems(_ sender: UIBarButtonItem) {
+        if let title = sender.title,
+            let itemsFilter = ItemsFilter(rawValue: title) {
+            switch itemsFilter {
+            case .todo:
+                currentItemsFilter = .todo
+                sender.title = ItemsFilter.completed.rawValue
+                filterItemsBy(category: ItemCategory.todo)
+            case .completed:
+                currentItemsFilter = .completed
+                sender.title = ItemsFilter.todo.rawValue
+                filterItemsBy(category: ItemCategory.completed)
+            }
+        }
     }
     
     private func populateGroceryItems(predicate: NSPredicate) {
@@ -57,7 +74,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 44
+        return currentItemsFilter == .todo ?  44 : 0
     }
     
     
@@ -69,19 +86,6 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         }
                 
         return addNewItemView
-    }
-
-    
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return  96 
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return FilterItemView(controller: self) {[weak self] (category) in
-            guard let strongSelf = self else { return }
-            
-            strongSelf.filterItemsBy(category: category)
-        }
     }
     
     
@@ -152,7 +156,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
             combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         }
         populateGroceryItems(predicate: combinedPredicate)
-        tableView.reloadData()
+        tableView.reloadSections([0], with: UITableViewRowAnimation.automatic)
     }
     
     override func didReceiveMemoryWarning() {

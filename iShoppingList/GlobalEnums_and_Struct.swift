@@ -38,3 +38,7 @@ struct EntityName {
     static let ShoppingList = "ShoppingList"
 }
 
+enum ItemsFilter: String {
+    case todo = "To Do"
+    case completed = "Completed"
+}
