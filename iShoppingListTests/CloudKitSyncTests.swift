@@ -29,13 +29,7 @@ class CloudKitSyncTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
-        if let recordZoneID = cloudKitService.recordZoneID {
-            self.recordZoneID = recordZoneID
-        }
-        else {
-            fatalError("Abort. No record zone.")
-        }
-        
+        self.recordZoneID = cloudKitService.recordZoneID
     }
     
     override func tearDown() {
@@ -104,11 +98,7 @@ class CloudKitSyncTests: XCTestCase {
     func testAddMoreShoppingListRecordInCloudKitThenDeleteAll() {
         
         
-        guard let recordZoneID = cloudKitService.recordZoneID else {
-            os_log("Abort. No record zone.")
-            return
-        }
-
+        let recordZoneID = cloudKitService.recordZoneID
         var recordIDs = [CKRecordID]()
         
         
@@ -147,7 +137,12 @@ class CloudKitSyncTests: XCTestCase {
         // Delete all ShoppingList from CloudKit
         let deleteExpectation = expectation(description: "Delete all shopping list records")
         
-        CloudKitUtil.deleteCKRecords(recordIDs: recordIDs, completion: { deleteExpectation.fulfill() })
+        CloudKitUtil.deleteCKRecords(recordIDs: recordIDs, completion: { error in
+            deleteExpectation.fulfill()
+            if error != nil {
+                os_log("Error: %@" , error!.localizedDescription)
+            }
+        })
         
         wait(for: [deleteExpectation], timeout: 10)
         os_log("We should have no record at this time")
@@ -205,10 +200,8 @@ class CloudKitSyncTests: XCTestCase {
         // Note: Here we use CKModifyRecordsOperation that will modify all records at once.
         // so the following will only create / modify one record in recordType. 
         // To create multiple records, use .saveRecord instead.
-        guard let recordZoneID = cloudKitService.recordZoneID else {
-            fatalError("Abort. No record zone.")
-        }
-
+        let recordZoneID = cloudKitService.recordZoneID
+        
         let uploadExpectation = expectation(description: "Record saved to CloudKit")
         
         let myRecord = createCKRecord(recordType: .ShoppingList, title: title, zoneID: recordZoneID)
@@ -223,7 +216,6 @@ class CloudKitSyncTests: XCTestCase {
                 os_log("Save Error: %@", err.localizedDescription)
             } else {
                 os_log("Success: %@", "Record saved successfully")
-                self?.cloudKitService.currentRecord = myRecord
             }
             XCTAssertTrue(error == nil)
             XCTAssertTrue(records != nil)

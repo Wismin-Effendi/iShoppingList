@@ -83,11 +83,10 @@ class iShoppingListTests: XCTestCase {
         RepeatedItemsCoordinator.shared(backgroundContext: moc).transferTodayItemsToActiveGroceryItems()
         count = CoreDataUtil.getWarehouseItemsCount(title: groceryItem, moc: moc)
         XCTAssertEqual(count, 0)
+        
+        // we delete the completed item after successful delivery, so count is 1 instead of 2
         count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
-        XCTAssertEqual(count, 2)
-       //  CoreDataUtil.deleteGroceryItem(title: groceryItem, moc: moc)
-        count = CoreDataUtil.getGroceryItemsCount(title: groceryItem, moc: moc)
-        XCTAssertEqual(count, 2)
+        XCTAssertEqual(count, 1)
         
     }
     

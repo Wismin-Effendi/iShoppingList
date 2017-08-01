@@ -23,20 +23,20 @@ class CloudKitUtil {
         privateDatabase?.perform(query, inZoneWith: recordZoneID, completionHandler: completion)
     }
     
-    public static func saveOneCKRecord(record: CKRecord, completion: (() -> ())?) {
+    public static func saveOneCKRecord(record: CKRecord, completion: ((Error?) -> ())?) {
         saveOrDeleteCKRecords(recordsToSave: [record], recordIDsToDelete: nil, completion: completion)
     }
     
-    public static func saveCKRecords(records: [CKRecord], completion: (() -> ())?) {
+    public static func saveCKRecords(records: [CKRecord], completion: ((Error?) -> ())?) {
         saveOrDeleteCKRecords(recordsToSave: records, recordIDsToDelete: nil, completion: completion)
     }
     
-    public static func deleteCKRecords(recordIDs: [CKRecordID], completion: (() -> ())?) {
+    public static func deleteCKRecords(recordIDs: [CKRecordID], completion: ((Error?) -> ())?) {
         saveOrDeleteCKRecords(recordsToSave: nil, recordIDsToDelete: recordIDs, completion: completion)
     }
     
     public static func saveOrDeleteCKRecords(recordsToSave: [CKRecord]?, recordIDsToDelete: [CKRecordID]?,
-    completion: (() -> ())? )  {
+    completion: ((Error?) -> ())? )  {
         let privateDatabase = CloudKitService.sharedInstance.privateDatabase
         
         let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave,
@@ -48,11 +48,12 @@ class CloudKitUtil {
         modifyRecordsOperation.modifyRecordsCompletionBlock = { records, recordIDs, error in
             if let err = error {
                 os_log("Save Error: %@", err.localizedDescription)
+                completion?(err)
             } else {
                 os_log("Success: %@", "Record saved/deleted successfully")
             }
             
-            completion?()
+            completion?(nil)
         }
         
         privateDatabase?.add(modifyRecordsOperation)
@@ -76,6 +77,10 @@ class CloudKitUtil {
         queryRecordsOperation.recordFetchedBlock = recordFetchBlockClosure
         
         queryRecordsOperation.queryCompletionBlock = { cursor, error in
+            if let error = error {
+                os_log("Error occured during CKQuery operation: %@", error.localizedDescription)
+            }
+            
             guard let cursor = cursor else {
                 completion()
                 return

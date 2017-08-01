@@ -62,22 +62,19 @@ class CoreDataUtil {
         }
     }
     
-    public static func deleteGroceryItem(identifier: String, moc: NSManagedObjectContext) {
-        let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
-        groceryItemFetch.predicate = predicate
+
+    
+    public static func getIDsShoppingListPendingDeletion(moc: NSManagedObjectContext) -> [String] {
+        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
+        let predicate = NSPredicate(format: "pendingDeletion == YES")
+        shoppingListFetch.predicate = predicate
         do {
-            let results = try moc.fetch(groceryItemFetch)
-            for result in results {
-                moc.delete(result)
-                try moc.save()
-            }
+            let results = try moc.fetch(shoppingListFetch)
+            return results.map { $0.identifier }
         } catch let error as NSError {
-            fatalError("Failed to delete from groceryItems. \(error.localizedDescription)")
+            fatalError("Failed to retrieved all Identifier of ShoppingList pendingDeletion record \(error.localizedDescription)")
         }
     }
-    
-    // MARK: For Testing 
     
     public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
         let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
@@ -94,8 +91,17 @@ class CoreDataUtil {
     }
     
     public static func deleteShoppingList(title: String, moc: NSManagedObjectContext) {
-        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), title)
+        deleteShoppingList(predicate: predicate, moc: moc)
+    }
+
+    public static func deleteShoppingList(identifier: String, moc: NSManagedObjectContext) {
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.identifier), identifier)
+        deleteShoppingList(predicate: predicate, moc: moc)
+    }
+  
+    public static func deleteShoppingList(predicate: NSPredicate, moc: NSManagedObjectContext) {
+        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
         shoppingListFetch.predicate = predicate
         do {
             let results = try moc.fetch(shoppingListFetch)
@@ -108,23 +114,25 @@ class CoreDataUtil {
         }
     }
 
+    
     public static func deleteGroceryItem(title: String, moc: NSManagedObjectContext) {
-        let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
-        groceryItemFetch.predicate = predicate
-        do {
-            let results = try moc.fetch(groceryItemFetch)
-            for result in results {
-                moc.delete(result)
-                try moc.save()
-            }
-        } catch let error as NSError {
-            fatalError("Failed to delete from groceryItems. \(error.localizedDescription)")
-        }
+        deleteGroceryItem(predicate: predicate, moc: moc)
+    }
+    
+    public static func deleteGroceryItem(identifier: String, moc: NSManagedObjectContext) {
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
+        deleteGroceryItem(predicate: predicate, moc: moc)
     }
 
     public static func deleteAllGroceryItems(moc: NSManagedObjectContext) {
+        let predicate = NSPredicate(format: "TRUEPREDICATE")
+        deleteGroceryItem(predicate: predicate, moc: moc)
+    }
+    
+    public static func deleteGroceryItem(predicate: NSPredicate, moc: NSManagedObjectContext) {
         let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        groceryItemFetch.predicate = predicate
         do {
             let results = try moc.fetch(groceryItemFetch)
             for result in results {
@@ -207,13 +215,26 @@ class CoreDataUtil {
         }
     }
 
+ 
+    // A more proper way to count given that we don't fetch items to memory just to count them.
     public static func getGroceryItemsCount(title: String, moc: NSManagedObjectContext) -> Int {
-        let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
+        let keyPathExp = NSExpression(forKeyPath: #keyPath(GroceryItems.title))
+        let expression = NSExpression(forFunction: "count:", arguments: [keyPathExp])
+        
+        let countDesc = NSExpressionDescription()
+        countDesc.expression = expression
+        countDesc.name = "count"
+        countDesc.expressionResultType = .integer64AttributeType
+        
+        let currentItemFetch: NSFetchRequest<NSFetchRequestResult> = GroceryItems.fetchRequest()
         currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
+        currentItemFetch.returnsObjectsAsFaults = false
+        currentItemFetch.propertiesToFetch = [countDesc]
+        currentItemFetch.resultType = .countResultType
         
         do {
-            let results = try moc.fetch(currentItemFetch)
-            return results.count
+            let countResults = try moc.fetch(currentItemFetch)
+            return countResults.first as! Int
         } catch let error as NSError {
             fatalError("Failed to retrieved item from coreData. \(error.localizedDescription)")
         }
@@ -232,11 +253,21 @@ class CoreDataUtil {
     }
     
     
-    public static func createNewRecord(fromCloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
+    public static func createNewShoppingListRecord(fromCloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
         
     }
     
-    public static func updateCoreDataRecord(_ entity: NSManagedObject, using cloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
+    public static func updateCoreDataShoppingListRecord(_ entity: NSManagedObject, using cloudKitRecord: CKRecord,
+                                                        completion: (NSError?) -> ()) {
     
+    }
+
+    public static func createNewGroceryItemRecord(fromCloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
+        
+    }
+    
+    public static func updateCoreDataGroceryItemRecord(_ entity: NSManagedObject, using cloudKitRecord: CKRecord,
+                                                        completion: (NSError?) -> ()) {
+        
     }
 }
