@@ -23,6 +23,8 @@ class CloudKitSyncTests: XCTestCase {
     let cloudKitService = CloudKitService.sharedInstance
     var recordZoneID: CKRecordZoneID!
     
+    
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -69,8 +71,8 @@ class CloudKitSyncTests: XCTestCase {
             if results.count > 0 {
                 for result in results {
                     print("All keys: \(result.allKeys())")
-                    print("Creation date: \(result.creationDate)")
-                    print("Modified date: \(result.modificationDate)")
+                    print("Creation date: \(result.creationDate!)")
+                    print("Modified date: \(result.modificationDate!)")
                     print("Modified keys: \(result.changedKeys())")
                 }
             } else {
@@ -78,6 +80,24 @@ class CloudKitSyncTests: XCTestCase {
             }
             queryWithSomeResultsExpectation.fulfill()
         }
+        wait(for: [queryWithSomeResultsExpectation], timeout: 10)
+    }
+    
+    func testQueryOperationShoppingList_HMart() {
+        
+        func processEachRecord(_ record: CKRecord) {
+            print("All keys: \(record.allKeys())")
+            print("RecordID: \(record.recordID.recordName)")
+            print("Modified date: \(record.modificationDate!)")
+        }
+        
+        // Query ShoppingList HMart and process each records
+        let queryWithSomeResultsExpectation = expectation(description: "Query with some results")
+        CloudKitUtil.queryCKRecordsOperation(recordType: EntityName.ShoppingList,
+                                             recordZoneID: recordZoneID,
+                                             predicate: NSPredicate.init(format: "title == %@", "H-Mart"),
+                                             recordFetchBlockClosure: processEachRecord(_:),
+                                             completion: { queryWithSomeResultsExpectation.fulfill() })
         wait(for: [queryWithSomeResultsExpectation], timeout: 10)
     }
     
