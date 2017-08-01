@@ -37,7 +37,7 @@ class CloudKitUtil {
     
     public static func saveOrDeleteCKRecords(recordsToSave: [CKRecord]?, recordIDsToDelete: [CKRecordID]?,
     completion: (() -> ())? )  {
-        let cloudKitService = CloudKitService.sharedInstance
+        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
         
         let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave,
                                                               recordIDsToDelete: recordIDsToDelete)
@@ -54,6 +54,53 @@ class CloudKitUtil {
             
             completion?()
         }
-        cloudKitService.privateDatabase?.add(modifyRecordsOperation)
+        
+        privateDatabase?.add(modifyRecordsOperation)
+    }
+    
+    public static func queryCKRecordsOperation(recordType: String, recordZoneID: CKRecordZoneID,
+                                               predicate: NSPredicate,
+                                               recordFetchBlockClosure: @escaping (CKRecord) -> Void,
+                                               completion: @escaping () -> Void) {
+        
+        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        
+        let query = CKQuery(recordType: recordType, predicate: predicate)
+        
+        let queryRecordsOperation = CKQueryOperation(query: query)
+        
+        queryRecordsOperation.timeoutIntervalForRequest = 10
+        queryRecordsOperation.timeoutIntervalForResource = 10
+        queryRecordsOperation.qualityOfService = .userInitiated
+        
+        queryRecordsOperation.recordFetchedBlock = recordFetchBlockClosure
+        
+        queryRecordsOperation.queryCompletionBlock = { cursor, error in
+            guard let cursor = cursor else {
+                completion()
+                return
+            }
+            
+            os_log("More data to fetch")
+            fetchMoreRecords(cursor: cursor)
+        }
+        
+        privateDatabase?.add(queryRecordsOperation)
+        
+        
+        func fetchMoreRecords(cursor: CKQueryCursor?) {
+            let queryOperation = CKQueryOperation(cursor: cursor!)
+            queryOperation.qualityOfService = .userInitiated
+            queryOperation.recordFetchedBlock = recordFetchBlockClosure
+            
+            queryOperation.queryCompletionBlock = { cursor, error in
+                guard let cursor = cursor else {
+                    completion() 
+                    return
+                }
+                
+                fetchMoreRecords(cursor: cursor)
+            }
+        }
     }
 }

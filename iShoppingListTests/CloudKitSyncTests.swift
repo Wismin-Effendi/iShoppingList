@@ -21,10 +21,18 @@ class CloudKitSyncTests: XCTestCase {
     }
     
     let cloudKitService = CloudKitService.sharedInstance
+    var recordZoneID: CKRecordZoneID!
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        if let recordZoneID = cloudKitService.recordZoneID {
+            self.recordZoneID = recordZoneID
+        }
+        else {
+            fatalError("Abort. No record zone.")
+        }
         
     }
     
@@ -44,6 +52,35 @@ class CloudKitSyncTests: XCTestCase {
         
     }
     
+    func testQueryShoppingList_HMart() {
+        
+        // Query ShoppingList HMart and save the recordIDs
+        let queryWithSomeResultsExpectation = expectation(description: "Query with some results")
+        CloudKitUtil.queryCKRecords(recordType: EntityName.ShoppingList,
+                                    recordZoneID: recordZoneID,
+                                    predicate: NSPredicate.init(format: "title == %@", "H-Mart"))
+        { (results, error) in
+            if (error != nil) {
+                os_log("Cloud Access Error: %@", error!.localizedDescription)
+            }
+            
+            guard let results = results else { return }
+            
+            if results.count > 0 {
+                for result in results {
+                    print("All keys: \(result.allKeys())")
+                    print("Creation date: \(result.creationDate)")
+                    print("Modified date: \(result.modificationDate)")
+                    print("Modified keys: \(result.changedKeys())")
+                }
+            } else {
+                os_log("No Match Found: %@", "No record matching the address was found")
+            }
+            queryWithSomeResultsExpectation.fulfill()
+        }
+        wait(for: [queryWithSomeResultsExpectation], timeout: 10)
+    }
+    
     func testAddMoreShoppingListRecordInCloudKitThenDeleteAll() {
         
         
@@ -55,13 +92,13 @@ class CloudKitSyncTests: XCTestCase {
         var recordIDs = [CKRecordID]()
         
         
-        for title in ["Rose", "Marshal", "JC Penny", "Dollar Tree", "HEB", "Walmart"] {
+        for title in ["Rose", "Marshal", "JC Penny", "Dollar Tree", "HEB", "Walmart", "BH Photo", "Adorama", "Apple Store"] {
             let newExpectation = expectation(description: "Create new record")
             createOneShoppingListRecordInCloudKit(title: title, completion: { newExpectation.fulfill() } )
             wait(for: [newExpectation], timeout: 10)
         }
         
-        sleep(1)
+        sleep(2)
         // Query all ShoppingList and save the recordIDs
         let queryWithSomeResultsExpectation = expectation(description: "Query with some results")
         CloudKitUtil.queryCKRecords(recordType: EntityName.ShoppingList,
