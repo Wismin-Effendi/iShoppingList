@@ -42,10 +42,15 @@ enum ItemsFilter: String {
     case completed = "Completed"
 }
 
+struct CoreDataModel {
+    static let iShoppingList = "iShoppingList"
+}
+
 struct CloudKitZone {
     static let iShoppingList = "iShoppingListZone"
 }
 
 struct UserDefaultsKey {
+    static let lastSync = "lastSync"
     static let iShoppingListZoneID = "iShoppingListZoneID"
 }

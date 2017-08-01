@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 
 class CoreDataUtil {
@@ -139,7 +140,6 @@ class CoreDataUtil {
         let item = ShoppingList(context: moc)
         item.title = title
         item.identifier = UUID().uuidString
-        item.synced = false
         do {
             try moc.save()
         } catch let error as NSError {
@@ -168,7 +168,7 @@ class CoreDataUtil {
         
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: moc) {
             shoppingList.addToItems(item)
-            item.setDefaultValues()
+            item.setDefaultValuesForLocalCreation()
             item.identifier = UUID().uuidString
             item.isRepeatedItem = true
             item.repetitionInterval = repetitionInterval
@@ -231,4 +231,12 @@ class CoreDataUtil {
         }
     }
     
+    
+    public static func createNewRecord(fromCloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
+        
+    }
+    
+    public static func updateCoreDataRecord(_ entity: NSManagedObject, using cloudKitRecord: CKRecord, completion: (NSError?) -> ()) {
+    
+    }
 }

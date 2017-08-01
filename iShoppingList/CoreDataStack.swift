@@ -12,12 +12,30 @@ import CoreData
 
 // MARK: - Core Data stack
 
+/// We create singleton for coreDataStack so it's easy to access form anywhere. 
+/// only the first call to shared(modelName: String)  will assign the model name.
+/// any subsequence call to shared  will just return the already existing sharedInstance. 
+
 class CoreDataStack {
     
     private let modelName: String
     
-    init(modelName: String) {
+    
+    private static var sharedInstance: CoreDataStack!
+    
+    private init(modelName: String) {
         self.modelName = modelName
+        CoreDataStack.sharedInstance = self
+    }
+    
+    static func shared(modelName: String) -> CoreDataStack {
+        switch (sharedInstance, modelName) {
+        case let (nil, modelName):
+            sharedInstance = CoreDataStack(modelName: modelName)
+            return sharedInstance
+        default:
+            return sharedInstance
+        }
     }
     
     lazy var managedObjectContext: NSManagedObjectContext = {

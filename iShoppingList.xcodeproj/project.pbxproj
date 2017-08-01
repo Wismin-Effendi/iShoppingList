@@ -149,12 +149,7 @@
 		370E9ADC1F2B79BF008EF197 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */,
-				370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */,
-				370E9AD21F2B786D008EF197 /* GroceryItems+CoreDataClass.swift */,
-				370E9AD31F2B786D008EF197 /* GroceryItems+CoreDataProperties.swift */,
-				370E9AD41F2B786D008EF197 /* ShoppingList+CoreDataClass.swift */,
-				370E9AD51F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift */,
+				37760C331F3082DF00A3B586 /* NSManagedObject Subclass */,
 			);
 			name = CoreData;
 			sourceTree = "<group>";
@@ -175,6 +170,19 @@
 				37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */,
 			);
 			name = CloudKit;
+			sourceTree = "<group>";
+		};
+		37760C331F3082DF00A3B586 /* NSManagedObject Subclass */ = {
+			isa = PBXGroup;
+			children = (
+				370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */,
+				370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */,
+				370E9AD21F2B786D008EF197 /* GroceryItems+CoreDataClass.swift */,
+				370E9AD31F2B786D008EF197 /* GroceryItems+CoreDataProperties.swift */,
+				370E9AD41F2B786D008EF197 /* ShoppingList+CoreDataClass.swift */,
+				370E9AD51F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift */,
+			);
+			name = "NSManagedObject Subclass";
 			sourceTree = "<group>";
 		};
 		378E97441F23B2F900C526D9 = {

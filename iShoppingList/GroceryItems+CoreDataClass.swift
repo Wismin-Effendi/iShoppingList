@@ -11,17 +11,34 @@ import CoreData
 
 @objc(GroceryItems)
 public class GroceryItems: NSManagedObject {
-
-    func setDefaultValues() {
-        self.synced = false
+    
+    func setDefaultValuesForLocalCreation() {
+        self.needsUpload = true
         self.completed = false
         self.hasReminder =  false
         self.pendingDeletion = false
         self.archived =  false
         self.isRepeatedItem = false
         self.repetitionInterval = 0
-        self.lastCompletionDate = self.lastCompletionDate ?? Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        self.reminderDate = self.reminderDate ?? Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        self.completionDate = self.completionDate ?? Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        self.lastCompletionDate =  NSDate()
+        self.reminderDate = NSDate()
+        self.completionDate = NSDate()
+        self.modificationDate = NSDate()
+    }
+    
+    func setDefaultValuesForLocalChange() {
+        self.modificationDate = NSDate()
+        self.needsUpload = true
+    }
+    
+    func setForLocalDeletion() {
+        self.needsUpload = true
+        self.pendingDeletion = true
+        self.modificationDate = NSDate()
+    }
+    
+    func setDefaultValuesForRemoteCreation() {
+        self.needsUpload = false
+        self.pendingDeletion = false        
     }
 }

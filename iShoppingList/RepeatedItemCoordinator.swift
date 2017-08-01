@@ -95,7 +95,7 @@ class RepeatedItemsCoordinator {
             shoppingList.addToItems(groceryItem)
             
             // set default first, then override as needed
-            groceryItem.setDefaultValues()
+            groceryItem.setDefaultValuesForLocalCreation()
             groceryItem.identifier = UUID().uuidString
             groceryItem.title = item.title
             groceryItem.isRepeatedItem = item.isRepeatedItem
