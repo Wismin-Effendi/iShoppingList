@@ -161,8 +161,8 @@ class CloudKitService {
         
         func pushDeletionAtCoreDataToCloudKit() {
             
-            func deleteOn_iCloud_then_CoreData() {
-                let cloudKitCKRecordIDsToDelete = coreDataIDsPendingDeletion.map { (name) -> CKRecordID in
+            func deleteOn_iCloud_then_CoreData(identifiers: [String]) {
+                let cloudKitCKRecordIDsToDelete = identifiers.map { (name) -> CKRecordID in
                     CKRecordID(recordName: name, zoneID: recordZoneID)
                 }
                 
@@ -175,25 +175,41 @@ class CloudKitService {
                 }
                 // how to ensure we have handled all the temporary error of CloudKit and has perform the retry until successful???
                 
-                // if no error then delete from CoreData
-                coreDataIDsPendingDeletion.forEach { (identifier) in
-                    CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
-                }
             }
             
+            var idsRecordsPendingDeletion = CoreDataUtil.getIDsShoppingListPendingDeletion(moc: backgroundContext)
             
-            var coreDataIDsPendingDeletion = CoreDataUtil.getIDsShoppingListPendingDeletion(moc: backgroundContext)
-            deleteOn_iCloud_then_CoreData()
-            // how to wait for previous one to finish first?
-            coreDataIDsPendingDeletion = CoreDataUtil.getIDsGroceryItemsPendingDeletion(moc: backgroundContext)
-            deleteOn_iCloud_then_CoreData()
+            // will have error handling that retries for temporary error
+            // but how to propagate permanent error, it should stop the deletion on CoreData if that's the case.
+            deleteOn_iCloud_then_CoreData(identifiers: idsRecordsPendingDeletion)
             
+            // should we wait for iCloud deletion to finish first, but how to wait? Use completion handler? 
+            // is there a better way to have cleaner code?
+            idsRecordsPendingDeletion.forEach { (identifier) in
+                CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
+            }
             
+            // how to wait for previous one to finish first? Need something like expectation in XCTest.
+            // Should I use to RxSwift ?
+            
+            idsRecordsPendingDeletion = CoreDataUtil.getIDsGroceryItemsPendingDeletion(moc: backgroundContext)
+            
+            deleteOn_iCloud_then_CoreData(identifiers: idsRecordsPendingDeletion)
+            // same as above for ShoppingList, need to somehow sync with iCloud deletion.
+            idsRecordsPendingDeletion.forEach { (identifier) in
+                CoreDataUtil.deleteGroceryItem(identifier: identifier, moc: backgroundContext)
+            }
         }
         
         func pushCreateUpdateAtCoreDataToCloudKit() {
             
-            let coreDataRecordsNeedsUpload = CoreDataUtil.get
+            let idsRecordsNeedsUpload = [String]()
+            
+            // use idsRecordsNeedsUpload to create corresponding CKRecordID
+            // try to fetch from CloudKit, it has data, it's an update, if empty then it's create new. 
+            //
+            
+            
         }
         
     }

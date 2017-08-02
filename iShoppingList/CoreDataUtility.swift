@@ -48,44 +48,35 @@ class CoreDataUtil {
         }
     }
     
-
     public static func getIDsShoppingListPendingDeletion(moc: NSManagedObjectContext) -> [String] {
         let predicate = NSPredicate(format: "pendingDeletion == YES")
-        return getIDsShoppingList(predicate: predicate, moc: moc)
+        let entity = ShoppingList()
+        return getIDsOfEntities(entity: entity, predicate: predicate, moc: moc)
     }
     
     public static func getIDsShoppingListNeedsUpload(moc: NSManagedObjectContext) -> [String] {
         let predicate = NSPredicate(format: "needsUpload == YES")
-        return getIDsShoppingList(predicate: predicate, moc: moc)
+        let entity = ShoppingList()
+        return getIDsOfEntities(entity: entity, predicate: predicate, moc: moc)
     }
-    
-    public static func getIDsShoppingList(predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] {
-        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
-        shoppingListFetch.predicate = predicate
-        do {
-            let results = try moc.fetch(shoppingListFetch)
-            return results.map { $0.identifier }
-        } catch let error as NSError {
-            fatalError("Failed to retrieved all Identifier of ShoppingList for \(predicate) \(error.localizedDescription)")
-        }
-    }
-    
     
     public static func getIDsGroceryItemsPendingDeletion(moc: NSManagedObjectContext) -> [String] {
         let predicate = NSPredicate(format: "pendingDeletion == YES")
-        return getIDsGroceryItems(predicate: predicate, moc: moc)
+        let entity = GroceryItems()
+        return getIDsOfEntities(entity: entity, predicate: predicate, moc: moc)
     }
     
     public static func getIDsGroceryItemsNeedsUpload(moc: NSManagedObjectContext) -> [String] {
         let predicate = NSPredicate(format: "needsUpload == YES")
-        return getIDsGroceryItems(predicate: predicate, moc: moc)
+        let entity = GroceryItems()
+        return getIDsOfEntities(entity: entity, predicate: predicate, moc: moc)
     }
-
-    public static func getIDsGroceryItems(predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] {
-        let groceryItemsFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        groceryItemsFetch.predicate = predicate
+    
+    public static func getIDsOfEntities<E>(entity: E, predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] where E: NSManagedObject, E: HasIdentifier {
+        let entityFetch: NSFetchRequest<NSFetchRequestResult> = E.fetchRequest()
+        entityFetch.predicate = predicate
         do {
-            let results = try moc.fetch(groceryItemsFetch)
+            let results = (try moc.fetch(entityFetch)) as! [E]
             return results.map { $0.identifier }
         } catch let error as NSError {
             fatalError("Failed to retrieved all Identifier of GroceryItems for \(predicate) \(error.localizedDescription)")
@@ -115,7 +106,6 @@ class CoreDataUtil {
             fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
         }
     }
-    
     
     public static func deleteShoppingList(title: String, moc: NSManagedObjectContext) {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), title)

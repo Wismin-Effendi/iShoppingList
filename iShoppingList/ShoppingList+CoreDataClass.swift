@@ -11,7 +11,7 @@ import CoreData
 import CloudKit
 
 @objc(ShoppingList)
-public class ShoppingList: NSManagedObject {
+public class ShoppingList: NSManagedObject, HasIdentifier {
 
 }
 

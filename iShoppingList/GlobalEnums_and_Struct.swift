@@ -8,6 +8,10 @@
 
 import Foundation
 
+protocol HasIdentifier {
+    var identifier: String { get }
+}
+
 struct TimeIntervalConst {
     static let oneDay: Double = 3600.0 * 24.0
     static let twoDays: Double = oneDay * 2.0

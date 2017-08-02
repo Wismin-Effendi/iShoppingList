@@ -11,7 +11,7 @@ import CoreData
 import CloudKit
 
 @objc(GroceryItems)
-public class GroceryItems: NSManagedObject {
+public class GroceryItems: NSManagedObject, HasIdentifier {
     
     func setDefaultValuesForLocalCreation() {
         self.needsUpload = true
