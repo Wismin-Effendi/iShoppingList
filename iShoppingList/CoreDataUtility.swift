@@ -13,19 +13,7 @@ import CloudKit
 
 class CoreDataUtil {
     
-    public static func getShoppingListOf(storeIdentifier: String, moc: NSManagedObjectContext) -> ShoppingList? {
-        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
-        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.identifier), storeIdentifier)
-        
-        do {
-            let results = try moc.fetch(shoppingListFetch)
-            if results.count > 0 {
-                return results.first!
-            } else { return nil }
-        } catch let error as NSError {
-            fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
-        }
-    }
+
     
     public static func getGroceryItem(identifier: String, moc: NSManagedObjectContext) -> GroceryItems? {
         let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
@@ -65,20 +53,39 @@ class CoreDataUtil {
 
     
     public static func getIDsShoppingListPendingDeletion(moc: NSManagedObjectContext) -> [String] {
-        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
         let predicate = NSPredicate(format: "pendingDeletion == YES")
+        return getIDsShoppingList(predicate: predicate, moc: moc)
+    }
+    
+    public static func getIDsShoppingListNeedsUpload(moc: NSManagedObjectContext) -> [String] {
+        let predicate = NSPredicate(format: "needsUpload == YES")
+        return getIDsShoppingList(predicate: predicate, moc: moc)
+    }
+
+    public static func getIDsShoppingList(predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] {
+        let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
         shoppingListFetch.predicate = predicate
         do {
             let results = try moc.fetch(shoppingListFetch)
             return results.map { $0.identifier }
         } catch let error as NSError {
-            fatalError("Failed to retrieved all Identifier of ShoppingList pendingDeletion record \(error.localizedDescription)")
+            fatalError("Failed to retrieved all Identifier of ShoppingList for \(predicate) \(error.localizedDescription)")
         }
     }
     
+    public static func getShoppingListOf(storeIdentifier: String, moc: NSManagedObjectContext) -> ShoppingList? {
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.identifier), storeIdentifier)
+        return getShoppingListOf(predicate: predicate, moc: moc)
+    }
+    
     public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
+        return getShoppingListOf(predicate: predicate, moc: moc)
+    }
+
+    public static func getShoppingListOf(predicate: NSPredicate, moc: NSManagedObjectContext) -> ShoppingList? {
         let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
-        shoppingListFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
+        shoppingListFetch.predicate = predicate
         
         do {
             let results = try moc.fetch(shoppingListFetch)
@@ -89,6 +96,7 @@ class CoreDataUtil {
             fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
         }
     }
+    
     
     public static func deleteShoppingList(title: String, moc: NSManagedObjectContext) {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), title)
@@ -203,22 +211,25 @@ class CoreDataUtil {
         }
     }
     
-    public static func getWarehouseItemsCount(title: String, moc: NSManagedObjectContext) -> Int {
-        let currentItemFetch: NSFetchRequest<WarehouseGroceryItems> = WarehouseGroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(WarehouseGroceryItems.title), title)
-        
-        do {
-            let results = try moc.fetch(currentItemFetch)
-            return results.count
-        } catch let error as NSError {
-            fatalError("Failed to retrieved item from coreData. \(error.localizedDescription)")
-        }
-    }
 
- 
-    // A more proper way to count given that we don't fetch items to memory just to count them.
+    /// MARK:  Get records count 
+    public static func getWarehouseItemsCount(title: String, moc: NSManagedObjectContext) -> Int {
+        let keyPathExp = NSExpression(forKeyPath: #keyPath(WarehouseGroceryItems.title))
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(WarehouseGroceryItems.title), title)
+        return getEntityItemsCount(keyPathExp: keyPathExp, predicate: predicate, type: WarehouseGroceryItems(), moc: moc)
+    }
+    
     public static func getGroceryItemsCount(title: String, moc: NSManagedObjectContext) -> Int {
         let keyPathExp = NSExpression(forKeyPath: #keyPath(GroceryItems.title))
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
+        let type = GroceryItems()
+        return getEntityItemsCount(keyPathExp: keyPathExp, predicate: predicate, type: type, moc: moc)
+    }
+
+    // A more proper way to count given that we don't fetch items to memory just to count them.
+    public static func getEntityItemsCount<T: NSManagedObject>(keyPathExp: NSExpression, predicate: NSPredicate,
+                                           type: T, moc: NSManagedObjectContext) -> Int {
+        
         let expression = NSExpression(forFunction: "count:", arguments: [keyPathExp])
         
         let countDesc = NSExpressionDescription()
@@ -226,8 +237,8 @@ class CoreDataUtil {
         countDesc.name = "count"
         countDesc.expressionResultType = .integer64AttributeType
         
-        let currentItemFetch: NSFetchRequest<NSFetchRequestResult> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.title), title)
+        let currentItemFetch: NSFetchRequest<NSFetchRequestResult> = T.fetchRequest()
+        currentItemFetch.predicate = predicate
         currentItemFetch.returnsObjectsAsFaults = false
         currentItemFetch.propertiesToFetch = [countDesc]
         currentItemFetch.resultType = .countResultType
@@ -239,6 +250,7 @@ class CoreDataUtil {
             fatalError("Failed to retrieved item from coreData. \(error.localizedDescription)")
         }
     }
+    
     
     public static func getGroceryItemIdentifierFromTitle(title: String, moc: NSManagedObjectContext) -> String? {
         let groceryItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()

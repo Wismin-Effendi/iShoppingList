@@ -155,10 +155,8 @@ class CloudKitService {
             }
         }
         
-        // process update from CloudKit first
-        runQueryCKRecordsOperation()
         
-        // push deletion from local to remote
+        // Push deletion, update and create from local to remote
         
         func pushDeletionAtCoreDataToCloudKit() {
 
@@ -173,9 +171,11 @@ class CloudKitService {
                 }
                 os_log("Done deletion on CloudKit")
             }
+            // how to ensure we have handled all the temporary error of CloudKit and has perform the retry until successful???
+            
             // if no error then delete from CoreData 
-            coreDataIDsPendingDeletion.forEach { (identity) in
-                
+            coreDataIDsPendingDeletion.forEach { (identifier) in
+                CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
             }
         }
         
