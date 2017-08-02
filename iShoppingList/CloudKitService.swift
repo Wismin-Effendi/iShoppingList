@@ -54,7 +54,7 @@ class CloudKitService {
             guard let coreDataShoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: record.recordID.recordName, moc: backgroundContext) else {
                 
                 // this is valid for case of new data from CloudKit.
-                CoreDataUtil.createNewShoppingListRecord(fromCloudKitRecord: record) { error in
+                CoreDataUtil.createNewShoppingListRecord(from: record, moc: backgroundContext) { error in
                     if error != nil {
                         os_log("We failed to create new record in core data")
                         fatalError("Failed to create new core data record")
@@ -74,7 +74,7 @@ class CloudKitService {
                 // we could continue..
             }
             
-            CoreDataUtil.updateCoreDataShoppingListRecord(coreDataShoppingList, using: record) { error in
+            CoreDataUtil.updateCoreDataShoppingListRecord(coreDataShoppingList, using: record, moc: backgroundContext) { error in
                 if error != nil {
                     os_log("We failed to update record in core data")
                     fatalError("Failed to update core data record")
@@ -82,18 +82,19 @@ class CloudKitService {
             }
         }
 
-        func recordFetchBlockClosureGroceryItems(_ record: CKRecord) {
+        func recordFetchBlockClosureGroceryItems(_ ckRecord: CKRecord) {
             // attempt to retrieve the record by recordID.recordName as identity in Core Data so we could update later
             
-            guard let coreDataGroceryItem = CoreDataUtil.getGroceryItem(identifier: record.recordID.recordName, moc: backgroundContext) else {
+            guard let coreDataGroceryItem = CoreDataUtil.getGroceryItem(identifier: ckRecord.recordID.recordName, moc: backgroundContext) else {
                 
                 // this is valid case of new data from CloudKit.
-                CoreDataUtil.createNewGroceryItemRecord(fromCloudKitRecord: record) { error in
+                CoreDataUtil.createNewGroceryItemRecord(from: ckRecord, moc: backgroundContext) { error in
                     if error != nil {
                         os_log("We failed to create new record in core data")
                         fatalError("Failed to create new core data record")
                     }
                 }
+                
                 return
             }
             // We are going to update the core data record here.
@@ -108,7 +109,7 @@ class CloudKitService {
                 // we could continue..
             }
             
-            CoreDataUtil.updateCoreDataGroceryItemRecord(coreDataGroceryItem, using: record) { error in
+            CoreDataUtil.updateCoreDataGroceryItemRecord(coreDataGroceryItem, using: ckRecord, moc: backgroundContext) { error in
                 if error != nil {
                     os_log("We failed to update record in core data")
                     fatalError("Failed to update core data record")
@@ -159,28 +160,40 @@ class CloudKitService {
         // Push deletion, update and create from local to remote
         
         func pushDeletionAtCoreDataToCloudKit() {
-
-            let coreDataIDsPendingDeletion = CoreDataUtil.getIDsShoppingListPendingDeletion(moc: backgroundContext)
-            let cloudKitCKRecordIDsToDelete = coreDataIDsPendingDeletion.map { (name) -> CKRecordID in
-                CKRecordID(recordName: name, zoneID: recordZoneID)
-            }
-            CloudKitUtil.saveOrDeleteCKRecords(recordsToSave: nil, recordIDsToDelete: cloudKitCKRecordIDsToDelete)  { error in
-                if error != nil {
-                    os_log("Error: %@", error.debugDescription)
-                    os_log("We need to handle the error here")
-                }
-                os_log("Done deletion on CloudKit")
-            }
-            // how to ensure we have handled all the temporary error of CloudKit and has perform the retry until successful???
             
-            // if no error then delete from CoreData 
-            coreDataIDsPendingDeletion.forEach { (identifier) in
-                CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
+            func deleteOn_iCloud_then_CoreData() {
+                let cloudKitCKRecordIDsToDelete = coreDataIDsPendingDeletion.map { (name) -> CKRecordID in
+                    CKRecordID(recordName: name, zoneID: recordZoneID)
+                }
+                
+                CloudKitUtil.saveOrDeleteCKRecords(recordsToSave: nil, recordIDsToDelete: cloudKitCKRecordIDsToDelete)  { error in
+                    if error != nil {
+                        os_log("Error: %@", error.debugDescription)
+                        os_log("We need to handle the error here")
+                    }
+                    os_log("Done deletion on CloudKit")
+                }
+                // how to ensure we have handled all the temporary error of CloudKit and has perform the retry until successful???
+                
+                // if no error then delete from CoreData
+                coreDataIDsPendingDeletion.forEach { (identifier) in
+                    CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
+                }
             }
+            
+            
+            var coreDataIDsPendingDeletion = CoreDataUtil.getIDsShoppingListPendingDeletion(moc: backgroundContext)
+            deleteOn_iCloud_then_CoreData()
+            // how to wait for previous one to finish first?
+            coreDataIDsPendingDeletion = CoreDataUtil.getIDsGroceryItemsPendingDeletion(moc: backgroundContext)
+            deleteOn_iCloud_then_CoreData()
+            
+            
         }
         
         func pushCreateUpdateAtCoreDataToCloudKit() {
             
+            let coreDataRecordsNeedsUpload = CoreDataUtil.get
         }
         
     }

@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 @objc(GroceryItems)
 public class GroceryItems: NSManagedObject {
@@ -39,6 +40,28 @@ public class GroceryItems: NSManagedObject {
     
     func setDefaultValuesForRemoteCreation() {
         self.needsUpload = false
-        self.pendingDeletion = false        
+        self.pendingDeletion = false
+        self.archived = false
+        self.modificationDate = NSDate()
+    }
+}
+
+extension GroceryItems {
+    
+    convenience init(using cloudKitRecord: CKRecord, context: NSManagedObjectContext) {
+        self.init(context: context)
+        self.setDefaultValuesForRemoteCreation()
+        self.identifier = cloudKitRecord.recordID.recordName
+        update(using: cloudKitRecord)
+    }
+    
+    func update(using cloudKitRecord: CKRecord) {
+        self.completed = cloudKitRecord.object(forKey: "completed") as! Bool
+        self.completionDate = (cloudKitRecord.object(forKey: "completionDate") as! NSDate)
+        self.hasReminder = cloudKitRecord.object(forKey: "hasReminder") as! Bool
+        self.isRepeatedItem = cloudKitRecord.object(forKey: "isRepeatedItem") as! Bool
+        self.lastCompletionDate = (cloudKitRecord.object(forKey: "lastCompletionDate") as! NSDate)
+        self.reminderDate = (cloudKitRecord.object(forKey: "reminderDate") as! NSDate)
+        self.title = cloudKitRecord.object(forKey: "title") as! String
     }
 }
