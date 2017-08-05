@@ -25,6 +25,6 @@ extension ShoppingList {
     func update(using cloudKitRecord: CKRecord) {
         self.title = cloudKitRecord.object(forKey: "title") as! String
         self.needsUpload = false
-        self.modificationDate = NSDate()
+        self.localUpdate = NSDate()
     }
 }

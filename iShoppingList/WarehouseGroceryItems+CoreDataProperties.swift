@@ -25,6 +25,6 @@ extension WarehouseGroceryItems {
     @NSManaged public var shoppingListTitle: String
     @NSManaged public var needsUpload: Bool
     @NSManaged public var title: String
-    @NSManaged public var modificationDate: NSDate
+    @NSManaged public var localUpdate: NSDate
 
 }

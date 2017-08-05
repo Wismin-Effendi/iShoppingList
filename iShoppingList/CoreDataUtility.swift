@@ -328,4 +328,54 @@ class CoreDataUtil {
         }
         completion(nil)
     }
+    
+    public static func getPreviousServerChangeToken(moc: NSManagedObjectContext) -> CKServerChangeToken?  {
+        let changeTokenFetch: NSFetchRequest<ChangeToken> = ChangeToken.fetchRequest()
+        changeTokenFetch.fetchLimit = 1
+        do {
+            let results = try moc.fetch(changeTokenFetch)
+            return results.first?.previousServerChangeToken as? CKServerChangeToken
+        } catch let error as NSError {
+            fatalError("Failed to retrieve from ChangeToken. \(error.localizedDescription)")
+        }
+    }
+    
+    public static func deletePreviousServerChangeToken(moc: NSManagedObjectContext) {
+        let changeTokenFetch: NSFetchRequest<ChangeToken> = ChangeToken.fetchRequest()
+        changeTokenFetch.fetchLimit = 1
+        do {
+            let results = try moc.fetch(changeTokenFetch)
+            if results.count == 0 { return }
+            else if results.count == 1 {
+                let changeToken = results.first!
+                moc.delete(changeToken)
+                try moc.save()
+            } else {
+                fatalError("ChangeToken should only has one entry")
+            }
+        } catch let error as NSError {
+            fatalError("Failed to retrieve from ChangeToken. \(error.localizedDescription)")
+        }
+    }
+    
+    public static func setPreviousServerChangeToken(previousServerChangeToken: CKServerChangeToken, moc: NSManagedObjectContext) {
+        
+        let changeTokenFetch: NSFetchRequest<ChangeToken> = ChangeToken.fetchRequest()
+        changeTokenFetch.fetchLimit = 1
+        
+        let changeToken: ChangeToken
+        do {
+            let results = try moc.fetch(changeTokenFetch)
+            if results.count > 0 {
+                changeToken = results.first!
+                changeToken.previousServerChangeToken = previousServerChangeToken
+            } else {
+                changeToken = ChangeToken(context: moc)
+                changeToken.previousServerChangeToken = previousServerChangeToken
+            }
+            try moc.save()
+        } catch let error as NSError {
+            fatalError("Failed to create from ChangeToken. \(error.localizedDescription)")
+        }
+    }
 }

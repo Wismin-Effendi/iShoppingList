@@ -23,8 +23,6 @@ class CloudKitSyncTests: XCTestCase {
     let cloudKitService = CloudKitService.sharedInstance
     var recordZoneID: CKRecordZoneID!
     
-    
-    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -66,7 +64,7 @@ class CloudKitSyncTests: XCTestCase {
                 for result in results {
                     print("All keys: \(result.allKeys())")
                     print("Creation date: \(result.creationDate!)")
-                    print("Modified date: \(result.modificationDate!)")
+                    print("Modified date: \(result["localUpdate"])")
                     print("Modified keys: \(result.changedKeys())")
                 }
             } else {
@@ -82,7 +80,7 @@ class CloudKitSyncTests: XCTestCase {
         func processEachRecord(_ record: CKRecord) {
             print("All keys: \(record.allKeys())")
             print("RecordID: \(record.recordID.recordName)")
-            print("Modified date: \(record.modificationDate!)")
+            print("Modified date: \(record["localUpdate"])")
         }
         
         // Query ShoppingList HMart and process each records
@@ -208,8 +206,7 @@ class CloudKitSyncTests: XCTestCase {
             
         let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: [myRecord], recordIDsToDelete: nil)
         
-        modifyRecordsOperation.timeoutIntervalForRequest = 10
-        modifyRecordsOperation.timeoutIntervalForResource = 10
+        modifyRecordsOperation.savePolicy = .ifServerRecordUnchanged
         
         modifyRecordsOperation.modifyRecordsCompletionBlock = {[weak self] records, recordIDs, error in
             if let err = error {
@@ -236,4 +233,113 @@ class CloudKitSyncTests: XCTestCase {
         
         return myRecord
     }
+    
+    func testCreateSubscription() {
+        let subscription = CKRecordZoneSubscription.init(zoneID: recordZoneID, subscriptionID: "recordZoneSubscription")
+        
+        
+        cloudKitService.privateDatabase?.save(subscription, completionHandler: { (subscription: CKSubscription?, error: Error?) in
+            
+            if error != nil {
+                print(error.debugDescription)
+            }
+        })
+    }
+    
+    func testRemoveSubscription() {
+        cloudKitService.privateDatabase?.delete(withSubscriptionID: "recordZoneSubscription", completionHandler: { (subscriptionID: String?, error: Error?) in
+            
+            print(subscriptionID)
+            print(error.debugDescription)
+        })
+    }
+    
+
+    func testRecordChangeNotification() {
+        let fetchNotifExpectation = expectation(description: "fetchNotification")
+        
+        var serverChangeToken: CKServerChangeToken!
+        let backgroundContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).newBackgroundContext()
+        
+        let operation = CKFetchNotificationChangesOperation()
+        operation.fetchNotificationChangesCompletionBlock = { serverToken, error in
+            guard error == nil else {
+                print("(error.debugdescription)")
+                fetchNotifExpectation.fulfill()
+                return
+            }
+            
+            if let token = serverToken {
+                serverChangeToken = token
+                print(token.debugDescription)
+                print(token.hashValue)
+            }
+            fetchNotifExpectation.fulfill()
+        }
+        let opQueue = OperationQueue()
+        opQueue.addOperation(operation)
+        
+        wait(for: [fetchNotifExpectation], timeout: 10)
+        
+        CoreDataUtil.setPreviousServerChangeToken(previousServerChangeToken: serverChangeToken!, moc: backgroundContext)
+        
+        
+        let retrievedData = CoreDataUtil.getPreviousServerChangeToken(moc: backgroundContext)
+        print(retrievedData)
+        XCTAssertEqual(serverChangeToken, retrievedData)
+    }
+    
+    func testSaveCKServerChangeToken() {
+        
+        let tokenUpdateExpectation = expectation(description: "Accept Server Token Update")
+        var serverToken: CKServerChangeToken?
+        let backgroundContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).newBackgroundContext()
+        
+
+        // add some CKRecord
+        testCreateMultipleShoppingListRecordInCloudKit()
+        
+        // CoreDataUtil.deletePreviousServerChangeToken(moc: backgroundContext)
+        
+        
+        serverToken = CoreDataUtil.getPreviousServerChangeToken(moc: backgroundContext)
+        
+        let options = CKFetchRecordZoneChangesOptions()
+        options.previousServerChangeToken = serverToken
+        
+        let operation = CKFetchRecordZoneChangesOperation(recordZoneIDs: [recordZoneID], optionsByRecordZoneID: [recordZoneID: options])
+        
+        operation.recordChangedBlock = { record in
+            print(record)
+        }
+        
+        operation.recordZoneFetchCompletionBlock = { zoneID, serverToken, clientToken, moreComing, error in
+            guard error == nil else {
+                print("Zone error: \(error.debugDescription)")
+                return
+            }
+            
+            print("Latest serverToken: \(serverToken)")
+            CoreDataUtil.setPreviousServerChangeToken(previousServerChangeToken: serverToken!, moc: backgroundContext)
+        }
+        
+        operation.recordZoneChangeTokensUpdatedBlock = { _, ckServerChangeToken, data in
+
+            serverToken = ckServerChangeToken
+            print("hi there, we are here...")
+            print("we got ... \(ckServerChangeToken)")
+        }
+        
+        operation.fetchRecordZoneChangesCompletionBlock = { error in
+            if error != nil { print(error.debugDescription) }
+            print("We are here....")
+            tokenUpdateExpectation.fulfill()
+        }
+        
+        cloudKitService.privateDatabase?.add(operation)
+        
+        wait(for: [tokenUpdateExpectation], timeout: 60)
+    
+    }
+    
 }

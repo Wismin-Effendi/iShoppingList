@@ -128,6 +128,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         let groceryItem = GroceryItems(context: self.managedObjectContext)
         shoppingList.addToItems(groceryItem)
+        groceryItem.storeName = shoppingList
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString        
         groceryItem.pendingDeletion = false

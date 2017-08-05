@@ -126,7 +126,7 @@ class CloudKitService {
             if let lastSync = userDefaults.object(forKey: UserDefaultsKey.lastSync) as? NSDate {
                 
                 // create query to iCloud based on lastSync and userRecordID
-                predicate = NSPredicate(format: "modificationDate >= %@ AND lastModifiedUserRecordID != %@", lastSync, userRecordID)
+                predicate = NSPredicate(format: "localUpdate >= %@ AND lastModifiedUserRecordID != %@", lastSync, userRecordID)
                 
                 // update lastSync to current
                 let currentSyncTime = NSDate()
@@ -203,7 +203,29 @@ class CloudKitService {
         
         func pushCreateUpdateAtCoreDataToCloudKit() {
             
-            let idsRecordsNeedsUpload = [String]()
+            var idsRecordsNeedsUpload = [String]()
+            var cloudKitRecords = [CKRecord]()
+            
+            // try for Shopping List first then expand ...
+            idsRecordsNeedsUpload = CoreDataUtil.getIDsShoppingListNeedsUpload(moc: backgroundContext)
+            let includeIDSOnlyPredicate = NSPredicate(format: "recordID.recordName IN %@", idsRecordsNeedsUpload)
+            
+            CloudKitUtil.queryCKRecords(recordType: EntityName.ShoppingList, recordZoneID: recordZoneID,
+                                        predicate: includeIDSOnlyPredicate)
+            { (ckRecords, error) in
+                
+                // we need to only
+                
+                guard error == nil else {
+                    os_log("Error during query CloudKit: %@", error.debugDescription)
+                    return
+                }
+                
+                if let ckRecords = ckRecords {
+                    cloudKitRecords = ckRecords
+                }
+            }
+            
             
             // use idsRecordsNeedsUpload to create corresponding CKRecordID
             // try to fetch from CloudKit, it has data, it's an update, if empty then it's create new. 

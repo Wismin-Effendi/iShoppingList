@@ -24,25 +24,25 @@ public class GroceryItems: NSManagedObject, HasIdentifier {
         self.lastCompletionDate =  NSDate()
         self.reminderDate = NSDate()
         self.completionDate = NSDate()
-        self.modificationDate = NSDate()
+        self.localUpdate = NSDate()
     }
     
     func setDefaultValuesForLocalChange() {
-        self.modificationDate = NSDate()
+        self.localUpdate = NSDate()
         self.needsUpload = true
     }
     
     func setForLocalDeletion() {
         self.needsUpload = true
         self.pendingDeletion = true
-        self.modificationDate = NSDate()
+        self.localUpdate = NSDate()
     }
     
     func setDefaultValuesForRemoteCreation() {
         self.needsUpload = false
         self.pendingDeletion = false
         self.archived = false
-        self.modificationDate = NSDate()
+        self.localUpdate = NSDate()
     }
 }
 

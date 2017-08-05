@@ -29,6 +29,9 @@
 		37760C2D1F2F7B6C00A3B586 /* CloudKitSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */; };
 		37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */; };
 		37760C321F2FB61900A3B586 /* CloudKitUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C311F2FB61900A3B586 /* CloudKitUtil.swift */; };
+		37760C3B1F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */; };
+		37760C3C1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */; };
+		3780F8491F34FD9B00FF4085 /* CloudKitHelpersScratchPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780F8481F34FD9B00FF4085 /* CloudKitHelpersScratchPad.swift */; };
 		378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97501F23B2F900C526D9 /* AppDelegate.swift */; };
 		378E97561F23B2F900C526D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 378E97541F23B2F900C526D9 /* Main.storyboard */; };
 		378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 378E97571F23B2F900C526D9 /* iShoppingList.xcdatamodeld */; };
@@ -95,6 +98,9 @@
 		37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitSyncTests.swift; sourceTree = "<group>"; };
 		37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
 		37760C311F2FB61900A3B586 /* CloudKitUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitUtil.swift; sourceTree = "<group>"; };
+		37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataClass.swift"; sourceTree = "<group>"; };
+		37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3780F8481F34FD9B00FF4085 /* CloudKitHelpersScratchPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitHelpersScratchPad.swift; sourceTree = "<group>"; };
 		378E974D1F23B2F900C526D9 /* iShoppingList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iShoppingList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		378E97501F23B2F900C526D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		378E97551F23B2F900C526D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -165,6 +171,7 @@
 			children = (
 				37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */,
 				37760C311F2FB61900A3B586 /* CloudKitUtil.swift */,
+				3780F8481F34FD9B00FF4085 /* CloudKitHelpersScratchPad.swift */,
 			);
 			name = CloudKit;
 			sourceTree = "<group>";
@@ -172,6 +179,8 @@
 		37760C331F3082DF00A3B586 /* NSManagedObject Subclass */ = {
 			isa = PBXGroup;
 			children = (
+				37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */,
+				37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */,
 				370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */,
 				370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */,
 				370E9AD21F2B786D008EF197 /* GroceryItems+CoreDataClass.swift */,
@@ -254,14 +263,14 @@
 		378E974F1F23B2F900C526D9 /* iShoppingList */ = {
 			isa = PBXGroup;
 			children = (
-				37760C381F3216D300A3B586 /* TableViewControllerHelper */,
+				370E9ADC1F2B79BF008EF197 /* CoreData */,
+				37760C2E1F2F7BE000A3B586 /* CloudKit */,
 				37760C371F3216A400A3B586 /* Helper */,
 				37760C361F3215FC00A3B586 /* TableViewCell */,
+				37760C381F3216D300A3B586 /* TableViewControllerHelper */,
 				37760C351F3215E200A3B586 /* View */,
 				37760C341F3215C300A3B586 /* ViewController */,
-				37760C2E1F2F7BE000A3B586 /* CloudKit */,
 				37760C291F2F7AD300A3B586 /* iShoppingList.entitlements */,
-				370E9ADC1F2B79BF008EF197 /* CoreData */,
 				378E97501F23B2F900C526D9 /* AppDelegate.swift */,
 				378E97541F23B2F900C526D9 /* Main.storyboard */,
 				378E975A1F23B2F900C526D9 /* Assets.xcassets */,
@@ -447,6 +456,7 @@
 				370E9ADA1F2B786D008EF197 /* ShoppingList+CoreDataClass.swift in Sources */,
 				37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */,
 				370E9ADE1F2B7A70008EF197 /* CoreDataUtility.swift in Sources */,
+				3780F8491F34FD9B00FF4085 /* CloudKitHelpersScratchPad.swift in Sources */,
 				3746AD321F2987EB00D1B988 /* ItemDetailsTableViewController.swift in Sources */,
 				378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */,
 				370E9AB91F2AB031008EF197 /* GlobalEnums_and_Struct.swift in Sources */,
@@ -455,6 +465,7 @@
 				3746AC4C1F241DEE00D1B988 /* ShoppingListTableViewController.swift in Sources */,
 				378EE8A21F2CB819008F5669 /* ShoppingListCell.swift in Sources */,
 				3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */,
+				37760C3B1F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift in Sources */,
 				378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */,
 				378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */,
 				370E9AD81F2B786D008EF197 /* GroceryItems+CoreDataClass.swift in Sources */,
@@ -463,6 +474,7 @@
 				370E9AE01F2B7C56008EF197 /* CloneItemToWarehouse.swift in Sources */,
 				378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */,
 				370E9ADB1F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift in Sources */,
+				37760C3C1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift in Sources */,
 				370E9ABB1F2AF204008EF197 /* RepeatedItemCoordinator.swift in Sources */,
 				3746AD2E1F292F0E00D1B988 /* TaskItemCell.swift in Sources */,
 			);

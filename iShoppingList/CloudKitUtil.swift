@@ -103,9 +103,46 @@ class CloudKitUtil {
                     completion() 
                     return
                 }
-                
                 fetchMoreRecords(cursor: cursor)
             }
         }
+    }
+    
+    public static func modifyRecords(_ records: [CKRecord]?, andDelete deleteIds: [CKRecordID]?,
+                                          completionHandler: @escaping ([CKRecord]?, [CKRecordID]?, Error?) -> Void) {
+        
+        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        
+        let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: deleteIds)
+        op.savePolicy = .allKeys
+        op.modifyRecordsCompletionBlock = { (_ savedRecords: [CKRecord]?,
+            _ deletedRecordIds: [CKRecordID]?, _ operationError: Error?) -> Void in
+            var returnError = operationError
+            if let ckerror = operationError as? CKError {
+                switch ckerror {
+                case CKError.requestRateLimited, CKError.serviceUnavailable, CKError.zoneBusy:
+                    let retry = ckerror.retryAfterSeconds ?? 3.0
+                    DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + retry, execute: {
+                        modifyRecords(records, andDelete: deleteIds, completionHandler: completionHandler)
+                    })
+                    
+                    return
+                case CKError.partialFailure:
+                    if (savedRecords != nil && savedRecords!.count > 0) ||
+                        (deletedRecordIds != nil && deletedRecordIds!.count > 0) {
+                        returnError = nil
+                    }
+                    // during development we want to failed
+                    assert(false, "we got partialFailure, need to check for partial records")
+                    
+                default:
+                    break
+                }
+            }
+            
+            completionHandler(savedRecords, deletedRecordIds, returnError)
+        }
+         
+        privateDatabase?.add(op)
     }
 }
