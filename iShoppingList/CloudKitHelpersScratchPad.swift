@@ -88,6 +88,7 @@ class CloudKitHelper {
         
     }
     
+    /// Don't forget to call  synchronize()  on UserDefaults after update / set 
     
     func confirmCustomZoneAndSubscriptions() {
         
