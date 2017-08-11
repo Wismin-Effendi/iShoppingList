@@ -119,8 +119,8 @@ class CloudKitHelper {
     func getExistingZoneIDs() -> [CKRecordZoneID]? {
         let group = DispatchGroup()
         var existingZoneIDs = [CKRecordZoneID]()
-        let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
         group.enter()
+        let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
         fetchAllZonesOperations.fetchRecordZonesCompletionBlock = { recordZoneDict, error in
             
             if let error = error as? CKError {
@@ -252,9 +252,89 @@ class CloudKitHelper {
     }
     
     
+    // MARK: Subcribing to Change Notification 
+    func fetchAllDatabaseSubscriptions() {
+        fetchDatabaseSubscriptions(database: privateDB)
+        fetchDatabaseSubscriptions(database: sharedDB)
+    }
+    
+    func fetchDatabaseSubscriptions(database: CKDatabase) {
+        let group = DispatchGroup()
+        group.enter()
+        let fetchSubscriptionOperation = CKFetchSubscriptionsOperation.fetchAllSubscriptionsOperation()
+        fetchSubscriptionOperation.fetchSubscriptionCompletionBlock = { subscriptions, error in
+            guard error == nil else {
+                fatalError("Fetch subscription failed: \(error.debugDescription)")
+            }
+            
+            let subscriptionIDs = Array(subscriptions!.keys)
+            subscriptionIDs.forEach { os_log("Subscription ID: %@", $0) }
+            group.leave()
+        }
+        database.add(fetchSubscriptionOperation)
+        group.wait(timeout: DispatchTime.now() + 5)
+    }
+    
+    // create subscription if not exists
+    func createDBSubscription() {
+        subscribedToPrivateChanges = false
+        subscribedToSharedChanges = false
+
+        let group = DispatchGroup()
+
+        print("create private")
+        group.enter()
+        let createSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
+        createSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+            if error == nil { self.subscribedToPrivateChanges = true }
+            else {
+                fatalError("failed to create private subscription. \(error.debugDescription)")
+            }
+            group.leave()
+        }
+        privateDB.add(createSubscriptionOperation)
+    
+        print("create shared")
+        group.enter()
+        let createSharedSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
+        createSharedSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+            if error == nil { self.subscribedToSharedChanges = true }
+            else {
+                fatalError("failed to create shared subscription. \(error.debugDescription)")
+            }
+            group.leave()
+        }
+        sharedDB.add(createSharedSubscriptionOperation)
+        let result = group.wait(timeout: DispatchTime.now() + 5)
+        switch result {
+        case .timedOut:
+            os_log("Timed out on shared")
+        case .success:
+            os_log("Success on shared")
+        }
+    }
+    
+    
     /// Don't forget to call  synchronize()  on UserDefaults after update / set
     
-    func confirmCustomZoneAndSubscriptions() {
+    func confirmChangeNotificationSubscriptions() {
+        
+        func fetchAllSubscriptions() {
+            let group = DispatchGroup()
+            let fetchSubscriptionOperation = CKFetchSubscriptionsOperation.fetchAllSubscriptionsOperation()
+            group.enter()
+            fetchSubscriptionOperation.fetchSubscriptionCompletionBlock = { subscriptions, error in
+                guard error == nil else {
+                    fatalError("Fetch subscription failed: \(error.debugDescription)")
+                }
+                
+                let subscriptionIDs = Array(subscriptions!.keys)
+                subscriptionIDs.forEach { os_log("Subscription ID: %@", $0) }
+                group.leave()
+            }
+            privateDB.add(fetchSubscriptionOperation)
+            group.wait(timeout: DispatchTime.now() + 5)
+        }
         
         // create subscription if not exists
         func createDBSubscription() {

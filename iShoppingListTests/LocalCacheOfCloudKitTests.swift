@@ -34,5 +34,10 @@ class LocalCacheOfCloudKitTests: XCTestCase {
         XCTAssertEqual(totalPrivateZoneCount, inCloudKitCustomZoneCount)
     }
     
+    func testFetchSubscriptions() {
+        let ckHelper = CloudKitHelper.sharedInstance
+        ckHelper.createDBSubscription()
+        ckHelper.fetchAllDatabaseSubscriptions()
+    }
     
 }

@@ -235,23 +235,36 @@ class CloudKitSyncTests: XCTestCase {
     }
     
     func testCreateSubscription() {
+        let group = DispatchGroup()
         let subscription = CKRecordZoneSubscription.init(zoneID: recordZoneID, subscriptionID: "recordZoneSubscription")
         
-        
+        group.enter()
         cloudKitService.privateDatabase?.save(subscription, completionHandler: { (subscription: CKSubscription?, error: Error?) in
             
             if error != nil {
                 print(error.debugDescription)
             }
+            group.leave()
         })
+        let result = group.wait(timeout: DispatchTime.now() + 5)
+        switch result {
+        case .timedOut:
+            os_log("Failed")
+        case .success:
+            os_log("Success")
+        }
     }
     
     func testRemoveSubscription() {
+        let group = DispatchGroup()
+        group.enter()
         cloudKitService.privateDatabase?.delete(withSubscriptionID: "recordZoneSubscription", completionHandler: { (subscriptionID: String?, error: Error?) in
             
             print(subscriptionID)
             print(error.debugDescription)
+            group.leave()
         })
+        group.wait(timeout: DispatchTime.now() + 5)
     }
     
 
