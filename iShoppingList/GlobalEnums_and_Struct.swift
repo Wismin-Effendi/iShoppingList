@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 protocol HasIdentifier {
     var identifier: String { get }
@@ -50,8 +51,20 @@ struct CoreDataModel {
     static let iShoppingList = "iShoppingList"
 }
 
-struct CloudKitZone {
-    static let iShoppingList = "iShoppingListZone"
+enum CloudKitZone: String {
+    case iShoppingListZone
+//    case addMeZone
+    case deleteMeZone
+    
+    func recordZoneID() -> CKRecordZoneID {
+        return CKRecordZoneID(zoneName: self.rawValue , ownerName: CKCurrentUserDefaultName)
+    }
+    
+    static let allCloudKitZoneNames = [
+        CloudKitZone.iShoppingListZone.rawValue,
+  //      CloudKitZone.addMeZone.rawValue,
+        CloudKitZone.deleteMeZone.rawValue
+    ]
 }
 
 struct UserDefaultsKey {

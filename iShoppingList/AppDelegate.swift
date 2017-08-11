@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import CloudKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        application.registerForRemoteNotifications()
+        
         guard let nc = self.window?.rootViewController as? UINavigationController else {
             fatalError("RootViewController not found")
         }
@@ -55,6 +58,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         coreDataStack.saveContext()
+    }
+    
+    // MARK: - Receive Notification 
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        print("Receive notification")
+        
+        let dict = userInfo as! [String: NSObject]
+        
+        guard let notification: CKDatabaseNotification = CKNotification(fromRemoteNotificationDictionary: dict) as?
+            CKDatabaseNotification else { return }
+        
+        CloudKitHelper.sharedInstance.fetchChanges(in: notification.databaseScope) {
+            completionHandler(.newData)
+        }
     }
 
     // MARK: - Private
