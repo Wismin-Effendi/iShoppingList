@@ -24,13 +24,9 @@ class LocalCacheOfCloudKitTests: XCTestCase {
         super.tearDown()
     }
     
-
-    func testCheckZonesExist() {
+    
+    func testCustomZoneCompliance() {
         let ckHelper = CloudKitHelper.sharedInstance
-       // let zoneExist = ckHelper.checkForCustomRecordZone()
-       // XCTAssertTrue(zoneExist)
-       ckHelper.checkAllCustomZone()
+        ckHelper.setCustomZonesCompliance()
     }
-    
-    
 }

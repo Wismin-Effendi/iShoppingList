@@ -53,8 +53,8 @@ struct CoreDataModel {
 
 enum CloudKitZone: String {
     case iShoppingListZone
-//    case addMeZone
-    case deleteMeZone
+    case addMeZone
+ //   case deleteMeZone
     
     func recordZoneID() -> CKRecordZoneID {
         return CKRecordZoneID(zoneName: self.rawValue , ownerName: CKCurrentUserDefaultName)
@@ -62,8 +62,8 @@ enum CloudKitZone: String {
     
     static let allCloudKitZoneNames = [
         CloudKitZone.iShoppingListZone.rawValue,
-  //      CloudKitZone.addMeZone.rawValue,
-        CloudKitZone.deleteMeZone.rawValue
+        CloudKitZone.addMeZone.rawValue,
+  //      CloudKitZone.deleteMeZone.rawValue
     ]
 }
 

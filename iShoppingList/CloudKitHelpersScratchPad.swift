@@ -116,9 +116,9 @@ class CloudKitHelper {
     func setCustomZonesCompliance() {
         // The following should run in strict order, use DispatchGroup and Wait to sync the process
         // 1. run fetch allZone
-        func getExistingZonesNames() -> [String]? {
+        func getExistingZoneIDs() -> [CKRecordZoneID]? {
             let group = DispatchGroup()
-            var existingZoneNames = [String]()
+            var existingZoneIDs = [CKRecordZoneID]()
             let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
             group.enter()
             fetchAllZonesOperations.fetchRecordZonesCompletionBlock = { recordZoneDict, error in
@@ -142,9 +142,8 @@ class CloudKitHelper {
                     fatalError("Error during fetch record zone. \(error.localizedDescription)")
                 }
                 
-                let recordZones = recordZoneDict!.keys
-                existingZoneNames = recordZones.map { $0.zoneName }
-                os_log("Existing zones: %@", existingZoneNames)
+                existingZoneIDs = Array(recordZoneDict!.keys)
+                os_log("Existing zones: %@", existingZoneIDs.map { $0.zoneName } )
                 group.leave()
             }
             privateDB.add(fetchAllZonesOperations)
@@ -156,15 +155,16 @@ class CloudKitHelper {
                 return nil
             case .success:
                 print("Finish fetchAllZoneOperation run!")
-                return existingZoneNames
+                return existingZoneIDs
             }
         }
         
         // 2. create zonesToCreate and zonesToDelete
-        func processServerRecordZone(existingZoneNames: [String]) -> (recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete:[CKRecordZoneID]?) {
+        func processServerRecordZone(existingZoneIDs: [CKRecordZoneID]) -> (recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete:[CKRecordZoneID]?) {
             
             func setZonesToCreate() -> [CKRecordZone]? {
                 var recordZonesToCreate: [CKRecordZone]? = nil
+                let existingZoneNames = existingZoneIDs.map {  $0.zoneName }
                 let expectedZoneNamesSet = Set(CloudKitZone.allCloudKitZoneNames)
                 let missingZoneNamesSet = expectedZoneNamesSet.subtracting(existingZoneNames)
                 
@@ -177,9 +177,10 @@ class CloudKitHelper {
             
             func setZoneIDstoDelete() -> [CKRecordZoneID]? {
                 var recordZoneIDsToDelete: [CKRecordZoneID]? = nil
-                let customZoneNamesOnly = existingZoneNames.filter { $0 != CKRecordZoneDefaultName }
-                let missingZoneName = customZoneNamesOnly.filter { CloudKitZone(rawValue: $0) == nil }
-                recordZoneIDsToDelete = missingZoneName.flatMap { CloudKitZone(rawValue: $0)?.recordZoneID() }
+                let customZoneIDsOnly = existingZoneIDs.filter { $0.zoneName != CKRecordZoneDefaultName }
+                recordZoneIDsToDelete = customZoneIDsOnly.filter { CloudKitZone(rawValue: $0.zoneName) == nil }
+                // we should return either nil or array with at least 1 member never empty array
+                recordZoneIDsToDelete = recordZoneIDsToDelete!.isEmpty ? nil : recordZoneIDsToDelete
                 return recordZoneIDsToDelete
             }
             
@@ -236,9 +237,11 @@ class CloudKitHelper {
             }
         }
         
-        if let existingZoneNames = getExistingZonesNames() {
-            let (recordZonesToSave, recordZoneIDsToDelete) = processServerRecordZone(existingZoneNames: existingZoneNames)
-            modifyRecordZones(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
+        if let existingZoneIDs = getExistingZoneIDs() {
+            let (recordZonesToSave, recordZoneIDsToDelete) = processServerRecordZone(existingZoneIDs: existingZoneIDs)
+            if  recordZonesToSave != nil || recordZoneIDsToDelete != nil {
+                modifyRecordZones(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
+            }
             createdCustomZone = true
         }
     }
@@ -283,7 +286,7 @@ class CloudKitHelper {
         }
     
         func fetchOfflineServerChanges() {
-            createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in 
+            createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
                 if self.createdCustomZone {
                     self.fetchChanges(in: .private) {}
                     self.fetchChanges(in: .public) {}

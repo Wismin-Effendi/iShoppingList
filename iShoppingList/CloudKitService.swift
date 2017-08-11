@@ -25,7 +25,7 @@ class CloudKitService {
     private init() {
         privateDatabase = container().privateCloudDatabase
         
-        let recordZone = CKRecordZone(zoneName: CloudKitZone.iShoppingList)
+        let recordZone = CKRecordZone(zoneName: CloudKitZone.iShoppingListZone.rawValue)
         let recordZoneID = recordZone.zoneID
         self.recordZoneID = recordZoneID
         
