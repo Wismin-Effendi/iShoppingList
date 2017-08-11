@@ -111,54 +111,59 @@ class CloudKitHelper {
     }
     
     
+    
+    
     // MARK: Modify custom zone to match CloudKitZones enums
-    //
-    func setCustomZonesCompliance() {
-        // The following should run in strict order, use DispatchGroup and Wait to sync the process
-        // 1. run fetch allZone
-        func getExistingZoneIDs() -> [CKRecordZoneID]? {
-            let group = DispatchGroup()
-            var existingZoneIDs = [CKRecordZoneID]()
-            let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
-            group.enter()
-            fetchAllZonesOperations.fetchRecordZonesCompletionBlock = { recordZoneDict, error in
-
-                if let error = error as? CKError {
-                    
-                    os_log("Need to have proper error handling here..!!")
-                    
-                    switch error.errorCode {
-                    case CKError.internalError.rawValue:
-                        print("Internal error. Fatal")
-                    case CKError.networkUnavailable.rawValue:
-                        print("Network unavailable")
-                    case CKError.notAuthenticated.rawValue:
-                        print("Detected as Not authenticated to iCloud....")
-                    default:
-                        break
-                    }
-                    
-                    os_log("error code: %d", error.errorCode)
-                    fatalError("Error during fetch record zone. \(error.localizedDescription)")
+    // 
+    // Helper:
+    func getExistingZoneIDs() -> [CKRecordZoneID]? {
+        let group = DispatchGroup()
+        var existingZoneIDs = [CKRecordZoneID]()
+        let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
+        group.enter()
+        fetchAllZonesOperations.fetchRecordZonesCompletionBlock = { recordZoneDict, error in
+            
+            if let error = error as? CKError {
+                
+                os_log("Need to have proper error handling here..!!")
+                
+                switch error.errorCode {
+                case CKError.internalError.rawValue:
+                    print("Internal error. Fatal")
+                case CKError.networkUnavailable.rawValue:
+                    print("Network unavailable")
+                case CKError.notAuthenticated.rawValue:
+                    print("Detected as Not authenticated to iCloud....")
+                default:
+                    break
                 }
                 
-                existingZoneIDs = Array(recordZoneDict!.keys)
-                os_log("Existing zones: %@", existingZoneIDs.map { $0.zoneName } )
-                group.leave()
+                os_log("error code: %d", error.errorCode)
+                fatalError("Error during fetch record zone. \(error.localizedDescription)")
             }
-            privateDB.add(fetchAllZonesOperations)
             
-            let dispatchTimeoutResult = group.wait(timeout: DispatchTime.now() + 5)
-            switch dispatchTimeoutResult {
-            case .timedOut:
-                os_log("timeout during fetchAllZoneOperation")
-                return nil
-            case .success:
-                print("Finish fetchAllZoneOperation run!")
-                return existingZoneIDs
-            }
+            existingZoneIDs = Array(recordZoneDict!.keys)
+            os_log("Existing zones: %@", existingZoneIDs.map { $0.zoneName } )
+            group.leave()
         }
+        privateDB.add(fetchAllZonesOperations)
         
+        let dispatchTimeoutResult = group.wait(timeout: DispatchTime.now() + 5)
+        switch dispatchTimeoutResult {
+        case .timedOut:
+            os_log("timeout during fetchAllZoneOperation")
+            return nil
+        case .success:
+            print("Finish fetchAllZoneOperation run!")
+            return existingZoneIDs
+        }
+    }
+    
+    // main function
+    func setCustomZonesCompliance() {
+        // The following should run in strict order, use DispatchGroup and Wait to sync the process
+        // 1. run fetch allZone (see helper func above) 
+
         // 2. create zonesToCreate and zonesToDelete
         func processServerRecordZone(existingZoneIDs: [CKRecordZoneID]) -> (recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete:[CKRecordZoneID]?) {
             

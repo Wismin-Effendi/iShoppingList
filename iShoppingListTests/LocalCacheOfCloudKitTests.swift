@@ -26,7 +26,13 @@ class LocalCacheOfCloudKitTests: XCTestCase {
     
     
     func testCustomZoneCompliance() {
+        let customPrivateZoneCount = CloudKitZone.allCloudKitZoneNames.count
+        let totalPrivateZoneCount = customPrivateZoneCount + 1 // + defaultZone
         let ckHelper = CloudKitHelper.sharedInstance
         ckHelper.setCustomZonesCompliance()
+        let inCloudKitCustomZoneCount = CloudKitHelper.sharedInstance.getExistingZoneIDs()!.count
+        XCTAssertEqual(totalPrivateZoneCount, inCloudKitCustomZoneCount)
     }
+    
+    
 }
