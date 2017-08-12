@@ -109,4 +109,12 @@ extension GroceryItem {
         // no need to update storeName as it's not possible
         return ckRecord
     }
+    
+    func getCKRecordID() -> CKRecordID {
+        guard let ckMetadata = self.ckMetadata else {
+            fatalError("CKMetaData is required to update CKRecord")
+        }
+        let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
+        return ckRecord.recordID
+    }
 }

@@ -1,5 +1,5 @@
 //
-//  CloudKitHelpersScratchPad.swift
+//  CloudKitHelper.swift
 //  iShoppingList
 //
 //  Created by Wismin Effendi on 8/4/17.
@@ -16,18 +16,11 @@ enum CloudKitUserDefaults: String {
     case createdCustomzone
     case subscribedToPrivateChanges
     case subscribedToSharedChanges
-    case recordZeroID
 }
 
 enum CustomCKError: Error {
     case fetchZoneError(Error)
     case createZoneError(Error)
-}
-
-enum ICloudDBState {
-    case unknown
-    case new
-    case persist
 }
 
 enum ServerChangeToken: String {
@@ -382,6 +375,15 @@ class CloudKitHelper {
     
     }
     
+    func fetchOfflineServerChanges() {
+        createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
+            if self.createdCustomZone {
+                self.fetchChanges(in: .private) {}
+                self.fetchChanges(in: .public) {}
+            }
+        }
+    }
+    
     func createDatabaseSubscriptionOperation(subscriptionID: String) -> CKModifySubscriptionsOperation {
         let subscription = CKDatabaseSubscription.init(subscriptionID: subscriptionID)
         
@@ -569,10 +571,9 @@ class CloudKitHelper {
         return record
     }
     
-    // 
-
 
 }
+
 
 
 

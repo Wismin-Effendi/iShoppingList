@@ -91,7 +91,7 @@ class RepeatedItemsCoordinator {
     fileprivate func transferOneItemToActiveGroceryItems(item: WarehouseGroceryItems) {
         let groceryItem = GroceryItem(context: backgroundContext)
         let storeName = item.shoppingListTitle
-        if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: backgroundContext) {
+        if let shoppingList = CoreDataUtil.getAShoppingListOf(storeName: storeName, moc: backgroundContext) {
             shoppingList.addToItems(groceryItem)
             
             // set default first, then override as needed

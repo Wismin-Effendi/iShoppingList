@@ -51,7 +51,7 @@ class CloudKitService {
         func recordFetchBlockClosureShoppingList(_ record: CKRecord) {
             // attempt to retrieve the record by recordID.recordName as identity in Core Data so we could update later
             
-            guard let coreDataShoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: record.recordID.recordName, moc: backgroundContext) else {
+            guard let coreDataShoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: record.recordID.recordName, moc: backgroundContext) else {
                 
                 // this is valid for case of new data from CloudKit.
                 CoreDataUtil.createNewShoppingListRecord(from: record, moc: backgroundContext) { error in

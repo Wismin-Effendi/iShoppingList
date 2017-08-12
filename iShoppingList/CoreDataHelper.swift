@@ -23,7 +23,7 @@ class CoreDataHelper {
         switch ckRecord.recordType {
         case EntityName.ShoppingList:
             if let storeIdentifier = ckRecord[ckShoppingList.identifier] as? String,
-                let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: storeIdentifier, moc: backgroundContext) {
+                let shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: storeIdentifier, moc: backgroundContext) {
                 shoppingList.update(using: ckRecord)
             } else {
                 let _ = ShoppingList.init(using: ckRecord, context: backgroundContext)
@@ -70,9 +70,54 @@ class CoreDataHelper {
         let ckRecordID = ckReference.recordID
         let (entityName, identifier) = splitIntoComponents(recordName: ckRecordID.recordName)
         guard entityName == EntityName.ShoppingList else { fatalError("This parent ref should be ShoppingList") }
-        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: identifier, moc: backgroundContext) else {
+        guard let shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: identifier, moc: backgroundContext) else {
             fatalError("Could not find shoppingList for \(identifier) while searching reference record.")
         }
         return shoppingList
+    }
+    
+    // MARK: - Helper to upload new/update to CloudKit
+    // including deletion
+    
+    func getRecordIDsForDeletion(backgroundContext: NSManagedObjectContext) -> [CKRecordID]? {
+        // gather the recordIDs for deletion
+        let deletedShoppingLists = CoreDataUtil.getShoppingListsOf(predicate: Predicates.DeletedShoppingList, moc: backgroundContext)
+        let deletedShoppingListRecordIDs = deletedShoppingLists.map { $0.getCKRecordID() }
+        let deletedGroceryItems = CoreDataUtil.getGroceryItems(predicate: Predicates.DeletedGroceryItem, moc: backgroundContext)
+        let deletedGroceryItemRecordIDs = deletedGroceryItems.map { $0.getCKRecordID() }
+        
+        let deletedRecords = deletedShoppingListRecordIDs + deletedGroceryItemRecordIDs
+        
+        return deletedRecords == [] ? nil : deletedRecords
+    }
+    
+    func postSuccessfulDeletionOnCloudKit(backgroundContext: NSManagedObjectContext) {
+        // here we delete from core data permanently
+        CoreDataUtil.batchDeleteGroceryItemPendingDeletion(backgroundContext: backgroundContext)
+        CoreDataUtil.batchDeleteShoppingListPendingDeletion(backgroundContext: backgroundContext)
+    }
+    
+    func getRecordsToModify(backgroundContext: NSManagedObjectContext) -> [CKRecord]? {
+        // update / modify
+        // Create New Records
+        let newShoppingLists = CoreDataUtil.getShoppingListsOf(predicate: Predicates.NewShoppingList, moc: backgroundContext)
+        let newShoppingListRecords = newShoppingLists.map { $0.managedObjectToNewCKRecord() }
+        let newGroceryItems = CoreDataUtil.getGroceryItems(predicate: Predicates.NewGroceryItem, moc: backgroundContext)
+        let newGroceryItemRecords = newGroceryItems.map { $0.managedObjectToNewCKRecord() }
+        
+        // Update existing Records
+        let updatedShoppingLists = CoreDataUtil.getShoppingListsOf(predicate: Predicates.UpdatedShoppingList, moc: backgroundContext)
+        let updatedShoppingListRecords = updatedShoppingLists.map { $0.managedObjectToUpdatedCKRecord() }
+        let updatedGroceryItems = CoreDataUtil.getGroceryItems(predicate: Predicates.UpdatedGroceryItem, moc: backgroundContext)
+        let updatedGroceryItemRecords = updatedGroceryItems.map { $0.managedObjectToUpdatedCKRecord() }
+        
+        let newAndUpdatedRecords = newShoppingListRecords + newGroceryItemRecords +
+                                    updatedShoppingListRecords + updatedGroceryItemRecords
+        return newAndUpdatedRecords == [] ? nil : newAndUpdatedRecords
+    }
+    
+    func postSuccessfyModifyOnCloudKit() {
+        //  update metadata and modify needsUpload flag
+        
     }
 }

@@ -13,19 +13,6 @@ import os.log
 
 class CoreDataUtil {
         
-    public static func getGroceryItem(identifier: String, moc: NSManagedObjectContext) -> GroceryItem? {
-        let groceryItemFetch: NSFetchRequest<GroceryItem> = GroceryItem.fetchRequest()
-        groceryItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.identifier), identifier)
-        
-        do {
-            let results = try moc.fetch(groceryItemFetch)
-            if results.count > 0 {
-                return results.first!
-            } else { return nil }
-        } catch let error as NSError {
-            fatalError("Failed to fetch grocery item by identifier. \(error.localizedDescription)")
-        }
-    }
     
     public static func deleteItemFromWarehouse(title: String, moc: NSManagedObjectContext) {
         let warehouseItemFetch: NSFetchRequest<WarehouseGroceryItems> = WarehouseGroceryItems.fetchRequest()
@@ -83,27 +70,48 @@ class CoreDataUtil {
         }
     }
     
-    public static func getShoppingListOf(storeIdentifier: String, moc: NSManagedObjectContext) -> ShoppingList? {
+    
+    public static func getAShoppingListOf(storeIdentifier: String, moc: NSManagedObjectContext) -> ShoppingList? {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.identifier), storeIdentifier)
-        return getShoppingListOf(predicate: predicate, moc: moc)
+        return getShoppingListsOf(predicate: predicate, moc: moc).first
     }
     
-    public static func getShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
+    public static func getAShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
-        return getShoppingListOf(predicate: predicate, moc: moc)
+        return getShoppingListsOf(predicate: predicate, moc: moc).first
     }
-
-    public static func getShoppingListOf(predicate: NSPredicate, moc: NSManagedObjectContext) -> ShoppingList? {
+    
+    public static func getShoppingListsOf(predicate: NSPredicate, moc: NSManagedObjectContext) -> [ShoppingList] {
         let shoppingListFetch: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
         shoppingListFetch.predicate = predicate
         
         do {
             let results = try moc.fetch(shoppingListFetch)
             if results.count > 0 {
-                return results.first!
-            } else { return nil }
+                return results
+            } else { return [] }
         } catch let error as NSError {
-            fatalError("Failed to fetch shopping list. \(error.localizedDescription)")
+            fatalError("Failed to fetch shopping lists. \(error.localizedDescription)")
+        }
+    }
+    
+    
+    public static func getGroceryItem(identifier: String, moc: NSManagedObjectContext) -> GroceryItem? {
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.identifier), identifier)
+        return getGroceryItems(predicate: predicate, moc: moc).first
+    }
+    
+    public static func getGroceryItems(predicate: NSPredicate, moc: NSManagedObjectContext) -> [GroceryItem] {
+        let groceryItemFetch: NSFetchRequest<GroceryItem> = GroceryItem.fetchRequest()
+        groceryItemFetch.predicate = predicate
+        
+        do {
+            let results = try moc.fetch(groceryItemFetch)
+            if results.count > 0 {
+                return results
+            } else { return [] }
+        } catch let error as NSError {
+            fatalError("Failed to fetch grocery items by identifier. \(error.localizedDescription)")
         }
     }
     
@@ -162,6 +170,24 @@ class CoreDataUtil {
         }
     }
     
+    public static func batchDeleteShoppingListPendingDeletion(backgroundContext: NSManagedObjectContext) {
+        let shoppingListFetch: NSFetchRequest<NSFetchRequestResult> = ShoppingList.fetchRequest()
+        shoppingListFetch.predicate = Predicates.DeletedShoppingList
+        batchDeleteManagedObject(fetchRequest: shoppingListFetch, backgroundContext: backgroundContext)
+    }
+    
+    public static func batchDeleteGroceryItemPendingDeletion(backgroundContext: NSManagedObjectContext) {
+        let groceryItemFetch: NSFetchRequest<NSFetchRequestResult> = GroceryItem.fetchRequest()
+        groceryItemFetch.predicate = Predicates.DeletedGroceryItem
+        batchDeleteManagedObject(fetchRequest: groceryItemFetch, backgroundContext: backgroundContext)
+    }
+    
+    public static func batchDeleteManagedObject(fetchRequest: NSFetchRequest<NSFetchRequestResult>, backgroundContext: NSManagedObjectContext) {
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        batchDeleteRequest.resultType = .resultTypeStatusOnly
+        try! backgroundContext.execute(batchDeleteRequest)
+    }
+    
     public static func createOneSampleShoppingList(title: String, moc: NSManagedObjectContext) {
         let item = ShoppingList(context: moc)
         item.title = title
@@ -192,7 +218,7 @@ class CoreDataUtil {
     public static func createOneSampleGroceryItem(storeName: String, title: String, repetitionInterval: TimeInterval = TimeIntervalConst.twoWeeks, moc: NSManagedObjectContext) {
         let item = GroceryItem(context: moc)
         
-        if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: moc) {
+        if let shoppingList = CoreDataUtil.getAShoppingListOf(storeName: storeName, moc: moc) {
             shoppingList.addToItems(item)
             item.setDefaultValuesForLocalCreation()
             item.identifier = UUID().uuidString
@@ -302,7 +328,7 @@ class CoreDataUtil {
     public static func createNewGroceryItemRecord(from cloudKitRecord: CKRecord, moc: NSManagedObjectContext,
                                                   completion: (NSError?) -> ()) {
         guard let shoppingListIdentifier = cloudKitRecord.parent?.recordID.recordName,
-            let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: shoppingListIdentifier, moc: moc) else {
+            let shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: shoppingListIdentifier, moc: moc) else {
             fatalError("No able to fetch shoppingList for identifier: \(cloudKitRecord.parent?.recordID.recordName ?? "0000-0000")")
         }
         

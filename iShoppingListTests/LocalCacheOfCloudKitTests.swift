@@ -39,5 +39,8 @@ class LocalCacheOfCloudKitTests: XCTestCase {
         ckHelper.createDBSubscription()
         ckHelper.fetchAllDatabaseSubscriptions()
     }
-    
+ 
+    func testUploadShoppingListToCloudKit() {
+        
+    }
 }
