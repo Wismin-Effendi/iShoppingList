@@ -122,7 +122,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     // MARK: Private
     
     private func addNewGroceryItem(title: String) {
-        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: storeIdentifier, moc: managedObjectContext) else {
+        guard let shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: storeIdentifier, moc: managedObjectContext) else {
             fatalError("Cannot save new item to non existing Shopping List")
         }
         

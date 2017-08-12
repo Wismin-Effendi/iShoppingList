@@ -170,6 +170,30 @@ class CoreDataUtil {
         }
     }
     
+    public static func updateShoppingListCKMetadata(from cloudKitRecords: [CKRecord], backgroundContext: NSManagedObjectContext) {
+        for ckRecord in cloudKitRecords {
+            let identifier: String = ckRecord[ckShoppingList.identifier] as! String
+            if let shoppingList = getAShoppingListOf(storeIdentifier: identifier, moc: backgroundContext) {
+                shoppingList.updateCKMetadata(from: ckRecord)
+            } else {
+                let title = ckRecord[ckShoppingList.title] as! String
+                fatalError("Can't find record to update metadata for \(title)")
+            }
+        }
+    }
+    
+    public static func updateGroceryItemCKMetadata(from cloudKitRecords: [CKRecord], backgroundContext: NSManagedObjectContext) {
+        for ckRecord in cloudKitRecords {
+            let identifier: String = ckRecord[ckGroceryItem.identifier] as! String
+            if let groceryItem = getGroceryItem(identifier: identifier, moc: backgroundContext) {
+                groceryItem.updateCKMetadata(from: ckRecord)
+            } else {
+                let title = ckRecord[ckGroceryItem.title] as! String
+                fatalError("Can't find record to update metadata for \(title)")
+            }
+        }
+    }
+    
     public static func batchDeleteShoppingListPendingDeletion(backgroundContext: NSManagedObjectContext) {
         let shoppingListFetch: NSFetchRequest<NSFetchRequestResult> = ShoppingList.fetchRequest()
         shoppingListFetch.predicate = Predicates.DeletedShoppingList

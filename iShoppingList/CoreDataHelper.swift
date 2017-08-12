@@ -116,8 +116,12 @@ class CoreDataHelper {
         return newAndUpdatedRecords == [] ? nil : newAndUpdatedRecords
     }
     
-    func postSuccessfyModifyOnCloudKit() {
+    func postSuccessfyModifyOnCloudKit(modifiedCKRecords: [CKRecord], backgroundContext: NSManagedObjectContext) {
         //  update metadata and modify needsUpload flag
+        let modifiedShoppingListCKRecords = modifiedCKRecords.filter { $0.recordType == RecordType.ShoppingList.rawValue }
+        let modifiedGroceryItemCKRecords = modifiedCKRecords.filter { $0.recordType == RecordType.GroceryItem.rawValue }
         
+        CoreDataUtil.updateShoppingListCKMetadata(from: modifiedShoppingListCKRecords, backgroundContext: backgroundContext)
+        CoreDataUtil.updateGroceryItemCKMetadata(from: modifiedGroceryItemCKRecords, backgroundContext: backgroundContext)
     }
 }

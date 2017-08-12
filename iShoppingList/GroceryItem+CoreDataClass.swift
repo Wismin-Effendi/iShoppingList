@@ -83,6 +83,7 @@ extension GroceryItem {
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         let ckRecord = CKRecord(recordType: RecordType.GroceryItem.rawValue, recordID: recordID)
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
+        ckRecord[ckGroceryItem.identifier] = self.identifier as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue

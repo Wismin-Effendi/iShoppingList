@@ -65,10 +65,15 @@ extension ShoppingList {
     }
     
     func getCKRecordID() -> CKRecordID {
-        guard let ckMetadata = self.ckMetadata else {
-            fatalError("CKMetaData is required to update CKRecord")
+        let ckRecordID: CKRecordID
+        if let ckMetadata = self.ckMetadata  {
+            let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
+            ckRecordID = ckRecord.recordID
+        } else {
+            let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
+            let recordName = EntityName.ShoppingList + "." + self.identifier
+            ckRecordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         }
-        let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
-        return ckRecord.recordID
+        return ckRecordID
     }
 }

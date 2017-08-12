@@ -56,7 +56,6 @@ class CloudKitHelper {
     
     let zoneID: CKRecordZoneID = CloudKitZone.iShoppingListZone.recordZoneID()
     
-    var icloudDBState: ICloudDBState = .unknown
     
     var databaseChangeToken: CKServerChangeToken? = nil
     
@@ -82,17 +81,6 @@ class CloudKitHelper {
     
     // we need to keep the reference for NSOperations around, so we use properties as their references
     var fetchRecordZoneOperation: CKFetchRecordZonesOperation?
-    
-    
-    var fetchRecordZoneResultDict : [CKRecordZoneID : CKRecordZone]? = nil {
-        didSet {
-            if fetchRecordZoneResultDict != nil {
-                icloudDBState = .persist
-            } else {
-                icloudDBState = .new
-            }
-        }
-    }
     
     // Singleton
     static var sharedInstance = CloudKitHelper()
@@ -571,7 +559,39 @@ class CloudKitHelper {
         return record
     }
     
-
+    
+    // Mark: - To save localChanges in CoreData to CloudKit
+    
+    func saveLocalChangesToCloudKit() {
+        let group = DispatchGroup()
+        let recordsToSave = CoreDataHelper.sharedInstance.getRecordsToModify(backgroundContext: backgroundContext)
+        let recordIDsToDelete = CoreDataHelper.sharedInstance.getRecordIDsForDeletion(backgroundContext: backgroundContext)
+        
+        group.enter()
+        let operation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
+        operation.isAtomic = true
+        operation.savePolicy = .changedKeys
+        operation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
+            guard error == nil else {
+                let error = error as! CKError
+                os_log("Error code: %d", error.errorCode)
+                os_log("Error dump: %@", error as CVarArg)
+                fatalError("Failed to save localChange to CloudKit: \(error.localizedDescription)")
+            }
+            
+            CoreDataHelper.sharedInstance.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.backgroundContext)
+            CoreDataHelper.sharedInstance.postSuccessfulDeletionOnCloudKit(backgroundContext: self.backgroundContext)
+            group.leave()
+        }
+        privateDB.add(operation)
+        let result = group.wait(timeout: DispatchTime.now() + 5)
+        switch result {
+        case .success:
+            os_log("Operation successful")
+        case .timedOut:
+            os_log("Operation timeout for saving to CloudKit")
+        }
+    }
 }
 
 
