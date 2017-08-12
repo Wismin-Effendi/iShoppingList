@@ -65,13 +65,11 @@ extension GroceryItems {
         self.title = cloudKitRecord[ckGroceryItem.title] as! String
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
         
-        try! self.managedObjectContext?.save()
     }
     
     
     func updateCKMetadata(from ckRecord: CKRecord) {
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
-        try! self.managedObjectContext?.save()
     }
     
     func managedObjectToNewCKRecord() -> CKRecord {

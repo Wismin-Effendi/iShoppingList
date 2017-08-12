@@ -440,6 +440,7 @@ class CloudKitHelper {
             
             let data = NSKeyedArchiver.archivedData(withRootObject: token)
             UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
+            UserDefaults.standard.synchronize()
         }
         
         
@@ -455,6 +456,7 @@ class CloudKitHelper {
             if let token = token {
                 let data = NSKeyedArchiver.archivedData(withRootObject: token)
                 UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
+                UserDefaults.standard.synchronize()
             }
             
             self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) {
@@ -489,23 +491,32 @@ class CloudKitHelper {
         
         let operation = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIDs, optionsByRecordZoneID: optionsByRecordZoneID)
         
-        operation.recordChangedBlock = { (record) in
-            print("Record changed:", record)
+        operation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
+            print("Record changed:", ckRecord)
             // Write this record change to memory 
-            
+            CoreDataHelper.sharedInstance.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
         }
         
-        operation.recordWithIDWasDeletedBlock = { (recordID) in
+        operation.recordWithIDWasDeletedBlock = {[unowned self] (recordID) in
             print("Record deleted:", recordID)
             // write this record deletion to memory
+             
         }
         
         operation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
-            // Flush record changes and deletions for this zone to disk 
+            // Flush record changes and deletions for this zone to disk
+            try! self.backgroundContext.save()
+            
             // Write this new zone change token to disk
+            guard let changeToken: CKServerChangeToken = token else { return }
+            let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
+            let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
+            UserDefaults.standard.set(data, forKey: zoneKey)
+            UserDefaults.standard.synchronize()
+            
         }
         
-        operation.recordZoneFetchCompletionBlock = { (zoneID, changeToken, _, _, error) in
+        operation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
             
             if let error = error {
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
@@ -513,7 +524,14 @@ class CloudKitHelper {
                 return
             }
             // Flush record changes and deletions for this zone to disk 
+            try! self.backgroundContext.save()
+            
             // Write this new zone change token to disk
+            guard let changeToken: CKServerChangeToken = changeToken else { return }
+            let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
+            let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
+            UserDefaults.standard.set(data, forKey: zoneKey)
+            UserDefaults.standard.synchronize()
             
         }
         
