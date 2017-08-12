@@ -56,12 +56,58 @@ extension GroceryItems {
     }
     
     func update(using cloudKitRecord: CKRecord) {
-        self.completed = cloudKitRecord.object(forKey: "completed") as! Bool
-        self.completionDate = (cloudKitRecord.object(forKey: "completionDate") as! NSDate)
-        self.hasReminder = cloudKitRecord.object(forKey: "hasReminder") as! Bool
-        self.isRepeatedItem = cloudKitRecord.object(forKey: "isRepeatedItem") as! Bool
-        self.lastCompletionDate = (cloudKitRecord.object(forKey: "lastCompletionDate") as! NSDate)
-        self.reminderDate = (cloudKitRecord.object(forKey: "reminderDate") as! NSDate)
-        self.title = cloudKitRecord.object(forKey: "title") as! String
+        self.completed = cloudKitRecord[ckGroceryItem.completed] as! Bool
+        self.completionDate = (cloudKitRecord[ckGroceryItem.completionDate] as! NSDate)
+        self.hasReminder = cloudKitRecord[ckGroceryItem.hasReminder] as! Bool
+        self.isRepeatedItem = cloudKitRecord[ckGroceryItem.isRepeatedItem] as! Bool
+        self.lastCompletionDate = (cloudKitRecord[ckGroceryItem.lastCompletionDate] as! NSDate)
+        self.reminderDate = (cloudKitRecord[ckGroceryItem.reminderDate] as! NSDate)
+        self.title = cloudKitRecord[ckGroceryItem.title] as! String
+        self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
+        
+        try! self.managedObjectContext?.save()
+    }
+    
+    
+    func updateCKMetadata(from ckRecord: CKRecord) {
+        self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
+        try! self.managedObjectContext?.save()
+    }
+    
+    func managedObjectToNewCKRecord() -> CKRecord {
+        guard ckMetadata == nil else {
+            fatalError("CKMetaData exist, this should is not a new CKRecord")
+        }
+        
+        let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
+        let recordName = self.identifier
+        let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
+        let ckRecord = CKRecord(recordType: RecordType.GroceryItems.rawValue, recordID: recordID)
+        ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
+        ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
+        ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
+        ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
+        ckRecord[ckGroceryItem.hasReminder] = self.hasReminder as CKRecordValue
+        ckRecord[ckGroceryItem.completionDate] = self.completionDate
+        ckRecord[ckGroceryItem.completed] = self.completed as CKRecordValue
+        
+        return ckRecord
+    }
+    
+    func managedObjectToUpdatedCKRecord() -> CKRecord {
+        guard let ckMetadata = self.ckMetadata else {
+            fatalError("CKMetadata is required to update CKRecord")
+        }
+        
+        let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
+        ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
+        ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
+        ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
+        ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
+        ckRecord[ckGroceryItem.hasReminder] = self.hasReminder as CKRecordValue
+        ckRecord[ckGroceryItem.completionDate] = self.completionDate
+        ckRecord[ckGroceryItem.completed] = self.completed as CKRecordValue
+        
+        return ckRecord
     }
 }

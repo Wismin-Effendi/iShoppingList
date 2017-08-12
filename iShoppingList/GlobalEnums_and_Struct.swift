@@ -60,6 +60,12 @@ struct ckShoppingList {
 struct ckGroceryItem {
     static let title = "title"
     static let identifier = "identifier"
+    static let reminderDate = "reminderDate"
+    static let completed = "completed"
+    static let completionDate = "completionDate"
+    static let hasReminder = "hasReminder"
+    static let isRepeatedItem = "isRepeatedItem"
+    static let lastCompletionDate = "lastCompletionDate"
 }
 
 enum CloudKitZone: String {

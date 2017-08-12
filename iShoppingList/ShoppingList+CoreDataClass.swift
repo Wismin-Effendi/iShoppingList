@@ -31,7 +31,7 @@ extension ShoppingList {
         try! self.managedObjectContext?.save()
     }
     
-    func updateCKMetaData(from ckRecord: CKRecord) {
+    func updateCKMetadata(from ckRecord: CKRecord) {
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
         try! self.managedObjectContext?.save()
     }
