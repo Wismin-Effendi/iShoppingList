@@ -33,7 +33,7 @@ class CoreDataHelper {
                 let groceryItem = CoreDataUtil.getGroceryItem(identifier: identifier, moc: backgroundContext) {
                 groceryItem.update(using: ckRecord)
             } else{
-                let _ = GroceryItems.init(using: ckRecord, context: backgroundContext)
+                let _ = GroceryItems.init(using: ckRecord, backgroundContext: backgroundContext)
             }
         default: fatalError("We got unexpected type: \(ckRecord.recordType)")
         }
@@ -61,6 +61,18 @@ class CoreDataHelper {
         }
     }
     
-
+    func ckReferenceOf(shoppingList: ShoppingList) -> CKReference {
+        let recordID = shoppingList.getCKRecordID()
+        return CKReference(recordID: recordID, action: .deleteSelf)
+    }
     
+    func coreDataShoppingListFrom(ckReference: CKReference, backgroundContext: NSManagedObjectContext) -> ShoppingList {
+        let ckRecordID = ckReference.recordID
+        let (entityName, identifier) = splitIntoComponents(recordName: ckRecordID.recordName)
+        guard entityName == EntityName.ShoppingList else { fatalError("This parent ref should be ShoppingList") }
+        guard let shoppingList = CoreDataUtil.getShoppingListOf(storeIdentifier: identifier, moc: backgroundContext) else {
+            fatalError("Could not find shoppingList for \(identifier) while searching reference record.")
+        }
+        return shoppingList
+    }
 }

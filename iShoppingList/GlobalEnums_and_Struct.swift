@@ -66,6 +66,7 @@ struct ckGroceryItem {
     static let hasReminder = "hasReminder"
     static let isRepeatedItem = "isRepeatedItem"
     static let lastCompletionDate = "lastCompletionDate"
+    static let storeName = "storeName"
 }
 
 enum CloudKitZone: String {
