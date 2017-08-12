@@ -25,7 +25,7 @@ class ItemDetailsTableViewController: UITableViewController {
 
     @IBOutlet weak var completionDate: UILabel!
     
-    var item: GroceryItems!
+    var item: GroceryItem!
     
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
@@ -139,8 +139,8 @@ extension ItemDetailsTableViewController: UIPickerViewDataSource, UIPickerViewDe
 extension ItemDetailsTableViewController {
     
     fileprivate func retrieveItemDetailsAndPopulate() {
-        let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), itemIdentifier)
+        let currentItemFetch: NSFetchRequest<GroceryItem> = GroceryItem.fetchRequest()
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.identifier), itemIdentifier)
         
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)
@@ -188,7 +188,7 @@ extension ItemDetailsTableViewController {
     }
     
     
-    private func populateItemDetails(_ item: GroceryItems) {
+    private func populateItemDetails(_ item: GroceryItem) {
         titleLabel.text = item.title
         repeatSwitch.isOn = item.isRepeatedItem
         reminderSwitch.isOn = item.hasReminder

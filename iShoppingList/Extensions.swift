@@ -17,10 +17,10 @@ extension ShoppingList: ManagedObjectType {
     }
 }
 
-extension GroceryItems: ManagedObjectType {
+extension GroceryItem: ManagedObjectType {
     
     static var entityName: String {
-        return "GroceryItems"
+        return "GroceryItem"
     }
 }
 

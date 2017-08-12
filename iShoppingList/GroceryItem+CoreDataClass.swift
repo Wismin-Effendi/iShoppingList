@@ -1,5 +1,5 @@
 //
-//  GroceryItems+CoreDataClass.swift
+//  GroceryItem+CoreDataClass.swift
 //  iShoppingList
 //
 //  Created by Wismin Effendi on 7/28/17.
@@ -10,8 +10,8 @@ import Foundation
 import CoreData
 import CloudKit
 
-@objc(GroceryItems)
-public class GroceryItems: NSManagedObject, HasIdentifier {
+@objc(GroceryItem)
+public class GroceryItem: NSManagedObject, HasIdentifier {
     
     func setDefaultValuesForLocalCreation() {
         self.needsUpload = true
@@ -46,7 +46,7 @@ public class GroceryItems: NSManagedObject, HasIdentifier {
     }
 }
 
-extension GroceryItems {
+extension GroceryItem {
     
     convenience init(using cloudKitRecord: CKRecord, backgroundContext: NSManagedObjectContext) {
         self.init(context: backgroundContext)
@@ -79,9 +79,9 @@ extension GroceryItems {
         }
         
         let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
-        let recordName = EntityName.GroceryItems + "." +  self.identifier
+        let recordName = EntityName.GroceryItem + "." +  self.identifier
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
-        let ckRecord = CKRecord(recordType: RecordType.GroceryItems.rawValue, recordID: recordID)
+        let ckRecord = CKRecord(recordType: RecordType.GroceryItem.rawValue, recordID: recordID)
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate

@@ -140,16 +140,16 @@ class CloudKitService {
                 predicate = NSPredicate(format: "TRUEPREDICATE")
             }
             
-            // first process the ShoppingList then process the GroceryItems since GroceryItems has dependencies on ShoppingList
-            // We need to make sure all ShoppingList sync successfully before continuing else we will have issue when working on GroceryItems.
-            // any retry to CloudKit for ShoppoingList should finished successfully and only then could we strart the GroceryItems work.
+            // first process the ShoppingList then process the GroceryItem since GroceryItem has dependencies on ShoppingList
+            // We need to make sure all ShoppingList sync successfully before continuing else we will have issue when working on GroceryItem.
+            // any retry to CloudKit for ShoppoingList should finished successfully and only then could we strart the GroceryItem work.
             var recordType = EntityName.ShoppingList
             
             CloudKitUtil.queryCKRecordsOperation(recordType: recordType, recordZoneID: recordZoneID, predicate: predicate, recordFetchBlockClosure: recordFetchBlockClosureShoppingList) {
                 os_log("Finished processing all records")
             }
             
-            recordType = EntityName.GroceryItems
+            recordType = EntityName.GroceryItem
             
             CloudKitUtil.queryCKRecordsOperation(recordType: recordType, recordZoneID: recordZoneID, predicate: predicate, recordFetchBlockClosure: recordFetchBlockClosureShoppingList) {
                 os_log("Finished processing all records")

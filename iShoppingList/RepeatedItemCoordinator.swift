@@ -89,7 +89,7 @@ class RepeatedItemsCoordinator {
     }
     
     fileprivate func transferOneItemToActiveGroceryItems(item: WarehouseGroceryItems) {
-        let groceryItem = GroceryItems(context: backgroundContext)
+        let groceryItem = GroceryItem(context: backgroundContext)
         let storeName = item.shoppingListTitle
         if let shoppingList = CoreDataUtil.getShoppingListOf(storeName: storeName, moc: backgroundContext) {
             shoppingList.addToItems(groceryItem)

@@ -2,7 +2,7 @@
 //  ShoppingList+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 8/4/17.
+//  Created by Wismin Effendi on 8/12/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -20,8 +20,8 @@ extension ShoppingList {
     @NSManaged public var identifier: String
     @NSManaged public var localUpdate: NSDate?
     @NSManaged public var needsUpload: Bool
-    @NSManaged public var title: String
     @NSManaged public var pendingDeletion: Bool
+    @NSManaged public var title: String
     @NSManaged public var items: NSSet
 
 }
@@ -30,10 +30,10 @@ extension ShoppingList {
 extension ShoppingList {
 
     @objc(addItemsObject:)
-    @NSManaged public func addToItems(_ value: GroceryItems)
+    @NSManaged public func addToItems(_ value: GroceryItem)
 
     @objc(removeItemsObject:)
-    @NSManaged public func removeFromItems(_ value: GroceryItems)
+    @NSManaged public func removeFromItems(_ value: GroceryItem)
 
     @objc(addItems:)
     @NSManaged public func addToItems(_ values: NSSet)

@@ -16,7 +16,7 @@ class CloudKitSyncTests: XCTestCase {
     
     enum RecordType: String {
         case ShoppingList
-        case GroceryItems
+        case GroceryItem
         case WarehouseGroceryItems
     }
     

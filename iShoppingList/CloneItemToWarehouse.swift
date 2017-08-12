@@ -15,7 +15,7 @@ class CloneItemToWarehouse {
     var managedObjectContext: NSManagedObjectContext
     
     var warehouseGroceryItem: WarehouseGroceryItems
-    var prototype: GroceryItems
+    var prototype: GroceryItem
     
     init(identifier: String, moc: NSManagedObjectContext, completion: () -> ()) {
         guard let prototype = CoreDataUtil.getGroceryItem(identifier: identifier,
@@ -35,7 +35,7 @@ class CloneItemToWarehouse {
         // store shoppingList name to be use during delivery day
         warehouseGroceryItem.shoppingListTitle = prototype.storeName!.title
         
-        // set deliveryDate to be checked periodically for time to deliver (i.e. move to active GroceryItems)
+        // set deliveryDate to be checked periodically for time to deliver (i.e. move to active GroceryItem)
         warehouseGroceryItem.deliveryDate = calculateDeliveryDate() as NSDate
         
         // copy mandatory fields

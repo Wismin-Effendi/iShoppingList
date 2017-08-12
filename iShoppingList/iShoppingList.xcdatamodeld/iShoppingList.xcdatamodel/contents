@@ -3,7 +3,7 @@
     <entity name="ChangeToken" representedClassName="ChangeToken" syncable="YES">
         <attribute name="previousServerChangeToken" optional="YES" attributeType="Transformable" syncable="YES"/>
     </entity>
-    <entity name="GroceryItems" representedClassName="GroceryItems" syncable="YES">
+    <entity name="GroceryItem" representedClassName="GroceryItem" syncable="YES">
         <attribute name="archived" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="ckMetadata" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="completed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -27,7 +27,7 @@
         <attribute name="needsUpload" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="pendingDeletion" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GroceryItems" inverseName="storeName" inverseEntity="GroceryItems" syncable="YES"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GroceryItem" inverseName="storeName" inverseEntity="GroceryItem" syncable="YES"/>
     </entity>
     <entity name="WarehouseGroceryItems" representedClassName="WarehouseGroceryItems" syncable="YES">
         <attribute name="deliveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -43,7 +43,7 @@
     </entity>
     <elements>
         <element name="ChangeToken" positionX="-324" positionY="198" width="128" height="60"/>
-        <element name="GroceryItems" positionX="-522" positionY="54" width="128" height="270"/>
+        <element name="GroceryItem" positionX="-522" positionY="54" width="128" height="270"/>
         <element name="ShoppingList" positionX="63" positionY="162" width="128" height="150"/>
         <element name="WarehouseGroceryItems" positionX="34" positionY="297" width="128" height="195"/>
     </elements>

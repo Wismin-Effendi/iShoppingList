@@ -28,12 +28,12 @@ class CoreDataHelper {
             } else {
                 let _ = ShoppingList.init(using: ckRecord, context: backgroundContext)
             }
-        case EntityName.GroceryItems:
+        case EntityName.GroceryItem:
             if let identifier = ckRecord[ckGroceryItem.identifier] as? String,
                 let groceryItem = CoreDataUtil.getGroceryItem(identifier: identifier, moc: backgroundContext) {
                 groceryItem.update(using: ckRecord)
             } else{
-                let _ = GroceryItems.init(using: ckRecord, backgroundContext: backgroundContext)
+                let _ = GroceryItem.init(using: ckRecord, backgroundContext: backgroundContext)
             }
         default: fatalError("We got unexpected type: \(ckRecord.recordType)")
         }
@@ -54,7 +54,7 @@ class CoreDataHelper {
         switch entityName {
         case EntityName.ShoppingList:
             CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
-        case EntityName.GroceryItems:
+        case EntityName.GroceryItem:
             CoreDataUtil.deleteGroceryItem(identifier: identifier, moc: backgroundContext)
         default:
             fatalError("Unexpected entityName: \(entityName)")

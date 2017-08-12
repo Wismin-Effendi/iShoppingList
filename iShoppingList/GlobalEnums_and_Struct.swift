@@ -38,7 +38,7 @@ enum ItemCategory: String {
 }
 
 struct EntityName {
-    static let GroceryItems = "GroceryItems"
+    static let GroceryItem = "GroceryItem"
     static let ShoppingList = "ShoppingList"
 }
 
@@ -87,7 +87,7 @@ enum CloudKitZone: String {
 
 enum RecordType: String {
     case ShoppingList
-    case GroceryItems
+    case GroceryItem
     case WarehouseGroceryItems
 }
 

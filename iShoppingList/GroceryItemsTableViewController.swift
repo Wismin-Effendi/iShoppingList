@@ -11,8 +11,8 @@ import CoreData
 
 class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegate {
 
-    var fetchedResultsProvider: FetchedResultsProvider<GroceryItems>!
-    var dataSource: TableViewDataSource<TaskItemCell, GroceryItems>!
+    var fetchedResultsProvider: FetchedResultsProvider<GroceryItem>!
+    var dataSource: TableViewDataSource<TaskItemCell, GroceryItem>!
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
     var storeIdentifier: String!
@@ -27,8 +27,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         navigationItem.title = storeNameTitle
         let filterItemTitle = UIBarButtonItem(title: ItemsFilter.completed.rawValue, style: .plain, target: self, action: #selector(GroceryItemsTableViewController.filterItems))
         navigationItem.rightBarButtonItem = filterItemTitle
-        let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.storeName.identifier), storeIdentifier)
-        let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.pendingDeletion))
+        let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.storeName.identifier), storeIdentifier)
+        let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItem.pendingDeletion))
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
@@ -53,7 +53,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     private func populateGroceryItems(predicate: NSPredicate) {
         
-        self.fetchedResultsProvider = FetchedResultsProvider<GroceryItems>(managedObjectContext: self.managedObjectContext,
+        self.fetchedResultsProvider = FetchedResultsProvider<GroceryItem>(managedObjectContext: self.managedObjectContext,
                                                                            additionalPredicate: predicate)
         
         self.dataSource = TableViewDataSource(cellIdentifier: "GroceryItemsTableViewCell",
@@ -126,7 +126,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
             fatalError("Cannot save new item to non existing Shopping List")
         }
         
-        let groceryItem = GroceryItems(context: self.managedObjectContext)
+        let groceryItem = GroceryItem(context: self.managedObjectContext)
         shoppingList.addToItems(groceryItem)
         groceryItem.storeName = shoppingList
         groceryItem.title = title
@@ -150,10 +150,10 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         switch category {
         case .todo:
-            let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItems.completed))
+            let categoryPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItem.completed))
             combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         case .completed:
-            let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItems.completed))
+            let categoryPredicate = NSPredicate(format: "%K == YES", #keyPath(GroceryItem.completed))
             combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierAndNotPendingDeletionPredicate,categoryPredicate])
         }
         populateGroceryItems(predicate: combinedPredicate)
@@ -170,8 +170,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
 extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
     func persist(identifier: String, completed: Bool) {
-        let currentItemFetch: NSFetchRequest<GroceryItems> = GroceryItems.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItems.identifier), identifier)
+        let currentItemFetch: NSFetchRequest<GroceryItem> = GroceryItem.fetchRequest()
+        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.identifier), identifier)
         
         do {
             let results = try managedObjectContext.fetch(currentItemFetch)

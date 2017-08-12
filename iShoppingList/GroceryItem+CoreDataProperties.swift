@@ -1,8 +1,8 @@
 //
-//  GroceryItems+CoreDataProperties.swift
+//  GroceryItem+CoreDataProperties.swift
 //  iShoppingList
 //
-//  Created by Wismin Effendi on 8/4/17.
+//  Created by Wismin Effendi on 8/12/17.
 //  Copyright © 2017 iShinobi. All rights reserved.
 //
 
@@ -10,10 +10,10 @@ import Foundation
 import CoreData
 
 
-extension GroceryItems {
+extension GroceryItem {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<GroceryItems> {
-        return NSFetchRequest<GroceryItems>(entityName: "GroceryItems")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<GroceryItem> {
+        return NSFetchRequest<GroceryItem>(entityName: "GroceryItem")
     }
 
     @NSManaged public var archived: Bool
