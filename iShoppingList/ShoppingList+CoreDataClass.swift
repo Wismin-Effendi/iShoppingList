@@ -22,10 +22,10 @@ extension ShoppingList {
     }
     
     func update(using cloudKitRecord: CKRecord) {
-        self.title = cloudKitRecord["title"] as! String
+        self.title = cloudKitRecord[ckShoppingList.title] as! String
         self.needsUpload = false
-        self.identifier = cloudKitRecord["identifier"] as! String
-        self.localUpdate = (cloudKitRecord["localUpdate"] as! NSDate)
+        self.identifier = cloudKitRecord[ckShoppingList.identifier] as! String
+        self.localUpdate = (cloudKitRecord[ckShoppingList.localUpdate] as! NSDate)
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
         
         try! self.managedObjectContext?.save()
@@ -45,9 +45,9 @@ extension ShoppingList {
         let recordName = self.identifier
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         let ckRecord = CKRecord(recordType: RecordType.ShoppingList.rawValue, recordID: recordID)
-        ckRecord["title"] = self.title as CKRecordValue
-        ckRecord["identifier"] = self.identifier as CKRecordValue
-        ckRecord["localUpdate"] = self.localUpdate
+        ckRecord[ckShoppingList.title] = self.title as CKRecordValue
+        ckRecord[ckShoppingList.identifier] = self.identifier as CKRecordValue
+        ckRecord[ckShoppingList.localUpdate] = self.localUpdate
         
         return ckRecord
     }
@@ -58,9 +58,9 @@ extension ShoppingList {
         }
         
         let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
-        ckRecord["title"] = self.title as CKRecordValue
-        ckRecord["identifier"] = self.identifier as CKRecordValue
-        ckRecord["localUpdate"] = self.localUpdate
+        ckRecord[ckShoppingList.title] = self.title as CKRecordValue
+        ckRecord[ckShoppingList.identifier] = self.identifier as CKRecordValue
+        ckRecord[ckShoppingList.localUpdate] = self.localUpdate
         
         return ckRecord
     }

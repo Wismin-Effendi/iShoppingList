@@ -51,6 +51,17 @@ struct CoreDataModel {
     static let iShoppingList = "iShoppingList"
 }
 
+struct ckShoppingList {
+    static let title = "title"
+    static let identifier = "identifier"
+    static let localUpdate = "localUpdate"
+}
+
+struct ckGroceryItem {
+    static let title = "title"
+    static let identifier = "identifier"
+}
+
 enum CloudKitZone: String {
     case iShoppingListZone
     case addMeZone
