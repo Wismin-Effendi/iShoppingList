@@ -67,6 +67,12 @@ enum CloudKitZone: String {
     ]
 }
 
+enum RecordType: String {
+    case ShoppingList
+    case GroceryItems
+    case WarehouseGroceryItems
+}
+
 struct UserDefaultsKey {
     static let lastSync = "lastSync"
     static let iShoppingListZoneID = "iShoppingListZoneID"

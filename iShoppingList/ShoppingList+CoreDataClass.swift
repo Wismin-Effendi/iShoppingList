@@ -18,13 +18,50 @@ public class ShoppingList: NSManagedObject, HasIdentifier {
 extension ShoppingList {
     convenience init(using cloudKitRecord: CKRecord, context: NSManagedObjectContext) {
         self.init(context: context)
-        self.identifier = cloudKitRecord.recordID.recordName
         update(using: cloudKitRecord)
     }
     
     func update(using cloudKitRecord: CKRecord) {
-        self.title = cloudKitRecord.object(forKey: "title") as! String
+        self.title = cloudKitRecord["title"] as! String
         self.needsUpload = false
-        self.localUpdate = NSDate()
+        self.identifier = cloudKitRecord["identifier"] as! String
+        self.localUpdate = (cloudKitRecord["localUpdate"] as! NSDate)
+        self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
+        
+        try! self.managedObjectContext?.save()
+    }
+    
+    func updateCKMetaData(from ckRecord: CKRecord) {
+        self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
+        try! self.managedObjectContext?.save()
+    }
+    
+    func managedObjectToNewCKRecord() -> CKRecord {
+        guard ckMetadata == nil else {
+            fatalError("CKMetaData exist, this should is not a new CKRecord")
+        }
+        
+        let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
+        let recordName = self.identifier
+        let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
+        let ckRecord = CKRecord(recordType: RecordType.ShoppingList.rawValue, recordID: recordID)
+        ckRecord["title"] = self.title as CKRecordValue
+        ckRecord["identifier"] = self.identifier as CKRecordValue
+        ckRecord["localUpdate"] = self.localUpdate
+        
+        return ckRecord
+    }
+    
+    func managedObjectToUpdatedCKRecord() -> CKRecord {
+        guard let ckMetadata = self.ckMetadata else {
+            fatalError("CKMetaData is required to update CKRecord")
+        }
+        
+        let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
+        ckRecord["title"] = self.title as CKRecordValue
+        ckRecord["identifier"] = self.identifier as CKRecordValue
+        ckRecord["localUpdate"] = self.localUpdate
+        
+        return ckRecord
     }
 }
