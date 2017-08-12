@@ -497,10 +497,11 @@ class CloudKitHelper {
             CoreDataHelper.sharedInstance.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
         }
         
-        operation.recordWithIDWasDeletedBlock = {[unowned self] (recordID) in
+        operation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
+            print("What is this? ", someString)
             print("Record deleted:", recordID)
             // write this record deletion to memory
-             
+            CoreDataHelper.sharedInstance.deleteManagedObject(using: recordID, backgroundContext: self.backgroundContext)
         }
         
         operation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in

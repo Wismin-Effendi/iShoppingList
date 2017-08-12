@@ -39,7 +39,28 @@ class CoreDataHelper {
         }
     }
     
-    func deleteManagedObject(using ckRecordID: CKRecordID) {
-        
+    func splitIntoComponents(recordName: String) -> (entityName: String, identifier: String) {
+        guard let dotIndex = recordName.characters.index(of: ".") else {
+            fatalError("ERROR - RecordID.recordName should contain entity prefix")
+        }
+        let entityName = recordName.substring(to: dotIndex)
+        let indexAfterDot = recordName.index(dotIndex, offsetBy: 1)
+        let identifier = recordName.substring(from: indexAfterDot)
+        return (entityName: entityName, identifier: identifier)
     }
+    
+    func deleteManagedObject(using ckRecordID: CKRecordID, backgroundContext: NSManagedObjectContext) {
+        let (entityName, identifier) = splitIntoComponents(recordName: ckRecordID.recordName)
+        switch entityName {
+        case EntityName.ShoppingList:
+            CoreDataUtil.deleteShoppingList(identifier: identifier, moc: backgroundContext)
+        case EntityName.GroceryItems:
+            CoreDataUtil.deleteGroceryItem(identifier: identifier, moc: backgroundContext)
+        default:
+            fatalError("Unexpected entityName: \(entityName)")
+        }
+    }
+    
+
+    
 }

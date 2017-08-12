@@ -78,7 +78,7 @@ extension GroceryItems {
         }
         
         let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
-        let recordName = self.identifier
+        let recordName = EntityName.GroceryItems + "." +  self.identifier
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         let ckRecord = CKRecord(recordType: RecordType.GroceryItems.rawValue, recordID: recordID)
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue

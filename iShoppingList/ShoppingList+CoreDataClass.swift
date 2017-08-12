@@ -40,7 +40,7 @@ extension ShoppingList {
         }
         
         let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
-        let recordName = self.identifier
+        let recordName = EntityName.ShoppingList + "." + self.identifier
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         let ckRecord = CKRecord(recordType: RecordType.ShoppingList.rawValue, recordID: recordID)
         ckRecord[ckShoppingList.title] = self.title as CKRecordValue
