@@ -20,6 +20,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         application.registerForRemoteNotifications()
         
+        if let options: NSDictionary = launchOptions as NSDictionary? {
+            let remoteNotification = options[UIApplicationLaunchOptionsKey.remoteNotification]
+            
+            if let notification = remoteNotification {
+                self.application(application, didReceiveRemoteNotification: notification as! [AnyHashable : Any], fetchCompletionHandler: { (result) in
+                    
+                })
+            }
+        }
+        
         guard let nc = self.window?.rootViewController as? UINavigationController else {
             fatalError("RootViewController not found")
         }

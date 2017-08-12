@@ -103,10 +103,11 @@ class CloudKitHelper {
     
     // Singleton
     static var sharedInstance = CloudKitHelper()
+
+    let backgroundContext: NSManagedObjectContext
     
     private init() {
-        
-       // confirmCustomZoneAndSubscriptions()
+        backgroundContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).newBackgroundContext()
         
     }
     
@@ -431,12 +432,11 @@ class CloudKitHelper {
             // write this zone deletion to memory
         }
         
-        operation.changeTokenUpdatedBlock = {[weak self] (token) in
+        operation.changeTokenUpdatedBlock = {[unowned self] (token) in
             // Flush zone deletion for this database to disk 
             // Write this new database change token to memory 
-            guard let strongSelf = self else { return }
             
-            strongSelf.databaseChangeToken = token
+            self.databaseChangeToken = token
             
             let data = NSKeyedArchiver.archivedData(withRootObject: token)
             UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
@@ -450,19 +450,19 @@ class CloudKitHelper {
                 return
             }
             
-            // Flush zone deletions for this database to disk 
+            // Flush zone deletions for this database to disk
             // Write this new database change token to memory
+            if let token = token {
+                let data = NSKeyedArchiver.archivedData(withRootObject: token)
+                UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
+            }
             
-            guard let token = token else { return }
-            
-            let data = NSKeyedArchiver.archivedData(withRootObject: token)
-            UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
-        }
-        
-        self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) { 
-            // Flush in memory database change token to disk
-            
-            completion()
+            self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) {
+                // Flush in memory database change token to disk
+
+                
+                completion()
+            }
         }
         
     }
