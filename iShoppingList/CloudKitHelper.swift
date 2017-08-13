@@ -363,13 +363,10 @@ class CloudKitHelper {
     
     }
     
-    func fetchOfflineServerChanges() {
+    func fetchOfflineServerChanges(completion: @escaping () -> Void) {
         print(self.createdCustomZone)
         createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
-            //if self.createdCustomZone {
-                self.fetchChanges(in: .private) {}
-            //   self.fetchChanges(in: .shared) {}
-            // }
+            self.fetchChanges(in: .private, completion: completion)
         }
     }
     

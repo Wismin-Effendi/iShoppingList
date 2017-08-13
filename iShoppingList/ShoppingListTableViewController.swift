@@ -22,10 +22,26 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupRefreshControl()
         populateShoppingLists()
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to load messages")
+        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.fetchRemote), for: .valueChanged)
+        tableView.addSubview(refreshControl!)
+    }
+    
+    func fetchRemote() {
+        let group = DispatchGroup()
+        group.enter()
+        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: { group.leave() })
+        let _ = group.wait(timeout: DispatchTime.now() + 5)
+        refreshControl!.endRefreshing()
     }
 
     private func populateShoppingLists() {

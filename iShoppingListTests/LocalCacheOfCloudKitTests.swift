@@ -46,7 +46,9 @@ class LocalCacheOfCloudKitTests: XCTestCase {
     }
     
     func testGetUpdateFromCloudKit() {
-        CloudKitHelper.sharedInstance.fetchOfflineServerChanges()
-        sleep(5)
+        let group = DispatchGroup()
+        group.enter()
+        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: { group.leave() })
+        group.wait(timeout: DispatchTime.now() + 5)
     }
 }

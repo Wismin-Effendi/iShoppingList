@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import CloudKit
+import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -57,8 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        CloudKitHelper.sharedInstance.fetchOfflineServerChanges()
-        CloudKitHelper.sharedInstance.saveLocalChangesToCloudKit()
+        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: { os_log("finished fetching")})
         runTransferTodaysItemFromWarehouseToActiveGroceryItems()
     }
 
@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Receive Notification 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        print("Receive notification")
+        os_log("Receive notification")
         
         let dict = userInfo as! [String: NSObject]
         
@@ -83,6 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CKDatabaseNotification else { return }
         
         CloudKitHelper.sharedInstance.fetchChanges(in: notification.databaseScope) {
+            os_log("inside completion handler for fetch changes")
             completionHandler(.newData)
         }
     }
