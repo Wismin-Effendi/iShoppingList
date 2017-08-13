@@ -56,6 +56,9 @@ class CloudKitHelper {
     
     let zoneID: CKRecordZoneID = CloudKitZone.iShoppingListZone.recordZoneID()
     
+    var saveToCloudKitOperation: CKModifyRecordsOperation!
+    var fetchDatabaseChangesoperation: CKFetchDatabaseChangesOperation!
+    var fetchRecordZoneChangesoperation: CKFetchRecordZoneChangesOperation!
     
     var databaseChangeToken: CKServerChangeToken? = nil
     
@@ -423,17 +426,18 @@ class CloudKitHelper {
         print("are we here..?")
         group.enter()
         
-        let operation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
+        fetchDatabaseChangesoperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
+        fetchDatabaseChangesoperation.addDependency(saveToCloudKitOperation)
         
-        operation.recordZoneWithIDChangedBlock = { (zoneID) in
+        fetchDatabaseChangesoperation.recordZoneWithIDChangedBlock = { (zoneID) in
             changedZoneIDs.append(zoneID)
         }
         
-        operation.recordZoneWithIDWasDeletedBlock = { (zoneID) in
+        fetchDatabaseChangesoperation.recordZoneWithIDWasDeletedBlock = { (zoneID) in
             // write this zone deletion to memory
         }
         
-        operation.changeTokenUpdatedBlock = {[unowned self] (token) in
+        fetchDatabaseChangesoperation.changeTokenUpdatedBlock = {[unowned self] (token) in
             // Flush zone deletion for this database to disk 
             // Write this new database change token to memory 
             
@@ -445,7 +449,7 @@ class CloudKitHelper {
         }
         
         
-        operation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
+        fetchDatabaseChangesoperation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
             if let error = error {
                 print("Error during fetch database changes operation", error)
                 completion()
@@ -472,7 +476,7 @@ class CloudKitHelper {
             
         }
         print("are we here...?")
-        database.add(operation)
+        database.add(fetchDatabaseChangesoperation)
         
         print("We just add the operation...")
         print("Should took some time..")
@@ -506,22 +510,22 @@ class CloudKitHelper {
             optionsByRecordZoneID[zoneID] = options
         }
         
-        let operation = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIDs, optionsByRecordZoneID: optionsByRecordZoneID)
+        fetchRecordZoneChangesoperation = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIDs, optionsByRecordZoneID: optionsByRecordZoneID)
         
-        operation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
+        fetchRecordZoneChangesoperation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
             print("Record changed:", ckRecord)
             // Write this record change to memory 
             CoreDataHelper.sharedInstance.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
         }
         
-        operation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
+        fetchRecordZoneChangesoperation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
             print("What is this? ", someString)
             print("Record deleted:", recordID)
             // write this record deletion to memory
             CoreDataHelper.sharedInstance.deleteManagedObject(using: recordID, backgroundContext: self.backgroundContext)
         }
         
-        operation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
+        fetchRecordZoneChangesoperation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
             // Flush record changes and deletions for this zone to disk
             try! self.backgroundContext.save()
             
@@ -534,7 +538,7 @@ class CloudKitHelper {
             
         }
         
-        operation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
+        fetchRecordZoneChangesoperation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
             
             if let error = error {
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
@@ -553,7 +557,7 @@ class CloudKitHelper {
             
         }
         
-        operation.fetchRecordZoneChangesCompletionBlock = { (error) in
+        fetchRecordZoneChangesoperation.fetchRecordZoneChangesCompletionBlock = { (error) in
             if let error = error {
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
             }
@@ -561,7 +565,7 @@ class CloudKitHelper {
             completion()
         }
         
-        database.add(operation)
+        database.add(fetchRecordZoneChangesoperation)
     }
 
     
@@ -596,10 +600,10 @@ class CloudKitHelper {
         let recordIDsToDelete = CoreDataHelper.sharedInstance.getRecordIDsForDeletion(backgroundContext: backgroundContext)
         
         group.enter()
-        let operation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
-        operation.isAtomic = true
-        operation.savePolicy = .changedKeys
-        operation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
+        saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
+        saveToCloudKitOperation.isAtomic = true
+        saveToCloudKitOperation.savePolicy = .changedKeys
+        saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
             guard error == nil else {
                 let error = error as! CKError
                 os_log("Error code: %d", error.errorCode)
@@ -611,7 +615,7 @@ class CloudKitHelper {
             CoreDataHelper.sharedInstance.postSuccessfulDeletionOnCloudKit(backgroundContext: self.backgroundContext)
             group.leave()
         }
-        privateDB.add(operation)
+        privateDB.add(saveToCloudKitOperation)
         let result = group.wait(timeout: DispatchTime.now() + 5)
         switch result {
         case .success:

@@ -25,24 +25,29 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupRefreshControl()
         populateShoppingLists()
+        syncToCloudKit()
+        setupRefreshControl()
+    }
+    
+    func syncToCloudKit() {
+        CloudKitHelper.sharedInstance.saveLocalChangesToCloudKit()
+        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: {
+            DispatchQueue.main.async {[unowned self] in
+                self.populateShoppingLists()
+                self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
+            }
+        })
     }
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
         refreshControl!.attributedTitle = NSAttributedString(string: "Pull to load messages")
-        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.fetchRemote), for: .valueChanged)
+        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
     
-    func fetchRemote() {
-        let group = DispatchGroup()
-        group.enter()
-        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: { group.leave() })
-        let _ = group.wait(timeout: DispatchTime.now() + 5)
-        refreshControl!.endRefreshing()
-    }
 
     private func populateShoppingLists() {
         

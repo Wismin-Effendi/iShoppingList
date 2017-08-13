@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        setupCloudKit()
         application.registerForRemoteNotifications()
         
         if let options: NSDictionary = launchOptions as NSDictionary? {
@@ -58,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: { os_log("finished fetching")})
         runTransferTodaysItemFromWarehouseToActiveGroceryItems()
     }
 
@@ -93,6 +93,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         coreDataStack.performBackgroundTask { (backgroundContext) in
             RepeatedItemsCoordinator.shared(backgroundContext: backgroundContext).transferTodayItemsToActiveGroceryItems()
         }
+    }
+    
+    private func setupCloudKit() {
+        // Zones compliance
+        CloudKitHelper.sharedInstance.setCustomZonesCompliance()
+        
+        // Postpone this for now.
+        // Fetch subscriptions
+        // let ckHelper = CloudKitHelper.sharedInstance
+        // ckHelper.createDBSubscription()
+        // ckHelper.fetchAllDatabaseSubscriptions()
+        
     }
 }
 
