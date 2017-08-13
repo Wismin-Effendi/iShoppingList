@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let coreDataStack = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList)
-
+    let cloudKitHelper: CloudKitHelper = CloudKitHelper.sharedInstance
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         setupCloudKit()
@@ -54,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        CloudKitHelper.sharedInstance.saveLocalChangesToCloudKit()
+        cloudKitHelper.saveLocalChangesToCloudKit()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -82,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let notification: CKDatabaseNotification = CKNotification(fromRemoteNotificationDictionary: dict) as?
             CKDatabaseNotification else { return }
         
-        CloudKitHelper.sharedInstance.fetchChanges(in: notification.databaseScope) {
+        cloudKitHelper.fetchChanges(in: notification.databaseScope) {
             os_log("inside completion handler for fetch changes")
             completionHandler(.newData)
         }
@@ -97,14 +98,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupCloudKit() {
         // Zones compliance
-        CloudKitHelper.sharedInstance.setCustomZonesCompliance()
+        cloudKitHelper.setCustomZonesCompliance()
         
-        // Postpone this for now.
         // Fetch subscriptions
-        // let ckHelper = CloudKitHelper.sharedInstance
-        // ckHelper.createDBSubscription()
-        // ckHelper.fetchAllDatabaseSubscriptions()
-        
+        cloudKitHelper.createDBSubscription()
+        cloudKitHelper.fetchAllDatabaseSubscriptions()
     }
 }
 

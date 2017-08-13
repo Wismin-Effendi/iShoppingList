@@ -129,17 +129,11 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         }
         
         let groceryItem = GroceryItem(context: self.managedObjectContext)
+        groceryItem.setDefaultValuesForLocalCreation()
         shoppingList.addToItems(groceryItem)
         groceryItem.storeName = shoppingList
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString
-        groceryItem.localUpdate = NSDate()
-        groceryItem.pendingDeletion = false
-        groceryItem.isRepeatedItem = false
-        groceryItem.completed = false
-        groceryItem.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        groceryItem.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        groceryItem.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         
         do {
             try self.managedObjectContext.save()

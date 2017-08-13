@@ -11,20 +11,22 @@ import CoreData
 import CloudKit
 
 @objc(GroceryItem)
-public class GroceryItem: NSManagedObject, HasIdentifier {
+public class GroceryItem: NSManagedObject, CloudKitConvertible {
     
     func setDefaultValuesForLocalCreation() {
-        self.needsUpload = true
-        self.completed = false
         self.hasReminder =  false
-        self.pendingDeletion = false
         self.archived =  false
+        self.localUpdate = NSDate()
+        self.needsUpload = true
+        self.pendingDeletion = false
         self.isRepeatedItem = false
         self.repetitionInterval = 0
-        self.lastCompletionDate =  NSDate()
-        self.reminderDate = NSDate()
-        self.completionDate = NSDate()
-        self.localUpdate = NSDate()
+        self.completed = false
+        self.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        self.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        self.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        self.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+
     }
     
     func setDefaultValuesForLocalChange() {

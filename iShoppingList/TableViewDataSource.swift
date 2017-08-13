@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class TableViewDataSource<Cell: UITableViewCell, Model: NSManagedObject> : NSObject,
-UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObjectType{
+UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObjectType & CloudKitConvertible {
 
     var cellIdentifier: String!
     var fetchedResultsProvider: FetchedResultsProvider<Model>!

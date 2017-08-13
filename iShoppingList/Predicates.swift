@@ -20,5 +20,6 @@ class Predicates {
     static let NewGroceryItem = NSPredicate(format: "%K == nil", #keyPath(GroceryItem.ckMetadata))
     static let UpdatedGroceryItem = NSPredicate(format: "%K == YES", #keyPath(GroceryItem.needsUpload))
     static let DeletedGroceryItem = NSPredicate(format: "%K == YES", #keyPath(GroceryItem.pendingDeletion))
-    
+ 
+    static let ShoppingListNotPendingDeletion = NSPredicate(format: "%K == NO", #keyPath(ShoppingList.pendingDeletion))
 }

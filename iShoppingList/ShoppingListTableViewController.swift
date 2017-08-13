@@ -15,24 +15,28 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         case groceryItemsTableViewController = "GroceryItemsTableViewController"
     }
     
+    static let notPendingDeletionPredicate = Predicates.ShoppingListNotPendingDeletion
     
     var fetchedResultsProvider: FetchedResultsProvider<ShoppingList>!
     var dataSource: TableViewDataSource<ShoppingListCell, ShoppingList>!
     
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
-
+    
+    let cloudKitHelper: CloudKitHelper = CloudKitHelper.sharedInstance
     
     override func viewDidLoad() {
         super.viewDidLoad()
         populateShoppingLists()
         syncToCloudKit()
         setupRefreshControl()
+        // show location for MySQL file
+        print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
     }
     
     func syncToCloudKit() {
-        CloudKitHelper.sharedInstance.saveLocalChangesToCloudKit()
-        CloudKitHelper.sharedInstance.fetchOfflineServerChanges(completion: {
+        cloudKitHelper.saveLocalChangesToCloudKit()
+        cloudKitHelper.fetchOfflineServerChanges(completion: {
             DispatchQueue.main.async {[unowned self] in
                 self.populateShoppingLists()
                 self.tableView.reloadData()
@@ -49,9 +53,10 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     }
     
 
-    private func populateShoppingLists() {
+    private func populateShoppingLists(predicate: NSPredicate = notPendingDeletionPredicate) {
         
-        self.fetchedResultsProvider = FetchedResultsProvider(managedObjectContext: self.managedObjectContext)
+        self.fetchedResultsProvider = FetchedResultsProvider(managedObjectContext: self.managedObjectContext,
+                                                            additionalPredicate: predicate)
         self.dataSource = TableViewDataSource(cellIdentifier: "ShoppingListTableViewCell", tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
             cell.textLabel?.text = model.title
             cell.backgroundColor = UIColor.orange
@@ -89,9 +94,10 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     private func addNewShoppingList(title: String) {
         
         let shoppingList = ShoppingList(context: managedObjectContext)
+        shoppingList.setDefaultValuesForLocalCreation()
         shoppingList.title = title
         shoppingList.identifier = UUID().uuidString
-        shoppingList.localUpdate = NSDate()
+
         do {
             try self.managedObjectContext.save()
         } catch let error as NSError {

@@ -11,7 +11,7 @@ import CoreData
 import CloudKit
 
 @objc(ShoppingList)
-public class ShoppingList: NSManagedObject, HasIdentifier {
+public class ShoppingList: NSManagedObject, CloudKitConvertible {
 
 }
 
@@ -21,9 +21,16 @@ extension ShoppingList {
         update(using: cloudKitRecord)
     }
     
+    func setDefaultValuesForLocalCreation() {
+        self.localUpdate = NSDate()
+        self.pendingDeletion = false
+        self.needsUpload = true
+    }
+    
     func update(using cloudKitRecord: CKRecord) {
         self.title = cloudKitRecord[ckShoppingList.title] as! String
         self.needsUpload = false
+        self.pendingDeletion = false
         self.identifier = cloudKitRecord[ckShoppingList.identifier] as! String
         self.localUpdate = (cloudKitRecord[ckShoppingList.localUpdate] as! NSDate)
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)

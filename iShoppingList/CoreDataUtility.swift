@@ -59,7 +59,7 @@ class CoreDataUtil {
         return getIDsOfEntities(entity: entity, predicate: predicate, moc: moc)
     }
     
-    public static func getIDsOfEntities<E>(entity: E, predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] where E: NSManagedObject, E: HasIdentifier {
+    public static func getIDsOfEntities<E>(entity: E, predicate: NSPredicate, moc: NSManagedObjectContext) -> [String] where E: NSManagedObject, E: CloudKitConvertible {
         let entityFetch: NSFetchRequest<NSFetchRequestResult> = E.fetchRequest()
         entityFetch.predicate = predicate
         do {
