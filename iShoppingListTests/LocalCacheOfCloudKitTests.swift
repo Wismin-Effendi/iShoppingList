@@ -42,9 +42,11 @@ class LocalCacheOfCloudKitTests: XCTestCase {
  
     func testUploadShoppingListToCloudKit() {
         CloudKitHelper.sharedInstance.saveLocalChangesToCloudKit()
+        sleep(5)
     }
     
     func testGetUpdateFromCloudKit() {
         CloudKitHelper.sharedInstance.fetchOfflineServerChanges()
+        sleep(5)
     }
 }

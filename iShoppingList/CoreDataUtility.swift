@@ -349,24 +349,7 @@ class CoreDataUtil {
         completion(nil)
     }
 
-    public static func createNewGroceryItemRecord(from cloudKitRecord: CKRecord, moc: NSManagedObjectContext,
-                                                  completion: (NSError?) -> ()) {
-        guard let shoppingListIdentifier = cloudKitRecord.parent?.recordID.recordName,
-            let shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: shoppingListIdentifier, moc: moc) else {
-            fatalError("No able to fetch shoppingList for identifier: \(cloudKitRecord.parent?.recordID.recordName ?? "0000-0000")")
-        }
-        
-        let groceryItem = GroceryItem(using: cloudKitRecord, backgroundContext: moc)
-        shoppingList.addToItems(groceryItem)
-        do {
-            try moc.save()
-        } catch let error as NSError {
-            os_log("Failed to create grocery item record. %@", error.localizedDescription)
-            completion(error)
-        }
-        completion(nil)
-    }
-    
+
     public static func updateCoreDataGroceryItemRecord(_ groceryItem: GroceryItem, using cloudKitRecord: CKRecord,
                                                          moc: NSManagedObjectContext, completion: (NSError?) -> ()) {
         groceryItem.update(using: cloudKitRecord)

@@ -24,7 +24,7 @@ extension GroceryItem {
     @NSManaged public var identifier: String
     @NSManaged public var isRepeatedItem: Bool
     @NSManaged public var lastCompletionDate: NSDate?
-    @NSManaged public var localUpdate: NSDate?
+    @NSManaged public var localUpdate: NSDate
     @NSManaged public var needsUpload: Bool
     @NSManaged public var pendingDeletion: Bool
     @NSManaged public var reminderDate: NSDate?

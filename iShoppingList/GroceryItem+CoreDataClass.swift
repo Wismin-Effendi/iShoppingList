@@ -51,7 +51,7 @@ extension GroceryItem {
     convenience init(using cloudKitRecord: CKRecord, backgroundContext: NSManagedObjectContext) {
         self.init(context: backgroundContext)
         self.setDefaultValuesForRemoteCreation()
-        self.identifier = cloudKitRecord.recordID.recordName
+        self.identifier = cloudKitRecord[ckGroceryItem.identifier] as! String 
         let ckReference = cloudKitRecord[ckGroceryItem.storeName] as! CKReference
         self.storeName = CoreDataHelper.sharedInstance.coreDataShoppingListFrom(ckReference: ckReference, backgroundContext: backgroundContext)
         update(using: cloudKitRecord)
@@ -65,6 +65,7 @@ extension GroceryItem {
         self.lastCompletionDate = (cloudKitRecord[ckGroceryItem.lastCompletionDate] as! NSDate)
         self.reminderDate = (cloudKitRecord[ckGroceryItem.reminderDate] as! NSDate)
         self.title = cloudKitRecord[ckGroceryItem.title] as! String
+        self.localUpdate = (cloudKitRecord[ckGroceryItem.localUpdate] as! NSDate)
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
     }
     
@@ -83,6 +84,7 @@ extension GroceryItem {
         let recordID = CKRecordID(recordName: recordName, zoneID: recordZoneID)
         let ckRecord = CKRecord(recordType: RecordType.GroceryItem.rawValue, recordID: recordID)
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
+        ckRecord[ckGroceryItem.localUpdate] = self.localUpdate
         ckRecord[ckGroceryItem.identifier] = self.identifier as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
@@ -101,13 +103,15 @@ extension GroceryItem {
         
         let ckRecord = CloudKitHelper.decodeMetadata(from: ckMetadata as! NSData)
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
+        ckRecord[ckGroceryItem.localUpdate] = self.localUpdate
+        ckRecord[ckGroceryItem.identifier] = self.identifier as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
         ckRecord[ckGroceryItem.hasReminder] = self.hasReminder as CKRecordValue
         ckRecord[ckGroceryItem.completionDate] = self.completionDate
         ckRecord[ckGroceryItem.completed] = self.completed as CKRecordValue
-        // no need to update storeName as it's not possible
+        ckRecord[ckGroceryItem.storeName] = CoreDataHelper.sharedInstance.ckReferenceOf(shoppingList: self.storeName!)
         return ckRecord
     }
     

@@ -49,9 +49,9 @@ class CloudKitService {
         
        
         func recordFetchBlockClosureShoppingList(_ record: CKRecord) {
-            // attempt to retrieve the record by recordID.recordName as identity in Core Data so we could update later
+            // attempt to retrieve the record by identifier as identifier in Core Data so we could update later
             
-            guard let coreDataShoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: record.recordID.recordName, moc: backgroundContext) else {
+            guard let coreDataShoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: record[ckShoppingList.identifier] as! String, moc: backgroundContext) else {
                 
                 // this is valid for case of new data from CloudKit.
                 CoreDataUtil.createNewShoppingListRecord(from: record, moc: backgroundContext) { error in
@@ -82,41 +82,7 @@ class CloudKitService {
             }
         }
 
-        func recordFetchBlockClosureGroceryItems(_ ckRecord: CKRecord) {
-            // attempt to retrieve the record by recordID.recordName as identity in Core Data so we could update later
-            
-            guard let coreDataGroceryItem = CoreDataUtil.getGroceryItem(identifier: ckRecord.recordID.recordName, moc: backgroundContext) else {
-                
-                // this is valid case of new data from CloudKit.
-                CoreDataUtil.createNewGroceryItemRecord(from: ckRecord, moc: backgroundContext) { error in
-                    if error != nil {
-                        os_log("We failed to create new record in core data")
-                        fatalError("Failed to create new core data record")
-                    }
-                }
-                
-                return
-            }
-            // We are going to update the core data record here.
-            
-            // make sure we don't have needsUpload = true on the core data record. Else, show alert that
-            // we are going to override with data from CloudKit
-            if coreDataGroceryItem.needsUpload == true {
-                // we have conflict here, need to show warning that we will override.
-                os_log("Replace me with proper alert that show override...")
-                // but we are in background mode and no access to ViewController, maybe just append any alert during sync to
-                // some LocalNotification that only run once,  or to some persistence store that will be read after sync process ended.
-                // we could continue..
-            }
-            
-            CoreDataUtil.updateCoreDataGroceryItemRecord(coreDataGroceryItem, using: ckRecord, moc: backgroundContext) { error in
-                if error != nil {
-                    os_log("We failed to update record in core data")
-                    fatalError("Failed to update core data record")
-                }
-            }
-        }
-        
+          
         func runQueryCKRecordsOperation() {
             
             let predicate: NSPredicate
@@ -208,7 +174,7 @@ class CloudKitService {
             
             // try for Shopping List first then expand ...
             idsRecordsNeedsUpload = CoreDataUtil.getIDsShoppingListNeedsUpload(moc: backgroundContext)
-            let includeIDSOnlyPredicate = NSPredicate(format: "recordID.recordName IN %@", idsRecordsNeedsUpload)
+            let includeIDSOnlyPredicate = NSPredicate(format: "%K IN %@", #keyPath(ShoppingList.identifier), idsRecordsNeedsUpload)
             
             CloudKitUtil.queryCKRecords(recordType: EntityName.ShoppingList, recordZoneID: recordZoneID,
                                         predicate: includeIDSOnlyPredicate)

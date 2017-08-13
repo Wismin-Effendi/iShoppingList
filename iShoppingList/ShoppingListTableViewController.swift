@@ -70,6 +70,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         let shoppingList = ShoppingList(context: managedObjectContext)
         shoppingList.title = title
         shoppingList.identifier = UUID().uuidString
+        shoppingList.localUpdate = NSDate()
         do {
             try self.managedObjectContext.save()
         } catch let error as NSError {

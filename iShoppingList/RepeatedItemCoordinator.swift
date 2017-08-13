@@ -98,6 +98,7 @@ class RepeatedItemsCoordinator {
             groceryItem.setDefaultValuesForLocalCreation()
             groceryItem.identifier = UUID().uuidString
             groceryItem.title = item.title
+            groceryItem.localUpdate = NSDate()
             groceryItem.isRepeatedItem = item.isRepeatedItem
             groceryItem.repetitionInterval = item.repetitionInterval
             groceryItem.lastCompletionDate = item.protoCompletionDate

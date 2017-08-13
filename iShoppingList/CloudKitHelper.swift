@@ -364,11 +364,12 @@ class CloudKitHelper {
     }
     
     func fetchOfflineServerChanges() {
+        print(self.createdCustomZone)
         createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
-            if self.createdCustomZone {
+            //if self.createdCustomZone {
                 self.fetchChanges(in: .private) {}
-                self.fetchChanges(in: .public) {}
-            }
+            //   self.fetchChanges(in: .shared) {}
+            // }
         }
     }
     
@@ -405,12 +406,25 @@ class CloudKitHelper {
     
     func fetchDatabaseChanges(database: CKDatabase, databaseTokenKey: String, completion: @escaping () -> Void) {
         
+        print("we are in fetch DB change for")
+        
+        let group = DispatchGroup()
+        
         var changedZoneIDs = [CKRecordZoneID]()
         
         let changeToken: CKServerChangeToken? = {
             guard let data = UserDefaults.standard.data(forKey: ServerChangeToken.DatabaseChangeToken.rawValue) else { return nil }
             return NSKeyedUnarchiver.unarchiveObject(with: data) as? CKServerChangeToken
         }()
+        
+        if let changeToken = changeToken {
+            print(changeToken)
+        } else {
+            print("Change token is nil")
+        }
+        
+        print("are we here..?")
+        group.enter()
         
         let operation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
         
@@ -441,6 +455,8 @@ class CloudKitHelper {
                 return
             }
             
+            print("We are in fetch db changes completion block..")
+            
             // Flush zone deletions for this database to disk
             // Write this new database change token to memory
             if let token = token {
@@ -452,11 +468,25 @@ class CloudKitHelper {
             self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) {
                 // Flush in memory database change token to disk
 
-                
+                os_log("We are done with fetch zone changes....")
                 completion()
+                group.leave()
             }
+            
         }
+        print("are we here...?")
+        database.add(operation)
         
+        print("We just add the operation...")
+        print("Should took some time..")
+        
+        let result = group.wait(timeout: DispatchTime.now() + 5)
+        switch result {
+        case .success:
+            print("it is a success")
+        case .timedOut:
+            print("it is a timeout")
+        }
     }
     
     
@@ -530,6 +560,7 @@ class CloudKitHelper {
             if let error = error {
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
             }
+            print("We are good...")
             completion()
         }
         

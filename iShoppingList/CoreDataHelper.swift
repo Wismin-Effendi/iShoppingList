@@ -31,7 +31,8 @@ class CoreDataHelper {
         case EntityName.GroceryItem:
             if let identifier = ckRecord[ckGroceryItem.identifier] as? String,
                 let groceryItem = CoreDataUtil.getGroceryItem(identifier: identifier, moc: backgroundContext) {
-                groceryItem.update(using: ckRecord)
+                    print("yes, we found the record...")
+                    groceryItem.update(using: ckRecord)
             } else{
                 let _ = GroceryItem.init(using: ckRecord, backgroundContext: backgroundContext)
             }

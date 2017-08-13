@@ -157,6 +157,8 @@ extension ItemDetailsTableViewController {
         item.isRepeatedItem = repeatSwitch.isOn
         item.hasReminder = repeatSwitch.isOn
         item.reminderDate = datePicker.date as NSDate
+        item.localUpdate = NSDate()
+        item.needsUpload = true 
         
         // item.repetitionInterval is updated in pickerView delegate
         do {

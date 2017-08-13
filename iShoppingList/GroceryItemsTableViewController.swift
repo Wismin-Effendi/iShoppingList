@@ -67,6 +67,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
             cell.delegate = strongSelf   // for ItemCellCompletionStateDelegate
+            print("Title: \(model.title)")
+            print("Identifier: \(model.identifier)")
         }
         
         self.tableView.dataSource = self.dataSource
@@ -130,13 +132,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         shoppingList.addToItems(groceryItem)
         groceryItem.storeName = shoppingList
         groceryItem.title = title
-        groceryItem.identifier = UUID().uuidString        
+        groceryItem.identifier = UUID().uuidString
+        groceryItem.localUpdate = NSDate()
         groceryItem.pendingDeletion = false
         groceryItem.isRepeatedItem = false
         groceryItem.completed = false
         groceryItem.completionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         groceryItem.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
-        
+        groceryItem.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         
         do {
             try self.managedObjectContext.save()

@@ -80,7 +80,7 @@ class CloudKitSyncTests: XCTestCase {
         func processEachRecord(_ record: CKRecord) {
             print("All keys: \(record.allKeys())")
             print("RecordID: \(record.recordID.recordName)")
-            print("Modified date: \(record["localUpdate"])")
+            print("Modified date: \(record[ckShoppingList.localUpdate])")
         }
         
         // Query ShoppingList HMart and process each records

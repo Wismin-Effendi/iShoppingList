@@ -60,6 +60,7 @@ struct ckShoppingList {
 struct ckGroceryItem {
     static let title = "title"
     static let identifier = "identifier"
+    static let localUpdate = "localUpdate"
     static let reminderDate = "reminderDate"
     static let completed = "completed"
     static let completionDate = "completionDate"
