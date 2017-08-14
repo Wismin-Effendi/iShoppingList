@@ -45,7 +45,7 @@ class ItemDetailsTableViewController: UITableViewController {
         repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
         repetitionIntervalPicker.selectRow(1, inComponent: 1, animated: true)
         
-        retrieveItemDetailsAndPopulate()
+        populateItemDetails(item)
         
         let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(ItemDetailsTableViewController.persistItemDetails))
         navigationItem.rightBarButtonItem = saveButton
@@ -190,7 +190,7 @@ extension ItemDetailsTableViewController {
     }
     
     
-    private func populateItemDetails(_ item: GroceryItem) {
+    fileprivate func populateItemDetails(_ item: GroceryItem) {
         titleLabel.text = item.title
         repeatSwitch.isOn = item.isRepeatedItem
         reminderSwitch.isOn = item.hasReminder

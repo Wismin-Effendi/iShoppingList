@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 
 protocol ItemCellCompletionStateDelegate: class {
-    func persist(identifier: String, completed: Bool)
     func cloneToWarehouseIfRepeatedItem(identifier: String)
 }
 
@@ -23,7 +22,8 @@ class TaskItemCell: UITableViewCell {
     
     weak var delegate: ItemCellCompletionStateDelegate?
     
-    var itemIdentifier: String!
+    var model: GroceryItem!  // need to make this generic, for now it's concrete.
+    
     
     var completed = false {
         didSet {
@@ -34,8 +34,9 @@ class TaskItemCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-    }
 
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
@@ -44,8 +45,9 @@ class TaskItemCell: UITableViewCell {
     
     @IBAction func completionButtonTapped(_ sender: UIButton) {
         completed = !completed
-        delegate?.persist(identifier: itemIdentifier, completed: completed)
+        model.completed = completed
         print("Value of completed flag: \(completed)")
+        let itemIdentifier = model.identifier
         delegate?.cloneToWarehouseIfRepeatedItem(identifier: itemIdentifier)
     }
     

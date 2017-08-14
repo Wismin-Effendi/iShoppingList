@@ -45,6 +45,7 @@ enum ServerChangeToken: String {
 class CloudKitHelper {
 // Initializing Container 
     
+    let coreDataHelper = CoreDataHelper.sharedInstance
     let container = CKContainer.default()
     let privateDB: CKDatabase = CKContainer.default().privateCloudDatabase
     let sharedDB: CKDatabase = CKContainer.default().sharedCloudDatabase
@@ -427,7 +428,6 @@ class CloudKitHelper {
         group.enter()
         
         fetchDatabaseChangesoperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
-        fetchDatabaseChangesoperation.addDependency(saveToCloudKitOperation)
         
         fetchDatabaseChangesoperation.recordZoneWithIDChangedBlock = { (zoneID) in
             changedZoneIDs.append(zoneID)
@@ -515,14 +515,14 @@ class CloudKitHelper {
         fetchRecordZoneChangesoperation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
             print("Record changed:", ckRecord)
             // Write this record change to memory 
-            CoreDataHelper.sharedInstance.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
+            self.coreDataHelper.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
         }
         
         fetchRecordZoneChangesoperation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
             print("What is this? ", someString)
             print("Record deleted:", recordID)
             // write this record deletion to memory
-            CoreDataHelper.sharedInstance.deleteManagedObject(using: recordID, backgroundContext: self.backgroundContext)
+            self.coreDataHelper.deleteManagedObject(using: recordID, backgroundContext: self.backgroundContext)
         }
         
         fetchRecordZoneChangesoperation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
@@ -546,7 +546,10 @@ class CloudKitHelper {
                 return
             }
             // Flush record changes and deletions for this zone to disk 
-            try! self.backgroundContext.save()
+            DispatchQueue.global().async {
+                try! self.backgroundContext.save()
+            }
+            
             
             // Write this new zone change token to disk
             guard let changeToken: CKServerChangeToken = changeToken else { return }
@@ -596,11 +599,12 @@ class CloudKitHelper {
     
     func saveLocalChangesToCloudKit() {
         let group = DispatchGroup()
-        let recordsToSave = CoreDataHelper.sharedInstance.getRecordsToModify(backgroundContext: backgroundContext)
-        let recordIDsToDelete = CoreDataHelper.sharedInstance.getRecordIDsForDeletion(backgroundContext: backgroundContext)
+        let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: backgroundContext)
+        let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: backgroundContext)
         
         group.enter()
         saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
+        saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
         saveToCloudKitOperation.isAtomic = true
         saveToCloudKitOperation.savePolicy = .changedKeys
         saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
@@ -611,8 +615,8 @@ class CloudKitHelper {
                 fatalError("Failed to save localChange to CloudKit: \(error.localizedDescription)")
             }
             
-            CoreDataHelper.sharedInstance.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.backgroundContext)
-            CoreDataHelper.sharedInstance.postSuccessfulDeletionOnCloudKit(backgroundContext: self.backgroundContext)
+            self.coreDataHelper.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.backgroundContext)
+            self.coreDataHelper.postSuccessfulDeletionOnCloudKit(backgroundContext: self.backgroundContext)
             group.leave()
         }
         privateDB.add(saveToCloudKitOperation)

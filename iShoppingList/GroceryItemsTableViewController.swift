@@ -8,11 +8,13 @@
 
 import UIKit
 import CoreData
+import CloudKit
 
 class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegate {
 
     var fetchedResultsProvider: FetchedResultsProvider<GroceryItem>!
     var dataSource: TableViewDataSource<TaskItemCell, GroceryItem>!
+    var cloudKitHelper: CloudKitHelper!
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
     var storeIdentifier: String!
@@ -32,7 +34,26 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        fetchFromCloudKit()
+    }
+    
+    private func fetchFromCloudKit() {
+        cloudKitHelper.fetchOfflineServerChanges {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        uploadToCloudKit()
+    }
+    
+    private func uploadToCloudKit() {
+        cloudKitHelper.saveLocalChangesToCloudKit()
     }
     
     func filterItems(_ sender: UIBarButtonItem) {
@@ -61,8 +82,8 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
                                               fetchedResultsProvider: self.fetchedResultsProvider)
         {[weak self] cell, model in
             guard let strongSelf = self else { return }
+            cell.model = model
             cell.titleLabel?.text = model.title
-            cell.itemIdentifier = model.identifier
             cell.completed = model.completed
             cell.backgroundColor = UIColor.green
             cell.accessoryType = .detailButton
@@ -109,7 +130,9 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         detailViewController.coreDataStack = coreDataStack 
         detailViewController.managedObjectContext = managedObjectContext
-        detailViewController.itemIdentifier = tableCell.itemIdentifier
+        detailViewController.item = tableCell.model
+        
+        detailViewController.itemIdentifier = "somePlaceholder_for_now"
         
         detailViewController.modalPresentationStyle = .popover
         let popover: UIPopoverPresentationController = detailViewController.popoverPresentationController!
@@ -130,10 +153,11 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         let groceryItem = GroceryItem(context: self.managedObjectContext)
         groceryItem.setDefaultValuesForLocalCreation()
-        shoppingList.addToItems(groceryItem)
         groceryItem.storeName = shoppingList
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString
+        // We only need to set storeName with reference to ShoppingList items, no need to also add groceryItem to ShoppingList item 
+        // The CoreData would do that part for us since we have configure inverse relationship
         
         do {
             try self.managedObjectContext.save()
@@ -166,24 +190,6 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
 
 
 extension GroceryItemsTableViewController: ItemCellCompletionStateDelegate {
-    func persist(identifier: String, completed: Bool) {
-        let currentItemFetch: NSFetchRequest<GroceryItem> = GroceryItem.fetchRequest()
-        currentItemFetch.predicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.identifier), identifier)
-        
-        do {
-            let results = try managedObjectContext.fetch(currentItemFetch)
-            if let item = results.first {
-                item.completed = completed
-                if completed {
-                    item.completionDate = Date.init() as NSDate
-                    item.hasReminder = false 
-                }
-                try self.managedObjectContext.save()
-            }
-        } catch let error as NSError {
-            fatalError("Failed to save updated item. \(error.localizedDescription)")
-        }
-    }
     
     func cloneToWarehouseIfRepeatedItem(identifier: String) {
         guard let item = CoreDataUtil.getGroceryItem(identifier: identifier, moc: coreDataStack.newBackgroundContext()), item.isRepeatedItem else { return }

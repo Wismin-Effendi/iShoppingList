@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         shoppingListTVC.coreDataStack = coreDataStack
         shoppingListTVC.managedObjectContext = coreDataStack.managedObjectContext
+        shoppingListTVC.cloudKitHelper = cloudKitHelper
         
         return true
     }

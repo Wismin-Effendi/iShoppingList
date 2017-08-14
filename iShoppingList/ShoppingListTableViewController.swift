@@ -23,26 +23,43 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     var coreDataStack: CoreDataStack!
     var managedObjectContext: NSManagedObjectContext!
     
-    let cloudKitHelper: CloudKitHelper = CloudKitHelper.sharedInstance
+    var cloudKitHelper: CloudKitHelper!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         populateShoppingLists()
-        syncToCloudKit()
         setupRefreshControl()
         // show location for MySQL file
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
     }
     
-    func syncToCloudKit() {
-        cloudKitHelper.saveLocalChangesToCloudKit()
-        cloudKitHelper.fetchOfflineServerChanges(completion: {
+
+    
+    override func viewWillAppear(_ animated: Bool) {
+        fetchFromCloudKit()
+    }
+    
+    private func fetchFromCloudKit() {
+        cloudKitHelper.fetchOfflineServerChanges {
             DispatchQueue.main.async {[unowned self] in
                 self.populateShoppingLists()
                 self.tableView.reloadData()
                 self.refreshControl?.endRefreshing()
             }
-        })
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        uploadToCloudKit()
+    }
+    
+    private func uploadToCloudKit() {
+        cloudKitHelper.saveLocalChangesToCloudKit()
+    }
+    
+    func syncToCloudKit() {
+        fetchFromCloudKit()
+        uploadToCloudKit()
     }
     
     private func setupRefreshControl() {
@@ -115,6 +132,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
             groceryItemsTVC.managedObjectContext = self.managedObjectContext
             groceryItemsTVC.storeNameTitle = (sender as? UITableViewCell)?.textLabel?.text
             groceryItemsTVC.storeIdentifier = (sender as? ShoppingListCell)?.coreDataIdentifier
+            groceryItemsTVC.cloudKitHelper = self.cloudKitHelper
         }
     }
 
