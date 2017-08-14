@@ -31,12 +31,12 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         setupRefreshControl()
         // show location for MySQL file
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
-        fetchFromCloudKit()
+        syncToCloudKit()
     }
     
     
-    private func fetchFromCloudKit() {
-        cloudKitHelper.fetchOfflineServerChanges {
+    func syncToCloudKit() {
+        cloudKitHelper.syncToCloudKit {
             DispatchQueue.main.async {[unowned self] in
                 self.populateShoppingLists()
                 self.tableView.reloadData()
@@ -45,22 +45,10 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-       // uploadToCloudKit()
-    }
-    
-    private func uploadToCloudKit() {
-        cloudKitHelper.saveLocalChangesToCloudKit()
-    }
-    
-    func syncToCloudKit() {
-        fetchFromCloudKit()
-        uploadToCloudKit()
-    }
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync")
+        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync to iCloud")
         refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }

@@ -244,7 +244,13 @@ class CloudKitHelper {
             group.leave()
         }
         database.add(fetchSubscriptionOperation)
-        group.wait(timeout: DispatchTime.now() + 5)
+        let result = group.wait(timeout: DispatchTime.now() + 5)
+        switch result {
+        case .success:
+            os_log("Success fetch DB subscription")
+        case .timedOut:
+            os_log("Timeout fetch DB subscription")
+        }
     }
     
     // create subscription if not exists
@@ -353,7 +359,13 @@ class CloudKitHelper {
     
     }
     
-    func fetchOfflineServerChanges(completion: @escaping () -> Void) {
+    
+    func syncToCloudKit(fetchCompletion: @escaping () -> Void) {
+        fetchOfflineServerChanges(completion: fetchCompletion)
+        saveLocalChangesToCloudKit()
+    }
+    
+    private func fetchOfflineServerChanges(completion: @escaping () -> Void) {
         print(self.createdCustomZone)
         createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
             self.fetchChanges(in: .private, completion: completion)
@@ -395,7 +407,7 @@ class CloudKitHelper {
         
         print("we are in fetch DB change for")
         
-        let group = DispatchGroup()
+     //   let group = DispatchGroup()
         
         var changedZoneIDs = [CKRecordZoneID]()
         
@@ -410,8 +422,6 @@ class CloudKitHelper {
             print("Change token is nil")
         }
         
-        print("are we here..?")
-        group.enter()
         
         fetchDatabaseChangesoperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
         
@@ -457,23 +467,11 @@ class CloudKitHelper {
 
                 os_log("We are done with fetch zone changes....")
                 completion()
-                group.leave()
             }
             
         }
         print("are we here...?")
         database.add(fetchDatabaseChangesoperation)
-        
-        print("We just add the operation...")
-        print("Should took some time..")
-        
-        let result = group.wait(timeout: DispatchTime.now() + 15)
-        switch result {
-        case .success:
-            print("it is a success")
-        case .timedOut:
-            print("it is a timeout")
-        }
     }
     
     
@@ -588,12 +586,10 @@ class CloudKitHelper {
     
     // Mark: - To save localChanges in CoreData to CloudKit
     
-    func saveLocalChangesToCloudKit() {
-     //   let group = DispatchGroup()
+    private func saveLocalChangesToCloudKit() {
         let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: managedObjectContext)
         let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: managedObjectContext)
         
-      //  group.enter()
         saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
         saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
         saveToCloudKitOperation.isAtomic = true
@@ -612,13 +608,7 @@ class CloudKitHelper {
           //  group.leave()
         }
         privateDB.add(saveToCloudKitOperation)
-//        let result = group.wait(timeout: DispatchTime.now() + 20)
-//        switch result {
-//        case .success:
-//            os_log("Operation successful")
-//        case .timedOut:
-//            os_log("Operation timeout for saving to CloudKit")
-//        }
+
     }
 }
 

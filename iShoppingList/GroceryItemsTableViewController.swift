@@ -36,25 +36,6 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         filterItemsBy(category: ItemCategory.todo)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        //fetchFromCloudKit()
-    }
-    
-    private func fetchFromCloudKit() {
-        cloudKitHelper.fetchOfflineServerChanges {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-       // uploadToCloudKit()
-    }
-    
-    private func uploadToCloudKit() {
-        cloudKitHelper.saveLocalChangesToCloudKit()
-    }
     
     func filterItems(_ sender: UIBarButtonItem) {
         if let title = sender.title,
