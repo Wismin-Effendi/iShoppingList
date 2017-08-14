@@ -162,6 +162,9 @@ class CoreDataUtil {
         do {
             let results = try moc.fetch(groceryItemFetch)
             for result in results {
+                if let shoppingList = result.storeName {
+                    shoppingList.removeFromItems(result)
+                }
                 moc.delete(result)
                 try moc.save()
             }

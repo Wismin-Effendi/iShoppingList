@@ -89,11 +89,10 @@ class CloudKitHelper {
     // Singleton
     static var sharedInstance = CloudKitHelper()
 
-    let backgroundContext: NSManagedObjectContext
+    let managedObjectContext: NSManagedObjectContext
     
     private init() {
-        backgroundContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).newBackgroundContext()
-        
+        managedObjectContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).managedObjectContext
     }
     
     
@@ -481,7 +480,7 @@ class CloudKitHelper {
         print("We just add the operation...")
         print("Should took some time..")
         
-        let result = group.wait(timeout: DispatchTime.now() + 5)
+        let result = group.wait(timeout: DispatchTime.now() + 15)
         switch result {
         case .success:
             print("it is a success")
@@ -515,19 +514,21 @@ class CloudKitHelper {
         fetchRecordZoneChangesoperation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
             print("Record changed:", ckRecord)
             // Write this record change to memory 
-            self.coreDataHelper.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.backgroundContext)
+            self.coreDataHelper.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.managedObjectContext)
         }
         
         fetchRecordZoneChangesoperation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
             print("What is this? ", someString)
             print("Record deleted:", recordID)
             // write this record deletion to memory
-            self.coreDataHelper.deleteManagedObject(using: recordID, backgroundContext: self.backgroundContext)
+            self.coreDataHelper.deleteManagedObject(using: recordID, backgroundContext: self.managedObjectContext)
         }
         
         fetchRecordZoneChangesoperation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
             // Flush record changes and deletions for this zone to disk
-            try! self.backgroundContext.save()
+            DispatchQueue.main.async {
+                try! self.managedObjectContext.save()
+            }
             
             // Write this new zone change token to disk
             guard let changeToken: CKServerChangeToken = token else { return }
@@ -540,15 +541,18 @@ class CloudKitHelper {
         
         fetchRecordZoneChangesoperation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
             
-            if let error = error {
+            if let error = error as? CKError {
+                let errorCode = error.errorCode
+                os_log("Error on fetch record zone change with ErrorCode: %@", errorCode)
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
                 
                 return
             }
-            // Flush record changes and deletions for this zone to disk 
-            DispatchQueue.global().async {
-                try! self.backgroundContext.save()
+            
+            DispatchQueue.main.async {
+                try! self.managedObjectContext.save()
             }
+            
             
             
             // Write this new zone change token to disk
@@ -598,35 +602,36 @@ class CloudKitHelper {
     // Mark: - To save localChanges in CoreData to CloudKit
     
     func saveLocalChangesToCloudKit() {
-        let group = DispatchGroup()
-        let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: backgroundContext)
-        let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: backgroundContext)
+     //   let group = DispatchGroup()
+        let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: managedObjectContext)
+        let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: managedObjectContext)
         
-        group.enter()
+      //  group.enter()
         saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
         saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
         saveToCloudKitOperation.isAtomic = true
         saveToCloudKitOperation.savePolicy = .changedKeys
         saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
             guard error == nil else {
-                let error = error as! CKError
-                os_log("Error code: %d", error.errorCode)
-                os_log("Error dump: %@", error as CVarArg)
-                fatalError("Failed to save localChange to CloudKit: \(error.localizedDescription)")
+                os_log("Error occured during save local change to CloudKit: %s", error!.localizedDescription)
+                DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2, qos: .background, flags: DispatchWorkItemFlags.detached, execute: {
+                        self.saveLocalChangesToCloudKit()
+                })
+                return
             }
             
-            self.coreDataHelper.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.backgroundContext)
-            self.coreDataHelper.postSuccessfulDeletionOnCloudKit(backgroundContext: self.backgroundContext)
-            group.leave()
+            self.coreDataHelper.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.managedObjectContext)
+            self.coreDataHelper.postSuccessfulDeletionOnCloudKit(backgroundContext: self.managedObjectContext)
+          //  group.leave()
         }
         privateDB.add(saveToCloudKitOperation)
-        let result = group.wait(timeout: DispatchTime.now() + 5)
-        switch result {
-        case .success:
-            os_log("Operation successful")
-        case .timedOut:
-            os_log("Operation timeout for saving to CloudKit")
-        }
+//        let result = group.wait(timeout: DispatchTime.now() + 20)
+//        switch result {
+//        case .success:
+//            os_log("Operation successful")
+//        case .timedOut:
+//            os_log("Operation timeout for saving to CloudKit")
+//        }
     }
 }
 

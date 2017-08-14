@@ -31,13 +31,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         setupRefreshControl()
         // show location for MySQL file
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
-    }
-    
-
-    
-    override func viewWillAppear(_ animated: Bool) {
         fetchFromCloudKit()
     }
+    
     
     private func fetchFromCloudKit() {
         cloudKitHelper.fetchOfflineServerChanges {
@@ -50,7 +46,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        uploadToCloudKit()
+       // uploadToCloudKit()
     }
     
     private func uploadToCloudKit() {

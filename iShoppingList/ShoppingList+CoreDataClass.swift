@@ -34,12 +34,15 @@ extension ShoppingList {
         self.identifier = cloudKitRecord[ckShoppingList.identifier] as! String
         self.localUpdate = (cloudKitRecord[ckShoppingList.localUpdate] as! NSDate)
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
-        
+     
+        try! self.managedObjectContext?.save()
     }
     
     func updateCKMetadata(from ckRecord: CKRecord) {
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
         self.needsUpload = false
+        
+        try! self.managedObjectContext?.save()
     }
     
     func managedObjectToNewCKRecord() -> CKRecord {

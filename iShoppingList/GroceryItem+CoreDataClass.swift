@@ -40,7 +40,7 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
         self.localUpdate = NSDate()
     }
     
-    func setDefaultValuesForRemoteCreation() {
+    func setDefaultValuesForRemoteModify() {
         self.needsUpload = false
         self.pendingDeletion = false
         self.archived = false
@@ -52,7 +52,7 @@ extension GroceryItem {
     
     convenience init(using cloudKitRecord: CKRecord, backgroundContext: NSManagedObjectContext) {
         self.init(context: backgroundContext)
-        self.setDefaultValuesForRemoteCreation()
+        self.setDefaultValuesForRemoteModify()
         self.identifier = cloudKitRecord[ckGroceryItem.identifier] as! String 
         let ckReference = cloudKitRecord[ckGroceryItem.storeName] as! CKReference
         self.storeName = CoreDataHelper.sharedInstance.coreDataShoppingListFrom(ckReference: ckReference, backgroundContext: backgroundContext)
@@ -73,6 +73,7 @@ extension GroceryItem {
     
     
     func updateCKMetadata(from ckRecord: CKRecord) {
+        self.setDefaultValuesForRemoteModify()
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: ckRecord)
     }
     

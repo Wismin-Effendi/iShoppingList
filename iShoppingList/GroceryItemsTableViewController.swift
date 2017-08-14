@@ -37,7 +37,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        fetchFromCloudKit()
+        //fetchFromCloudKit()
     }
     
     private func fetchFromCloudKit() {
@@ -49,7 +49,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        uploadToCloudKit()
+       // uploadToCloudKit()
     }
     
     private func uploadToCloudKit() {
@@ -153,17 +153,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         
         let groceryItem = GroceryItem(context: self.managedObjectContext)
         groceryItem.setDefaultValuesForLocalCreation()
-        groceryItem.storeName = shoppingList
         groceryItem.title = title
         groceryItem.identifier = UUID().uuidString
         // We only need to set storeName with reference to ShoppingList items, no need to also add groceryItem to ShoppingList item 
         // The CoreData would do that part for us since we have configure inverse relationship
-        
-        do {
-            try self.managedObjectContext.save()
-        } catch let error as NSError {
-            fatalError("Failed to save new grocery item to core data. \(error.localizedDescription)")
-        }
+        shoppingList.addToItems(groceryItem)
+        try! self.managedObjectContext.save()
+        self.managedObjectContext.refreshAllObjects()
+    
     }
     
     private func filterItemsBy(category: ItemCategory) {
