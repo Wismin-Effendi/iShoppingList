@@ -29,19 +29,6 @@ enum ServerChangeToken: String {
 }
 
 
-// MARK: Currently we don't handle the situation where user deleted the iCloud data for the app.
-//       we still keep the UserDefaults on disk with value 'true' 
-//       Also if user remove and add back the app, the iCloud data still exist including the custom zone 
-//       and subscriptions.  So what to do here ?  we should not keep them in disk disconnected from reality
-//       instead we should fetchZoneIDs and fetchSubscriptions to find out.
-
-// In order to detect iCloud being reinitialized or it's new, we save 'recordZero' with value: zoneName of the custom zone. 
-// we tried to retrieved from iCloud default zone, it record found, means it's in persist state.
-//  No need to create customZone and  Subscriptions again.
-//  but if not exist, we will check for existence of recordZone, if exist we move on to normal flow.
-//  If also not found, then we'll create new Record Zone and new Subscriptions.
-
-
 class CloudKitHelper {
 // Initializing Container 
     

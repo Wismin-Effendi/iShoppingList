@@ -60,7 +60,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to load messages")
+        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync")
         refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
