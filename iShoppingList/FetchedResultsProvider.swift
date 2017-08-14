@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import os.log 
 
 protocol FetchedResultsProviderDelegate: class {
     func fetchedResultsProviderDidInsert(indexPath: IndexPath)
@@ -15,7 +16,7 @@ protocol FetchedResultsProviderDelegate: class {
 }
 
 class FetchedResultsProvider<T: NSManagedObject>: NSObject, NSFetchedResultsControllerDelegate
-where T: ManagedObjectType {
+where T: ManagedObjectType & CloudKitConvertible {
     
     weak var delegate: FetchedResultsProviderDelegate!
     var managedObjectContext: NSManagedObjectContext!
@@ -52,11 +53,23 @@ where T: ManagedObjectType {
     
     
     func delete(model: T) {
-        self.managedObjectContext.delete(model)
-        do {
-            try self.managedObjectContext.save()
-        } catch let error as NSError {
-            fatalError("Failed to perform managed object save after deletion. \(error.localizedDescription)")
+        var shoppingList: ShoppingList?
+        var groceryItem: GroceryItem?
+        
+        switch T.entityName {
+        case EntityName.ShoppingList:
+            shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: model.identifier, moc: self.managedObjectContext)
+            shoppingList?.pendingDeletion = true
+        case EntityName.GroceryItem:
+            groceryItem = CoreDataUtil.getGroceryItem(identifier: model.identifier, moc: self.managedObjectContext)
+            groceryItem?.pendingDeletion = true
+        default: break
+        }
+        // self.managedObjectContext.delete(model)
+        guard self.managedObjectContext.hasChanges else { return }
+            os_log("We detected the pendingDeletion update..")
+        DispatchQueue.main.async {
+            try! self.managedObjectContext.save()
         }
     }
     
