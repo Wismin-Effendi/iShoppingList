@@ -35,20 +35,20 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: 48))
         headerView.backgroundColor = UIColor.groupTableViewBackground
         
-        let textField = UITextField(frame: CGRect(x: 8, y: 4, width: headerView.frame.size.width - 16, height: 40))
+        let textField = UITextField(frame: CGRect(x: 28, y: 4, width: headerView.frame.size.width - 56, height: 40))
         textField.backgroundColor = UIColor.white
         textField.textColor = UIColor.darkGray
-        textField.layer.cornerRadius = 20.0
+        textField.layer.cornerRadius = 6.0
         textField.layer.borderWidth = 1.0
         textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.returnKeyType = UIReturnKeyType.done
         
         textField.placeholder = self.placeHolderText
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         textField.leftViewMode = .always
         textField.clearButtonMode = .always
         textField.delegate = self
-        
+        textField.becomeFirstResponder()
         headerView.addSubview(textField)
         
         self.addSubview(headerView)
