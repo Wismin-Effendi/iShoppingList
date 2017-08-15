@@ -53,22 +53,17 @@ where T: ManagedObjectType & CloudKitConvertible {
     
     
     func delete(model: T) {
-        var shoppingList: ShoppingList?
-        var groceryItem: GroceryItem?
+        var shoppingList: ShoppingList!
+        var groceryItem: GroceryItem!
         
-        // If already uploaded to iCloud then we set pendingDeletion, else just delete locally.
-        if model.needsUpload == true {
-            self.managedObjectContext.delete(model)
-        } else {
-            switch T.entityName {
-            case EntityName.ShoppingList:
-                shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: model.identifier, moc: self.managedObjectContext)
-                shoppingList?.pendingDeletion = true
-            case EntityName.GroceryItem:
-                groceryItem = CoreDataUtil.getGroceryItem(identifier: model.identifier, moc: self.managedObjectContext)
-                groceryItem?.pendingDeletion = true
-            default: break
-            }
+        switch T.entityName {
+        case EntityName.ShoppingList:
+            shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: model.identifier, moc: self.managedObjectContext)
+            shoppingList.needsUpload ?  self.managedObjectContext.delete(shoppingList) : (shoppingList.pendingDeletion = true)
+        case EntityName.GroceryItem:
+            groceryItem = CoreDataUtil.getGroceryItem(identifier: model.identifier, moc: self.managedObjectContext)
+            groceryItem.needsUpload ? self.managedObjectContext.delete(groceryItem) : (groceryItem?.pendingDeletion = true)
+        default: break
         }
         //
         guard self.managedObjectContext.hasChanges else { return }
