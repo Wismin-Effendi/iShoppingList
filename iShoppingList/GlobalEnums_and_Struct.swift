@@ -12,6 +12,7 @@ import CloudKit
 protocol CloudKitConvertible {
     var identifier: String { get }
     var pendingDeletion: Bool { get set }
+    var needsUpload: Bool { get set }
 }
 
 struct TimeIntervalConst {
