@@ -34,28 +34,26 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         syncToCloudKit()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        self.refreshControl?.endRefreshing()
-    }
-    
     func syncToCloudKit() {
         cloudKitHelper.syncToCloudKit {
             DispatchQueue.main.async {[unowned self] in
                 self.populateShoppingLists()
                 self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
             }
         }
     }
     
+    func saveToCloudKit() {
+        cloudKitHelper.savingToCloudKitOnly()
+        refreshControl?.endRefreshing()
+    }
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync to iCloud")
-        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
+        refreshControl!.attributedTitle = NSAttributedString(string: "Saving to iCloud")
+        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.saveToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
-    
 
     private func populateShoppingLists(predicate: NSPredicate = notPendingDeletionPredicate) {
         

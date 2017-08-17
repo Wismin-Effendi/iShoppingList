@@ -59,6 +59,7 @@ class CloudKitHelper {
     var createdCustomZone = false
     var subscribedToPrivateChanges = false
     var subscribedToSharedChanges = false
+    var needToFetchBeforeSave = false
     
     // we need to keep the reference for NSOperations around, so we use properties as their references
     var fetchRecordZoneOperation: CKFetchRecordZonesOperation?
@@ -221,7 +222,13 @@ class CloudKitHelper {
     
     // MARK: - Fetch from CloudKit and Save to CloudKit
     func syncToCloudKit(fetchCompletion: @escaping () -> Void) {
+        needToFetchBeforeSave = true
         fetchOfflineServerChanges(completion: fetchCompletion)
+        saveLocalChangesToCloudKit()
+    }
+    
+    func savingToCloudKitOnly() {
+        needToFetchBeforeSave = false
         saveLocalChangesToCloudKit()
     }
     
@@ -316,7 +323,7 @@ class CloudKitHelper {
             }
             
             
-            fetchDatabaseChangesOperation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
+            fetchDatabaseChangesOperation.fetchDatabaseChangesCompletionBlock = {[unowned self] (token, moreComing, error) in
                 guard error == nil else {
                     os_log("Error occured during fetch database changes operations: %s", error!.localizedDescription)
                     
@@ -522,7 +529,9 @@ class CloudKitHelper {
             let saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
             if !isRetryOperation {
                 self.saveToCloudKitOperation = saveToCloudKitOperation
-                saveToCloudKitOperation.addDependency(fetchDatabaseChangesOperation)
+                if needToFetchBeforeSave {
+                    saveToCloudKitOperation.addDependency(fetchDatabaseChangesOperation)
+                }
             } else {
                 isRetryOperation = false
             }

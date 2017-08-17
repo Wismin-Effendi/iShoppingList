@@ -35,25 +35,18 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
         setupRefreshControl()
-        syncToCloudKit()
+        saveToCloudKit()
     }
     
-    func syncToCloudKit() {
-        cloudKitHelper.syncToCloudKit {
-            DispatchQueue.main.async {[unowned self] in
-                self.populateGroceryItems(predicate: self.storeIdentifierAndNotPendingDeletionPredicate)
-                self.filterItemsBy(category: ItemCategory.todo)
-                self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
-            }
-        }
+    func saveToCloudKit() {
+        cloudKitHelper.savingToCloudKitOnly()
+        refreshControl?.endRefreshing()
     }
-    
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync to iCloud")
-        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
+        refreshControl!.attributedTitle = NSAttributedString(string: "Saving to iCloud")
+        refreshControl!.addTarget(self, action: #selector(GroceryItemsTableViewController.saveToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
     

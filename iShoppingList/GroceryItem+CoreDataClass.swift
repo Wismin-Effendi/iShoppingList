@@ -32,10 +32,11 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
     func setDefaultValuesForLocalChange() {
         self.localUpdate = NSDate()
         self.needsUpload = true
+        self.pendingDeletion = false 
     }
     
     func setForLocalDeletion() {
-        self.needsUpload = true
+        self.needsUpload = false
         self.pendingDeletion = true
         self.localUpdate = NSDate()
     }
