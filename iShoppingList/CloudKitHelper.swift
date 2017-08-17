@@ -44,31 +44,21 @@ class CloudKitHelper {
     
     let zoneID: CKRecordZoneID = CloudKitZone.iShoppingListZone.recordZoneID()
     
+    var fetchAllZonesOperations: CKFetchRecordZonesOperation!
+    var modifyRecordZonesOperation: CKModifyRecordZonesOperation!
+    var createPrivateDBSubscriptionOperation: CKModifySubscriptionsOperation!
+    var createSharedDBSubscriptionOperation: CKModifySubscriptionsOperation!
     var saveToCloudKitOperation: CKModifyRecordsOperation!
     var fetchDatabaseChangesoperation: CKFetchDatabaseChangesOperation!
     var fetchRecordZoneChangesoperation: CKFetchRecordZoneChangesOperation!
     
     var databaseChangeToken: CKServerChangeToken? = nil
+    var isRetryOperation = false
     
-    // default to `false` when there is no userDefaults for the key
-    var createdCustomZone = UserDefaults.standard.bool(forKey: CloudKitUserDefaults.createdCustomzone.rawValue) {
-        didSet {
-            UserDefaults.standard.set(createdCustomZone, forKey: CloudKitUserDefaults.createdCustomzone.rawValue)
-        }
-    }
-    
-    var subscribedToPrivateChanges = UserDefaults.standard.bool(forKey: CloudKitUserDefaults.subscribedToPrivateChanges.rawValue) {
-        didSet {
-            UserDefaults.standard.set(subscribedToSharedChanges, forKey: CloudKitUserDefaults.subscribedToPrivateChanges.rawValue)
-        }
-    }
-    
-    var subscribedToSharedChanges = UserDefaults.standard.bool(forKey: CloudKitUserDefaults.subscribedToSharedChanges.rawValue) {
-        didSet {
-            UserDefaults.standard.set(subscribedToSharedChanges, forKey: CloudKitUserDefaults.subscribedToSharedChanges.rawValue)
-        }
-    }
-    
+    // default to `false`
+    var createdCustomZone = false
+    var subscribedToPrivateChanges = false
+    var subscribedToSharedChanges = false
     
     // we need to keep the reference for NSOperations around, so we use properties as their references
     var fetchRecordZoneOperation: CKFetchRecordZonesOperation?
@@ -85,59 +75,19 @@ class CloudKitHelper {
     
     
     
-    // MARK: Modify custom zone to match CloudKitZones enums
-    // 
-    // Helper:
-    func getExistingZoneIDs() -> [CKRecordZoneID]? {
-        let group = DispatchGroup()
-        var existingZoneIDs = [CKRecordZoneID]()
-        group.enter()
-        let fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
-        fetchAllZonesOperations.fetchRecordZonesCompletionBlock = { recordZoneDict, error in
-            
-            if let error = error as? CKError {
-                
-                os_log("Need to have proper error handling here..!!")
-                
-                switch error.errorCode {
-                case CKError.internalError.rawValue:
-                    print("Internal error. Fatal")
-                case CKError.networkUnavailable.rawValue:
-                    print("Network unavailable")
-                case CKError.notAuthenticated.rawValue:
-                    print("Detected as Not authenticated to iCloud....")
-                default:
-                    break
-                }
-                
-                os_log("error code: %d", error.errorCode)
-                fatalError("Error during fetch record zone. \(error.localizedDescription)")
-            }
-            
-            existingZoneIDs = Array(recordZoneDict!.keys)
-            os_log("Existing zones: %@", existingZoneIDs.map { $0.zoneName } )
-            group.leave()
-        }
-        privateDB.add(fetchAllZonesOperations)
-        
-        let dispatchTimeoutResult = group.wait(timeout: DispatchTime.now() + 5)
-        switch dispatchTimeoutResult {
-        case .timedOut:
-            os_log("timeout during fetchAllZoneOperation")
-            return nil
-        case .success:
-            print("Finish fetchAllZoneOperation run!")
-            return existingZoneIDs
-        }
-    }
+    //MARK: - Modify custom zone to match CloudKitZones enums
+    //
     
     // main function
     func setCustomZonesCompliance() {
         // The following should run in strict order, use DispatchGroup and Wait to sync the process
-        // 1. run fetch allZone (see helper func above) 
-
+        // 1. run fetch allZone (see helper func above)
         // 2. create zonesToCreate and zonesToDelete
-        func processServerRecordZone(existingZoneIDs: [CKRecordZoneID]) -> (recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete:[CKRecordZoneID]?) {
+        
+        var recordZonesToSave: [CKRecordZone]?
+        var recordZoneIDsToDelete: [CKRecordZoneID]?
+        
+        func processServerRecordZone(existingZoneIDs: [CKRecordZoneID]) -> ([CKRecordZone]?, [CKRecordZoneID]?) {
             
             func setZonesToCreate() -> [CKRecordZone]? {
                 var recordZonesToCreate: [CKRecordZone]? = nil
@@ -161,37 +111,47 @@ class CloudKitHelper {
                 return recordZoneIDsToDelete
             }
             
-            return (recordZonesToSave: setZonesToCreate(), recordZoneIDsToDelete: setZoneIDstoDelete())
+            return (setZonesToCreate(), setZoneIDstoDelete())
         }
         
+        func fetchAndProcessRecordZones() {
+            var existingZoneIDs = [CKRecordZoneID]()
+            fetchAllZonesOperations = CKFetchRecordZonesOperation.fetchAllRecordZonesOperation()
+            fetchAllZonesOperations.fetchRecordZonesCompletionBlock = {[unowned self] recordZoneDict, error in
+                
+                guard error == nil else {
+                    os_log("Error occured during fetch record zones operation: %s", error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: self.setCustomZonesCompliance)
+                    return
+                }
+                
+                existingZoneIDs = Array(recordZoneDict!.keys)
+                os_log("Existing zones: %@", existingZoneIDs.map { $0.zoneName } )
+                (recordZonesToSave, recordZoneIDsToDelete) = processServerRecordZone(existingZoneIDs: existingZoneIDs)
+            }
+            privateDB.add(fetchAllZonesOperations)
+        }
+
         
         // 3. run modifyRecordZone operation to create and delete zone for compliance
         func modifyRecordZones(recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete: [CKRecordZoneID]?) {
             let group = DispatchGroup()
             group.enter()
-            let modifyRecordZonesOperation = CKModifyRecordZonesOperation(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
-            modifyRecordZonesOperation.modifyRecordZonesCompletionBlock = { modifiedRecordZones, deletedRecordZoneIDs, error in
+            modifyRecordZonesOperation = CKModifyRecordZonesOperation(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
+            modifyRecordZonesOperation.addDependency(fetchAllZonesOperations)
+            if isRetryOperation { isRetryOperation = false } // need to reset the flag eventhough we don't use it here
+            modifyRecordZonesOperation.modifyRecordZonesCompletionBlock = {[unowned self] modifiedRecordZones, deletedRecordZoneIDs, error in
                 
                 os_log("--CKModifyRecordZonesOperation.modifyRecordZonesOperation")
 
-                if let error = error as? CKError {
+                guard error == nil else {
+                    os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
                     
-                    os_log("Need to have proper error handling here..!!")
-
-                    switch error.errorCode {
-                    case CKError.internalError.rawValue:
-                        print("Internal error. Fatal")
-                    case CKError.networkUnavailable.rawValue:
-                        print("Network unavailable")
-                    case CKError.notAuthenticated.rawValue:
-                        print("Detected as Not authenticated to iCloud....")
-                    default:
-                        break
-                    }
-                    
-                    os_log("error code: %d", error.errorCode)
-                    fatalError("Modify RecordZonesOperation failed: \(error.localizedDescription)")
+                    self.handlingCKOperationError(of: error!, retryableFunction: self.setCustomZonesCompliance)
+                    return
                 }
+                
                 
                 if let modifiedRecordZones = modifiedRecordZones {
                     modifiedRecordZones.forEach { os_log("Added recordZone: %@", $0) }
@@ -201,165 +161,63 @@ class CloudKitHelper {
                     deletedRecordZoneIDs.forEach { os_log("Deleted zoneID: %@", $0) }
                 }
                 
-                group.leave()
+                self.createdCustomZone = true
+                self.isRetryOperation = false
             }
             privateDB.add(modifyRecordZonesOperation)
-            
-            let dispatchTimeoutResult = group.wait(timeout: DispatchTime.now() + 5)
-            switch dispatchTimeoutResult {
-            case .timedOut:
-                os_log("timeout during modifyRecordZonesOperation")
-            case .success:
-                print("Finish modifyRecordZonesOperation run!")
-            }
         }
         
-        if let existingZoneIDs = getExistingZoneIDs() {
-            let (recordZonesToSave, recordZoneIDsToDelete) = processServerRecordZone(existingZoneIDs: existingZoneIDs)
-            if  recordZonesToSave != nil || recordZoneIDsToDelete != nil {
-                modifyRecordZones(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
-            }
-            createdCustomZone = true
-        }
+        fetchAndProcessRecordZones()
+        modifyRecordZones(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
+        
     }
     
     
-    // MARK: Subcribing to Change Notification 
-    func fetchAllDatabaseSubscriptions() {
-        fetchDatabaseSubscriptions(database: privateDB)
-        fetchDatabaseSubscriptions(database: sharedDB)
-    }
-    
-    func fetchDatabaseSubscriptions(database: CKDatabase) {
-        let group = DispatchGroup()
-        group.enter()
-        let fetchSubscriptionOperation = CKFetchSubscriptionsOperation.fetchAllSubscriptionsOperation()
-        fetchSubscriptionOperation.fetchSubscriptionCompletionBlock = { subscriptions, error in
-            guard error == nil else {
-                fatalError("Fetch subscription failed: \(error.debugDescription)")
-            }
-            
-            let subscriptionIDs = Array(subscriptions!.keys)
-            subscriptionIDs.forEach { os_log("Subscription ID: %@", $0) }
-            group.leave()
-        }
-        database.add(fetchSubscriptionOperation)
-        let result = group.wait(timeout: DispatchTime.now() + 5)
-        switch result {
-        case .success:
-            os_log("Success fetch DB subscription")
-        case .timedOut:
-            os_log("Timeout fetch DB subscription")
-        }
-    }
-    
+    // MARK: - Subcribing to Change Notification
     // create subscription if not exists
     func createDBSubscription() {
         subscribedToPrivateChanges = false
         subscribedToSharedChanges = false
 
-        let group = DispatchGroup()
-
         print("create private")
-        group.enter()
-        let createSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
-        createSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-            if error == nil { self.subscribedToPrivateChanges = true }
-            else {
-                fatalError("failed to create private subscription. \(error.debugDescription)")
-            }
-            group.leave()
+        createPrivateDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
+        if !isRetryOperation {
+            createPrivateDBSubscriptionOperation.addDependency(modifyRecordZonesOperation)
+        } else {
+            isRetryOperation = false
         }
-        privateDB.add(createSubscriptionOperation)
+        createPrivateDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+            guard error == nil else {
+                os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
+                
+                self.handlingCKOperationError(of: error!, retryableFunction: self.createDBSubscription)
+                return
+            }
+            
+            self.subscribedToPrivateChanges = true
+
+        }
+        privateDB.add(createPrivateDBSubscriptionOperation)
     
         print("create shared")
-        group.enter()
-        let createSharedSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
-        createSharedSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-            if error == nil { self.subscribedToSharedChanges = true }
-            else {
-                fatalError("failed to create shared subscription. \(error.debugDescription)")
+        createSharedDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
+        createSharedDBSubscriptionOperation.addDependency(createPrivateDBSubscriptionOperation)
+        createSharedDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+            guard error == nil else {
+                os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
+                
+                self.handlingCKOperationError(of: error!, retryableFunction: self.createDBSubscription)
+                return
             }
-            group.leave()
+            self.subscribedToSharedChanges = true
+            
         }
-        sharedDB.add(createSharedSubscriptionOperation)
-        let result = group.wait(timeout: DispatchTime.now() + 5)
-        switch result {
-        case .timedOut:
-            os_log("Timed out on shared")
-        case .success:
-            os_log("Success on shared")
-        }
+        sharedDB.add(createSharedDBSubscriptionOperation)
+
     }
     
     
-    /// Don't forget to call  synchronize()  on UserDefaults after update / set
-    
-    func confirmChangeNotificationSubscriptions() {
-        
-        func fetchAllSubscriptions() {
-            let group = DispatchGroup()
-            let fetchSubscriptionOperation = CKFetchSubscriptionsOperation.fetchAllSubscriptionsOperation()
-            group.enter()
-            fetchSubscriptionOperation.fetchSubscriptionCompletionBlock = { subscriptions, error in
-                guard error == nil else {
-                    fatalError("Fetch subscription failed: \(error.debugDescription)")
-                }
-                
-                let subscriptionIDs = Array(subscriptions!.keys)
-                subscriptionIDs.forEach { os_log("Subscription ID: %@", $0) }
-                group.leave()
-            }
-            privateDB.add(fetchSubscriptionOperation)
-            group.wait(timeout: DispatchTime.now() + 5)
-        }
-        
-        // create subscription if not exists
-        func createDBSubscription() {
-            createPrivateDBSubscription()
-            createSharedDBSubscription()
-        }
-        
-        func createPrivateDBSubscription() {
-            if !subscribedToPrivateChanges {
-                let createSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
-                
-                createSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-                    if error == nil { self.subscribedToPrivateChanges = true }
-                    else {
-                        fatalError("failed to create private subscription. \(error.debugDescription)")
-                    }
-                }
-                privateDB.add(createSubscriptionOperation)
-            }
-        }
-        
-        func createSharedDBSubscription() {
-            if !subscribedToPrivateChanges {
-                let createSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
-                
-                createSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-                    if error == nil { self.subscribedToSharedChanges = true }
-                    else {
-                        fatalError("failed to create private subscription. \(error.debugDescription)")
-                    }
-                }
-                privateDB.add(createSubscriptionOperation)
-            }
-        }
-    
-        func fetchOfflineServerChanges() {
-            createdZoneGroup.notify(queue: DispatchQueue.global()) { [unowned self] in
-                if self.createdCustomZone {
-                    self.fetchChanges(in: .private) {}
-                    self.fetchChanges(in: .public) {}
-                }
-            }
-        }
-    
-    }
-    
-    
+    // MARK: - Fetch from CloudKit and Save to CloudKit
     func syncToCloudKit(fetchCompletion: @escaping () -> Void) {
         fetchOfflineServerChanges(completion: fetchCompletion)
         saveLocalChangesToCloudKit()
@@ -424,6 +282,9 @@ class CloudKitHelper {
         
         
         fetchDatabaseChangesoperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
+        if !subscribedToPrivateChanges {
+            fetchDatabaseChangesoperation.addDependency(createPrivateDBSubscriptionOperation)
+        }
         
         fetchDatabaseChangesoperation.recordZoneWithIDChangedBlock = { (zoneID) in
             changedZoneIDs.append(zoneID)
@@ -448,6 +309,13 @@ class CloudKitHelper {
         fetchDatabaseChangesoperation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
             if let error = error {
                 print("Error during fetch database changes operation", error)
+                completion()
+                return
+            }
+            guard error == nil else {
+                os_log("Error occured during fetch database changes operations: %s", error!.localizedDescription)
+                
+                self.handlingCKOperationError(of: error!, retryableFunction: self.saveLocalChangesToCloudKit)
                 completion()
                 return
             }
@@ -552,6 +420,7 @@ class CloudKitHelper {
         fetchRecordZoneChangesoperation.fetchRecordZoneChangesCompletionBlock = { (error) in
             if let error = error {
                 print("Error fetching zone changes for \(databaseTokenKey) database:", error)
+                print("Inside fetch record zone changes operation")
             }
             print("We are good...")
             completion()
@@ -560,6 +429,7 @@ class CloudKitHelper {
         database.add(fetchRecordZoneChangesoperation)
     }
 
+    // MARK: - General helper
     
     static func encodeMetadata(of cloudKitRecord: CKRecord) -> NSData {
         let data = NSMutableData()
@@ -583,23 +453,57 @@ class CloudKitHelper {
         return record
     }
     
+    private func retryCKOperation(of error: CKError, f: @escaping () -> Void) {
+        if let retryAfter = error.userInfo[CKErrorRetryAfterKey] as? Double {
+            let delayTime = DispatchTime.now() + retryAfter
+            DispatchQueue.global().asyncAfter(deadline: delayTime, execute: f)
+        }
+    }
     
-    // Mark: - To save localChanges in CoreData to CloudKit
+    private func handlingCKOperationError(of error: Error, retryableFunction: @escaping () -> Void) {
+        isRetryOperation = true
+        if let error = error as? CKError {
+            let errorCode = error.errorCode
+            let cloudKitError = CloudKitError(rawValue: errorCode)!
+            if cloudKitError.isFatalError() {
+                os_log("We got fatal error: %@", cloudKitError.description)
+            } else if cloudKitError.isRetryCase() {
+                os_log("We got retryable ")
+                isRetryOperation = true
+                retryCKOperation(of: error, f: retryableFunction)
+            } else {
+                os_log("We got neither fatal nor retryable CKError: %@", cloudKitError.description)
+            }
+        } else {
+            // Other error before reaching CK layer
+            // e.g. Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.cloudd" UserInfo={NSDebugDescription=connection to service named com.apple.cloudd}
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2, qos: .background, flags: DispatchWorkItemFlags.detached, execute: {
+                    retryableFunction()
+            })
+        }
+    }
     
+    //MARK: - To save localChanges in CoreData to CloudKit
+
+
     private func saveLocalChangesToCloudKit() {
         let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: managedObjectContext)
         let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: managedObjectContext)
         
         saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
-        saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
+        if !isRetryOperation {
+            saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
+        } else {
+            isRetryOperation = false
+        }
+        
         saveToCloudKitOperation.isAtomic = true
         saveToCloudKitOperation.savePolicy = .changedKeys
         saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
             guard error == nil else {
                 os_log("Error occured during save local change to CloudKit: %s", error!.localizedDescription)
-                DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2, qos: .background, flags: DispatchWorkItemFlags.detached, execute: {
-                        self.saveLocalChangesToCloudKit()
-                })
+                
+                self.handlingCKOperationError(of: error!, retryableFunction: self.saveLocalChangesToCloudKit)
                 return
             }
             

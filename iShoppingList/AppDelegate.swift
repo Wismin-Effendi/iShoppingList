@@ -105,7 +105,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Fetch subscriptions
         cloudKitHelper.createDBSubscription()
-        cloudKitHelper.fetchAllDatabaseSubscriptions()
     }
 }
 

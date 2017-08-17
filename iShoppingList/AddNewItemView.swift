@@ -48,7 +48,6 @@ class AddNewItemView: UIView, UITextFieldDelegate {
         textField.leftViewMode = .always
         textField.clearButtonMode = .always
         textField.delegate = self
-        textField.becomeFirstResponder()
         headerView.addSubview(textField)
         
         self.addSubview(headerView)
@@ -56,12 +55,12 @@ class AddNewItemView: UIView, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
+        textField.resignFirstResponder()
         let text = textField.text!
+        guard text != "" else { return true }
         
         self.addNewItemViewClosure(text)
         textField.text = ""
-        
         return true
     }
     
