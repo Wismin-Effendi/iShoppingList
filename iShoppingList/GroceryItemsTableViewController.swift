@@ -34,6 +34,27 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
         populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
         filterItemsBy(category: ItemCategory.todo)
+        setupRefreshControl()
+        syncToCloudKit()
+    }
+    
+    func syncToCloudKit() {
+        cloudKitHelper.syncToCloudKit {
+            DispatchQueue.main.async {[unowned self] in
+                self.populateGroceryItems(predicate: self.storeIdentifierAndNotPendingDeletionPredicate)
+                self.filterItemsBy(category: ItemCategory.todo)
+                self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
+            }
+        }
+    }
+    
+    
+    private func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl!.attributedTitle = NSAttributedString(string: "Pull to sync to iCloud")
+        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
+        tableView.addSubview(refreshControl!)
     }
     
     
