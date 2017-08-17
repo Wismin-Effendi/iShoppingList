@@ -73,7 +73,9 @@ class CloudKitHelper {
     }
     
     
-    
+    func sayHello() {
+        print("Hello world")
+    }
     
     //MARK: - Modify custom zone to match CloudKitZones enums
     //
@@ -136,8 +138,6 @@ class CloudKitHelper {
         
         // 3. run modifyRecordZone operation to create and delete zone for compliance
         func modifyRecordZones(recordZonesToSave: [CKRecordZone]?, recordZoneIDsToDelete: [CKRecordZoneID]?) {
-            let group = DispatchGroup()
-            group.enter()
             modifyRecordZonesOperation = CKModifyRecordZonesOperation(recordZonesToSave: recordZonesToSave, recordZoneIDsToDelete: recordZoneIDsToDelete)
             modifyRecordZonesOperation.addDependency(fetchAllZonesOperations)
             if isRetryOperation { isRetryOperation = false } // need to reset the flag eventhough we don't use it here

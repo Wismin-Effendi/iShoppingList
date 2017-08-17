@@ -101,6 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupCloudKit() {
         // Zones compliance
+        cloudKitHelper.sayHello()
         cloudKitHelper.setCustomZonesCompliance()
         
         // Fetch subscriptions
