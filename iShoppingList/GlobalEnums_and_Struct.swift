@@ -139,8 +139,9 @@ enum CloudKitError: Int  {
         switch self {
         case .CKErrorZoneBusy, .CKErrorServiceUnavailable, .CKErrorRequestRateLimited:
             return true
-        default:
-            return false
+        case .CKErrorUserDeletedZone:
+            return true   // should be caught by setCustomZonesCompliance, so it's okay to retry
+        default: return false
         }
     }
     
