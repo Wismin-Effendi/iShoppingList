@@ -49,8 +49,8 @@ class CloudKitHelper {
     var createPrivateDBSubscriptionOperation: CKModifySubscriptionsOperation!
     var createSharedDBSubscriptionOperation: CKModifySubscriptionsOperation!
     var saveToCloudKitOperation: CKModifyRecordsOperation!
-    var fetchDatabaseChangesoperation: CKFetchDatabaseChangesOperation!
-    var fetchRecordZoneChangesoperation: CKFetchRecordZoneChangesOperation!
+    var fetchDatabaseChangesOperation: CKFetchDatabaseChangesOperation!
+    var fetchRecordZoneChangesOperation: CKFetchRecordZoneChangesOperation!
     
     var databaseChangeToken: CKServerChangeToken? = nil
     var isRetryOperation = false
@@ -72,10 +72,7 @@ class CloudKitHelper {
         managedObjectContext = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList).managedObjectContext
     }
     
-    
-    func sayHello() {
-        print("Hello world")
-    }
+
     
     //MARK: - Modify custom zone to match CloudKitZones enums
     //
@@ -179,41 +176,46 @@ class CloudKitHelper {
         subscribedToPrivateChanges = false
         subscribedToSharedChanges = false
 
-        print("create private")
-        createPrivateDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
-        if !isRetryOperation {
-            createPrivateDBSubscriptionOperation.addDependency(modifyRecordZonesOperation)
-        } else {
-            isRetryOperation = false
-        }
-        createPrivateDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-            guard error == nil else {
-                os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
-                
-                self.handlingCKOperationError(of: error!, retryableFunction: self.createDBSubscription)
-                return
+        func WrapperCreateDBSubscription() {
+            print("create private")
+            let createPrivateDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: privateSubscriptionID)
+            if !isRetryOperation {
+                self.createPrivateDBSubscriptionOperation = createPrivateDBSubscriptionOperation
+                createPrivateDBSubscriptionOperation.addDependency(modifyRecordZonesOperation)
             }
-            
-            self.subscribedToPrivateChanges = true
-
-        }
-        privateDB.add(createPrivateDBSubscriptionOperation)
-    
-        print("create shared")
-        createSharedDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
-        createSharedDBSubscriptionOperation.addDependency(createPrivateDBSubscriptionOperation)
-        createSharedDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
-            guard error == nil else {
-                os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
+            createPrivateDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+                guard error == nil else {
+                    os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: WrapperCreateDBSubscription)
+                    return
+                }
                 
-                self.handlingCKOperationError(of: error!, retryableFunction: self.createDBSubscription)
-                return
+                self.subscribedToPrivateChanges = true
+                
             }
-            self.subscribedToSharedChanges = true
+            privateDB.add(createPrivateDBSubscriptionOperation)
             
+            print("create shared")
+            let createSharedDBSubscriptionOperation = self.createDatabaseSubscriptionOperation(subscriptionID: sharedSubscriptionID)
+            if !isRetryOperation {
+              self.createSharedDBSubscriptionOperation = createSharedDBSubscriptionOperation
+            } else {
+                isRetryOperation = false
+            }
+            createSharedDBSubscriptionOperation.addDependency(createPrivateDBSubscriptionOperation)
+            createSharedDBSubscriptionOperation.modifySubscriptionsCompletionBlock = {[unowned self] (subscriptions, deletedIDs, error) in
+                guard error == nil else {
+                    os_log("Error occured during modify record zones operation: %s", error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: self.createDBSubscription)
+                    return
+                }
+                self.subscribedToSharedChanges = true
+            }
+            sharedDB.add(createSharedDBSubscriptionOperation)
         }
-        sharedDB.add(createSharedDBSubscriptionOperation)
-
+        WrapperCreateDBSubscription()
     }
     
     
@@ -280,66 +282,73 @@ class CloudKitHelper {
             print("Change token is nil")
         }
         
-        
-        fetchDatabaseChangesoperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
-        if !subscribedToPrivateChanges {
-            fetchDatabaseChangesoperation.addDependency(createPrivateDBSubscriptionOperation)
-        }
-        
-        fetchDatabaseChangesoperation.recordZoneWithIDChangedBlock = { (zoneID) in
-            changedZoneIDs.append(zoneID)
-        }
-        
-        fetchDatabaseChangesoperation.recordZoneWithIDWasDeletedBlock = { (zoneID) in
-            // write this zone deletion to memory
-        }
-        
-        fetchDatabaseChangesoperation.changeTokenUpdatedBlock = {[unowned self] (token) in
-            // Flush zone deletion for this database to disk 
-            // Write this new database change token to memory 
+        func WrapperFetchDatabaseChangesOperation() {
             
-            self.databaseChangeToken = token
+            let fetchDatabaseChangesOperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: changeToken)
             
-            let data = NSKeyedArchiver.archivedData(withRootObject: token)
-            UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
-            UserDefaults.standard.synchronize()
-        }
-        
-        
-        fetchDatabaseChangesoperation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
-            if let error = error {
-                print("Error during fetch database changes operation", error)
-                completion()
-                return
+            if !subscribedToPrivateChanges && !isRetryOperation {
+                fetchDatabaseChangesOperation.addDependency(createPrivateDBSubscriptionOperation)
             }
-            guard error == nil else {
-                os_log("Error occured during fetch database changes operations: %s", error!.localizedDescription)
+            
+            if !isRetryOperation {
+                self.fetchDatabaseChangesOperation = fetchDatabaseChangesOperation
+            } else {
+                isRetryOperation = false
+            }
+            
+            fetchDatabaseChangesOperation.recordZoneWithIDChangedBlock = { (zoneID) in
+                changedZoneIDs.append(zoneID)
+            }
+            
+            fetchDatabaseChangesOperation.recordZoneWithIDWasDeletedBlock = { (zoneID) in
+                // write this zone deletion to memory
+            }
+            
+            fetchDatabaseChangesOperation.changeTokenUpdatedBlock = {[unowned self] (token) in
+                // Flush zone deletion for this database to disk
+                // Write this new database change token to memory
                 
-                self.handlingCKOperationError(of: error!, retryableFunction: self.saveLocalChangesToCloudKit)
-                completion()
-                return
-            }
-            
-            print("We are in fetch db changes completion block..")
-            
-            // Flush zone deletions for this database to disk
-            // Write this new database change token to memory
-            if let token = token {
+                self.databaseChangeToken = token
+                
                 let data = NSKeyedArchiver.archivedData(withRootObject: token)
                 UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
                 UserDefaults.standard.synchronize()
             }
             
-            self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) {
-                // Flush in memory database change token to disk
-
-                os_log("We are done with fetch zone changes....")
-                completion()
-            }
             
+            fetchDatabaseChangesOperation.fetchDatabaseChangesCompletionBlock = { (token, moreComing, error) in
+                guard error == nil else {
+                    os_log("Error occured during fetch database changes operations: %s", error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: WrapperFetchDatabaseChangesOperation)
+                    completion()
+                    return
+                }
+                
+                print("We are in fetch db changes completion block..")
+                
+                // Flush zone deletions for this database to disk
+                // Write this new database change token to memory
+                if let token = token {
+                    let data = NSKeyedArchiver.archivedData(withRootObject: token)
+                    UserDefaults.standard.set(data, forKey: ServerChangeToken.DatabaseChangeToken.rawValue)
+                    UserDefaults.standard.synchronize()
+                }
+                
+                self.fetchZoneChanges(database: database, databaseTokenKey: databaseTokenKey, zoneIDs: changedZoneIDs) {
+                    // Flush in memory database change token to disk
+                    
+                    os_log("We are done with fetch zone changes....")
+                    completion()
+                }
+                
+            }
+            print("are we here...?")
+            database.add(fetchDatabaseChangesOperation)
         }
-        print("are we here...?")
-        database.add(fetchDatabaseChangesoperation)
+        WrapperFetchDatabaseChangesOperation()
+        
+
     }
     
     
@@ -362,71 +371,96 @@ class CloudKitHelper {
             optionsByRecordZoneID[zoneID] = options
         }
         
-        fetchRecordZoneChangesoperation = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIDs, optionsByRecordZoneID: optionsByRecordZoneID)
-        
-        fetchRecordZoneChangesoperation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
-            print("Record changed:", ckRecord)
-            // Write this record change to memory 
-            self.coreDataHelper.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.managedObjectContext)
-        }
-        
-        fetchRecordZoneChangesoperation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
-            print("What is this? ", someString)
-            print("Record deleted:", recordID)
-            // write this record deletion to memory
-            self.coreDataHelper.deleteManagedObject(using: recordID, backgroundContext: self.managedObjectContext)
-        }
-        
-        fetchRecordZoneChangesoperation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
-            // Flush record changes and deletions for this zone to disk
-            DispatchQueue.main.async {
-                try! self.managedObjectContext.save()
+        func WrapperFetchRecordZoneChangesOperation() {
+            
+            let fetchRecordZoneChangesOperation = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIDs, optionsByRecordZoneID: optionsByRecordZoneID)
+            
+            if !isRetryOperation {
+                self.fetchRecordZoneChangesOperation = fetchRecordZoneChangesOperation
+            } else {
+                isRetryOperation = false
             }
             
-            // Write this new zone change token to disk
-            guard let changeToken: CKServerChangeToken = token else { return }
-            let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
-            let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
-            UserDefaults.standard.set(data, forKey: zoneKey)
-            UserDefaults.standard.synchronize()
+            fetchRecordZoneChangesOperation.recordChangedBlock = {[unowned self] (ckRecord: CKRecord) in
+                print("Record changed:", ckRecord)
+                // Write this record change to memory
+                self.coreDataHelper.insertOrUpdateManagedObject(using: ckRecord, backgroundContext: self.managedObjectContext)
+            }
             
-        }
-        
-        fetchRecordZoneChangesoperation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
+            fetchRecordZoneChangesOperation.recordWithIDWasDeletedBlock = {[unowned self] (recordID, someString) in
+                print("What is this? ", someString)
+                print("Record deleted:", recordID)
+                // write this record deletion to memory
+                self.coreDataHelper.deleteManagedObject(using: recordID, backgroundContext: self.managedObjectContext)
+            }
             
-            if let error = error as? CKError {
-                let errorCode = error.errorCode
-                os_log("Error on fetch record zone change with ErrorCode: %@", errorCode)
-                print("Error fetching zone changes for \(databaseTokenKey) database:", error)
+            fetchRecordZoneChangesOperation.recordZoneChangeTokensUpdatedBlock = { (zoneID, token, data) in
+                // Flush record changes and deletions for this zone to disk
+                DispatchQueue.main.async {
+                    try! self.managedObjectContext.save()
+                }
                 
-                return
+                // Write this new zone change token to disk
+                guard let changeToken: CKServerChangeToken = token else { return }
+                let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
+                let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
+                UserDefaults.standard.set(data, forKey: zoneKey)
+                UserDefaults.standard.synchronize()
+                
             }
             
-            DispatchQueue.main.async {
-                try! self.managedObjectContext.save()
+            fetchRecordZoneChangesOperation.recordZoneFetchCompletionBlock = {[unowned self] (zoneID, changeToken, _, _, error) in
+                
+                if let error = error as? CKError {
+                    let errorCode = error.errorCode
+                    let cloudKitError = CloudKitError(rawValue: errorCode)!
+                    switch cloudKitError {
+                    case .CKErrorChangeTokenExpired:
+                        for zoneID in zoneIDs {
+                            let options = CKFetchRecordZoneChangesOptions()
+                            options.previousServerChangeToken = nil
+                            optionsByRecordZoneID[zoneID] = options
+                        }
+                        WrapperFetchRecordZoneChangesOperation()
+                    default: break
+                    }
+                    
+                    os_log("Error on fetch record zone change with ErrorCode: %@", cloudKitError.description)
+                    print("Error fetching zone changes for \(databaseTokenKey) database:", error)
+                    completion()
+                    return
+                }
+                // Handle changeToken
+                
+                
+                DispatchQueue.main.async {
+                    try! self.managedObjectContext.save()
+                }
+                
+                
+                
+                // Write this new zone change token to disk
+                guard let changeToken: CKServerChangeToken = changeToken else { return }
+                let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
+                let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
+                UserDefaults.standard.set(data, forKey: zoneKey)
+                UserDefaults.standard.synchronize()
+                
             }
             
-            
-            
-            // Write this new zone change token to disk
-            guard let changeToken: CKServerChangeToken = changeToken else { return }
-            let zoneKey =  self.zoneKeyPrefix + "\(zoneID.zoneName)"
-            let data = NSKeyedArchiver.archivedData(withRootObject: changeToken)
-            UserDefaults.standard.set(data, forKey: zoneKey)
-            UserDefaults.standard.synchronize()
-            
+            fetchRecordZoneChangesOperation.fetchRecordZoneChangesCompletionBlock = { (error) in
+                guard error == nil else {
+                    os_log("Error fetching zone changes for %s database: %s", databaseTokenKey, error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: WrapperFetchRecordZoneChangesOperation)
+                    return
+                }
+                print("We are good...")
+                completion()
+            }
+            database.add(fetchRecordZoneChangesOperation)
         }
-        
-        fetchRecordZoneChangesoperation.fetchRecordZoneChangesCompletionBlock = { (error) in
-            if let error = error {
-                print("Error fetching zone changes for \(databaseTokenKey) database:", error)
-                print("Inside fetch record zone changes operation")
-            }
-            print("We are good...")
-            completion()
-        }
-        
-        database.add(fetchRecordZoneChangesoperation)
+        WrapperFetchRecordZoneChangesOperation()
     }
 
     // MARK: - General helper
@@ -474,12 +508,6 @@ class CloudKitHelper {
             } else {
                 os_log("We got neither fatal nor retryable CKError: %@", cloudKitError.description)
             }
-        } else {
-            // Other error before reaching CK layer
-            // e.g. Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.cloudd" UserInfo={NSDebugDescription=connection to service named com.apple.cloudd}
-            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2, qos: .background, flags: DispatchWorkItemFlags.detached, execute: {
-                    retryableFunction()
-            })
         }
     }
     
@@ -490,29 +518,30 @@ class CloudKitHelper {
         let recordsToSave = coreDataHelper.getRecordsToModify(backgroundContext: managedObjectContext)
         let recordIDsToDelete = coreDataHelper.getRecordIDsForDeletion(backgroundContext: managedObjectContext)
         
-        saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
-        if !isRetryOperation {
-            saveToCloudKitOperation.addDependency(fetchDatabaseChangesoperation)
-        } else {
-            isRetryOperation = false
-        }
-        
-        saveToCloudKitOperation.isAtomic = true
-        saveToCloudKitOperation.savePolicy = .changedKeys
-        saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
-            guard error == nil else {
-                os_log("Error occured during save local change to CloudKit: %s", error!.localizedDescription)
-                
-                self.handlingCKOperationError(of: error!, retryableFunction: self.saveLocalChangesToCloudKit)
-                return
+        func WrapperSaveToCloudKitOperation() {
+            let saveToCloudKitOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
+            if !isRetryOperation {
+                self.saveToCloudKitOperation = saveToCloudKitOperation
+                saveToCloudKitOperation.addDependency(fetchDatabaseChangesOperation)
+            } else {
+                isRetryOperation = false
             }
             
-            self.coreDataHelper.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.managedObjectContext)
-            self.coreDataHelper.postSuccessfulDeletionOnCloudKit(backgroundContext: self.managedObjectContext)
-          //  group.leave()
+            saveToCloudKitOperation.isAtomic = true
+            saveToCloudKitOperation.savePolicy = .changedKeys
+            saveToCloudKitOperation.modifyRecordsCompletionBlock = {[unowned self] (modifiedCKRecords, deletedRecordIDs, error) in
+                guard error == nil else {
+                    os_log("Error occured during save local change to CloudKit: %s", error!.localizedDescription)
+                    
+                    self.handlingCKOperationError(of: error!, retryableFunction: WrapperSaveToCloudKitOperation)
+                    return
+                }
+                self.coreDataHelper.postSuccessfyModifyOnCloudKit(modifiedCKRecords: modifiedCKRecords!, backgroundContext: self.managedObjectContext)
+                self.coreDataHelper.postSuccessfulDeletionOnCloudKit(backgroundContext: self.managedObjectContext)
+            }
+            privateDB.add(saveToCloudKitOperation)
         }
-        privateDB.add(saveToCloudKitOperation)
-
+        WrapperSaveToCloudKitOperation()
     }
 }
 

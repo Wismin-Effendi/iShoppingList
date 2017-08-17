@@ -45,8 +45,10 @@ class TaskItemCell: UITableViewCell {
     
     @IBAction func completionButtonTapped(_ sender: UIButton) {
         completed = !completed
+        model.setDefaultValuesForLocalChange()
         model.completed = completed
         print("Value of completed flag: \(completed)")
+        try! model.managedObjectContext!.save()
         let itemIdentifier = model.identifier
         delegate?.cloneToWarehouseIfRepeatedItem(identifier: itemIdentifier)
     }

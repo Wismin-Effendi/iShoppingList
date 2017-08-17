@@ -106,7 +106,7 @@
 		37760C311F2FB61900A3B586 /* CloudKitUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitUtil.swift; sourceTree = "<group>"; };
 		37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataClass.swift"; sourceTree = "<group>"; };
 		37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3780F8481F34FD9B00FF4085 /* CloudKitHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitHelper.swift; sourceTree = "<group>"; };
+		3780F8481F34FD9B00FF4085 /* CloudKitHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CloudKitHelper.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		378E974D1F23B2F900C526D9 /* iShoppingList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iShoppingList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		378E97501F23B2F900C526D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		378E97551F23B2F900C526D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };

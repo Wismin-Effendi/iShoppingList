@@ -34,6 +34,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         syncToCloudKit()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.refreshControl?.endRefreshing()
+    }
     
     func syncToCloudKit() {
         cloudKitHelper.syncToCloudKit {

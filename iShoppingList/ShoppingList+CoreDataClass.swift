@@ -27,6 +27,12 @@ extension ShoppingList {
         self.needsUpload = true
     }
     
+    func setForLocalDeletion() {
+        self.needsUpload = true
+        self.pendingDeletion = true
+        self.localUpdate = NSDate()
+    }
+    
     func update(using cloudKitRecord: CKRecord) {
         self.title = cloudKitRecord[ckShoppingList.title] as! String
         self.needsUpload = false

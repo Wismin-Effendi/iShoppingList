@@ -59,10 +59,10 @@ where T: ManagedObjectType & CloudKitConvertible {
         switch T.entityName {
         case EntityName.ShoppingList:
             shoppingList = CoreDataUtil.getAShoppingListOf(storeIdentifier: model.identifier, moc: self.managedObjectContext)
-            shoppingList.needsUpload ?  self.managedObjectContext.delete(shoppingList) : (shoppingList.pendingDeletion = true)
+            shoppingList.needsUpload ?  self.managedObjectContext.delete(shoppingList) : (shoppingList.setForLocalDeletion())
         case EntityName.GroceryItem:
             groceryItem = CoreDataUtil.getGroceryItem(identifier: model.identifier, moc: self.managedObjectContext)
-            groceryItem.needsUpload ? self.managedObjectContext.delete(groceryItem) : (groceryItem?.pendingDeletion = true)
+            groceryItem.needsUpload ? self.managedObjectContext.delete(groceryItem) : (groceryItem.setForLocalDeletion())
         default: break
         }
         //
