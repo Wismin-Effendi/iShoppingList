@@ -76,6 +76,13 @@ class CoreDataUtil {
         return getShoppingListsOf(predicate: predicate, moc: moc).first
     }
     
+    public static func doesShoppingListHasItems(storeIdentifier: String, moc: NSManagedObjectContext) -> Bool {
+        guard let store = CoreDataUtil.getAShoppingListOf(storeIdentifier: storeIdentifier, moc: moc) else {
+            return false
+        }
+        return store.items.count > 0
+    }
+    
     public static func getAShoppingListOf(storeName: String, moc: NSManagedObjectContext) -> ShoppingList? {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(ShoppingList.title), storeName)
         return getShoppingListsOf(predicate: predicate, moc: moc).first

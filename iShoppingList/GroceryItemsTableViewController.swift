@@ -92,13 +92,13 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return currentItemsFilter == .todo ?  44 : 0
+        return currentItemsFilter == .todo ?  81 : 0
     }
     
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        let addNewItemView = AddNewItemView(controller: self, placeHolderText: "Enter New Grocery Item") { (title) in
+        let addNewItemView = AddNewItemView(controller: self, itemType: AddItem.groceryItem.rawValue) { (title) in
             
             self.addNewGroceryItem(title: title)
         }

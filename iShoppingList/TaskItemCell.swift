@@ -22,8 +22,7 @@ class TaskItemCell: UITableViewCell {
     
     weak var delegate: ItemCellCompletionStateDelegate?
     
-    var model: GroceryItem!  // need to make this generic, for now it's concrete.
-    
+    var model: GroceryItem!     
     
     var completed = false {
         didSet {
@@ -45,8 +44,8 @@ class TaskItemCell: UITableViewCell {
     
     @IBAction func completionButtonTapped(_ sender: UIButton) {
         completed = !completed
-        model.setDefaultValuesForLocalChange()
         model.completed = completed
+        if completed { model.setDefaultValuesForCompletion() } 
         print("Value of completed flag: \(completed)")
         try! model.managedObjectContext!.save()
         let itemIdentifier = model.identifier
@@ -54,8 +53,8 @@ class TaskItemCell: UITableViewCell {
     }
     
     private func setCompletionCheckBoxWithAnimation() {
-        let image: UIImage = completed ?  #imageLiteral(resourceName: "check_icon") : #imageLiteral(resourceName: "uncheck")
-        let oldImage: UIImage = completed ? #imageLiteral(resourceName: "uncheck") : #imageLiteral(resourceName: "check_icon")
+        let image: UIImage = completed ?  #imageLiteral(resourceName: "checked") : #imageLiteral(resourceName: "unchecked")
+        let oldImage: UIImage = completed ? #imageLiteral(resourceName: "unchecked") : #imageLiteral(resourceName: "checked")
         let button = self.completionButton
         UIView.animate(withDuration: 0.15, animations: {
             button?.alpha = 0.0

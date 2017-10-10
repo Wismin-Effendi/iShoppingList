@@ -68,6 +68,7 @@ struct ckGroceryItem {
     static let completionDate = "completionDate"
     static let hasReminder = "hasReminder"
     static let isRepeatedItem = "isRepeatedItem"
+    static let repetitionInterval = "repetitionInterval"
     static let lastCompletionDate = "lastCompletionDate"
     static let storeName = "storeName"
 }

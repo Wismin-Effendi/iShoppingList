@@ -28,6 +28,10 @@
 		3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */; };
 		3746AD2E1F292F0E00D1B988 /* TaskItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AD2D1F292F0E00D1B988 /* TaskItemCell.swift */; };
 		3746AD321F2987EB00D1B988 /* ItemDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AD311F2987EB00D1B988 /* ItemDetailsTableViewController.swift */; };
+		374CCD8F1F8C5E6E000EE69D /* RoundedShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374CCD8E1F8C5E6E000EE69D /* RoundedShadowView.swift */; };
+		374CCD911F8C5F03000EE69D /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374CCD901F8C5F03000EE69D /* CircleView.swift */; };
+		374CCD971F8C7A77000EE69D /* AddNewItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 374CCD961F8C7A77000EE69D /* AddNewItemView.xib */; };
+		374CCD991F8C8B94000EE69D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374CCD981F8C8B94000EE69D /* Constants.swift */; };
 		37760C2B1F2F7AD600A3B586 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37760C2A1F2F7AD600A3B586 /* CloudKit.framework */; };
 		37760C2D1F2F7B6C00A3B586 /* CloudKitSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */; };
 		37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */; };
@@ -45,7 +49,7 @@
 		378E97821F23B3AD00C526D9 /* ManagedObjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */; };
 		378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97831F23B47F00C526D9 /* TableViewDataSource.swift */; };
 		378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */; };
-		378EE8A21F2CB819008F5669 /* ShoppingListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */; };
+		378EE8A21F2CB819008F5669 /* ShoppingListCell..swift in Sources */ = {isa = PBXBuildFile; fileRef = 378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +103,10 @@
 		3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroceryItemsTableViewController.swift; sourceTree = "<group>"; };
 		3746AD2D1F292F0E00D1B988 /* TaskItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskItemCell.swift; sourceTree = "<group>"; };
 		3746AD311F2987EB00D1B988 /* ItemDetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDetailsTableViewController.swift; sourceTree = "<group>"; };
+		374CCD8E1F8C5E6E000EE69D /* RoundedShadowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedShadowView.swift; sourceTree = "<group>"; };
+		374CCD901F8C5F03000EE69D /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
+		374CCD961F8C7A77000EE69D /* AddNewItemView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddNewItemView.xib; sourceTree = "<group>"; };
+		374CCD981F8C8B94000EE69D /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		37760C291F2F7AD300A3B586 /* iShoppingList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iShoppingList.entitlements; sourceTree = "<group>"; };
 		37760C2A1F2F7AD600A3B586 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitSyncTests.swift; sourceTree = "<group>"; };
@@ -123,7 +131,7 @@
 		378E97811F23B3AD00C526D9 /* ManagedObjectType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObjectType.swift; sourceTree = "<group>"; };
 		378E97831F23B47F00C526D9 /* TableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
 		378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsProvider.swift; sourceTree = "<group>"; };
-		378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListCell.swift; sourceTree = "<group>"; };
+		378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListCell..swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,6 +221,9 @@
 			children = (
 				370E9AB61F2AA8B1008EF197 /* FilterItemView.swift */,
 				3746AC471F24094500D1B988 /* AddNewItemView.swift */,
+				374CCD8E1F8C5E6E000EE69D /* RoundedShadowView.swift */,
+				374CCD901F8C5F03000EE69D /* CircleView.swift */,
+				374CCD961F8C7A77000EE69D /* AddNewItemView.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -220,7 +231,7 @@
 		37760C361F3215FC00A3B586 /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
-				378EE8A11F2CB819008F5669 /* ShoppingListCell.swift */,
+				378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */,
 				3746AD2D1F292F0E00D1B988 /* TaskItemCell.swift */,
 			);
 			name = TableViewCell;
@@ -234,6 +245,7 @@
 				370E9ABA1F2AF204008EF197 /* RepeatedItemCoordinator.swift */,
 				370E9ADF1F2B7C56008EF197 /* CloneItemToWarehouse.swift */,
 				372B458B1F3F935E001BD1C7 /* Predicates.swift */,
+				374CCD981F8C8B94000EE69D /* Constants.swift */,
 			);
 			name = Helper;
 			sourceTree = "<group>";
@@ -431,6 +443,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				378E975E1F23B2F900C526D9 /* LaunchScreen.storyboard in Resources */,
+				374CCD971F8C7A77000EE69D /* AddNewItemView.xib in Resources */,
 				378E975B1F23B2F900C526D9 /* Assets.xcassets in Resources */,
 				378E97561F23B2F900C526D9 /* Main.storyboard in Resources */,
 			);
@@ -458,6 +471,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				372B45861F3F2C9C001BD1C7 /* CoreDataHelper.swift in Sources */,
+				374CCD991F8C8B94000EE69D /* Constants.swift in Sources */,
 				370E9AD61F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift in Sources */,
 				3746AC441F23E46500D1B988 /* CoreDataStack.swift in Sources */,
 				372B458A1F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift in Sources */,
@@ -474,8 +488,9 @@
 				378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */,
 				3746AC4E1F242EC200D1B988 /* GroceryItemsTableViewController.swift in Sources */,
 				3746AC4C1F241DEE00D1B988 /* ShoppingListTableViewController.swift in Sources */,
-				378EE8A21F2CB819008F5669 /* ShoppingListCell.swift in Sources */,
+				378EE8A21F2CB819008F5669 /* ShoppingListCell..swift in Sources */,
 				3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */,
+				374CCD8F1F8C5E6E000EE69D /* RoundedShadowView.swift in Sources */,
 				37760C3B1F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift in Sources */,
 				378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */,
 				378E97591F23B2F900C526D9 /* iShoppingList.xcdatamodeld in Sources */,
@@ -483,6 +498,7 @@
 				37760C321F2FB61900A3B586 /* CloudKitUtil.swift in Sources */,
 				370E9AE01F2B7C56008EF197 /* CloneItemToWarehouse.swift in Sources */,
 				378E97511F23B2F900C526D9 /* AppDelegate.swift in Sources */,
+				374CCD911F8C5F03000EE69D /* CircleView.swift in Sources */,
 				370E9ADB1F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift in Sources */,
 				372B458C1F3F935E001BD1C7 /* Predicates.swift in Sources */,
 				37760C3C1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift in Sources */,

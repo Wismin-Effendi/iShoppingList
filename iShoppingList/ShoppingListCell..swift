@@ -9,7 +9,8 @@
 import UIKit
 
 class ShoppingListCell: UITableViewCell {
-
+    
     var coreDataIdentifier: String?
+
 
 }

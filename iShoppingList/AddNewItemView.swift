@@ -11,47 +11,52 @@ import UIKit
 
 class AddNewItemView: UIView, UITextFieldDelegate {
 
+    @IBOutlet var contentView: UIView!
+    @IBOutlet weak var staticCircleView: CircleView!
+    @IBOutlet weak var staticText: UITextField!
+    @IBOutlet weak var inputText: UITextField!
+    @IBOutlet weak var inputTextCircleView: CircleView!
+    
+    
     var placeHolderText: String!
     var addNewItemViewClosure: (String) -> ()
     
-    init(controller: UIViewController, placeHolderText: String, addNewItemViewClosure: @escaping (String) -> ()) {
+    init(controller: UIViewController, itemType: String, addNewItemViewClosure: @escaping (String) -> ()) {
         
-        self.placeHolderText = placeHolderText
+        self.placeHolderText = AddItemAttributeText[itemType]?[AddItem.Attribute.placeHolder.rawValue]
         self.addNewItemViewClosure = addNewItemViewClosure
         
         super.init(frame: controller.view.frame)
         
-        setup()
+        setupView()
+        staticText.text = AddItemAttributeText[itemType]?[AddItem.Attribute.staticText.rawValue]
+        inputText.placeholder = placeHolderText
+        inputText.delegate = self
+        
+        // Switch color if GroceryItem
+        if itemType == AddItem.groceryItem.rawValue {
+            (staticCircleView.backgroundColor, inputTextCircleView.backgroundColor) = (inputTextCircleView.backgroundColor, staticCircleView.backgroundColor)
+            (staticCircleView.borderColor, inputTextCircleView.borderColor) = (inputTextCircleView.borderColor, staticCircleView.borderColor)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        self.placeHolderText = ""
+        self.addNewItemViewClosure = { _ in }
+        super.init(coder: aDecoder)
+        setupView()
     }
     
-    private func setup() {
+    // Performs the initial setup
+    private func setupView() {
+        Bundle.main.loadNibNamed("AddNewItemView", owner: self, options: nil)
+        addSubview(contentView)
+        contentView.frame = bounds
         
-        self.backgroundColor = UIColor.lightGray
-        
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: 48))
-        headerView.backgroundColor = UIColor.groupTableViewBackground
-        
-        let textField = UITextField(frame: CGRect(x: 28, y: 4, width: headerView.frame.size.width - 56, height: 40))
-        textField.backgroundColor = UIColor.white
-        textField.textColor = UIColor.darkGray
-        textField.layer.cornerRadius = 6.0
-        textField.layer.borderWidth = 1.0
-        textField.layer.borderColor = UIColor.lightGray.cgColor
-        textField.returnKeyType = UIReturnKeyType.done
-        
-        textField.placeholder = self.placeHolderText
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
-        textField.leftViewMode = .always
-        textField.clearButtonMode = .always
-        textField.delegate = self
-        headerView.addSubview(textField)
-        
-        self.addSubview(headerView)
-    
+        contentView.autoresizingMask = [
+            UIViewAutoresizing.flexibleWidth,
+            UIViewAutoresizing.flexibleHeight
+        ]
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

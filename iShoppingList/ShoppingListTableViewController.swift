@@ -25,8 +25,10 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     var cloudKitHelper: CloudKitHelper!
     
-    override func viewDidLoad() {
+    override func viewDidLoad()     {
         super.viewDidLoad()
+      //  let nib = UINib(nibName: NibName.shoppingListCell.rawValue, bundle: nil)
+      //  tableView.register(nib, forCellReuseIdentifier: CellIdentifier.shoppingList.rawValue)
         populateShoppingLists()
         setupRefreshControl()
         // show location for MySQL file
@@ -59,8 +61,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         
         self.fetchedResultsProvider = FetchedResultsProvider(managedObjectContext: self.managedObjectContext,
                                                             additionalPredicate: predicate)
-        self.dataSource = TableViewDataSource(cellIdentifier: "ShoppingListTableViewCell", tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
+        self.dataSource = TableViewDataSource(cellIdentifier: CellIdentifier.shoppingList.rawValue, tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
             cell.textLabel?.text = model.title
+            // cell.hasItems = model.items.count > 0
             cell.backgroundColor = UIColor.orange
             cell.accessoryType = .disclosureIndicator
             cell.coreDataIdentifier = model.identifier 
@@ -72,12 +75,12 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
 
     // Mark: TableViewDelegate 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 48
+        return 81
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        let addNewItemView = AddNewItemView(controller: self, placeHolderText: "Enter new Store name") { (title) in
+        let addNewItemView = AddNewItemView(controller: self, itemType: AddItem.shoppingList.rawValue) { (title) in
             
             self.addNewShoppingList(title: title)
         }
@@ -125,6 +128,6 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
 
 extension ShoppingListTableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 52
+        return  52
     }
 }

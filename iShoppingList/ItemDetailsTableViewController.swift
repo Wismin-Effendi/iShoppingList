@@ -195,16 +195,14 @@ extension ItemDetailsTableViewController {
         repeatSwitch.isOn = item.isRepeatedItem
         reminderSwitch.isOn = item.hasReminder
         
-        if let reminderDate = item.reminderDate {
-            datePicker.date = reminderDate as Date
-        }
+        datePicker.date = item.reminderDate as Date
         
         if item.isRepeatedItem {
             setRepetitionIntervalPicker(from: item.repetitionInterval)
         }
         
         if item.completed {
-            setCompletionDate(item.completionDate! as Date)
+            setCompletionDate(item.completionDate as Date)
         }
     }
     

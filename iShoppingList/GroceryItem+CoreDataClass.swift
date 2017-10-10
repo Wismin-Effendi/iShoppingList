@@ -35,6 +35,11 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
         self.pendingDeletion = false 
     }
     
+    func setDefaultValuesForCompletion() {
+        setDefaultValuesForLocalChange()
+        self.completionDate = NSDate()
+    }
+    
     func setForLocalDeletion() {
         self.needsUpload = false
         self.pendingDeletion = true
@@ -65,6 +70,7 @@ extension GroceryItem {
         self.completionDate = (cloudKitRecord[ckGroceryItem.completionDate] as! NSDate)
         self.hasReminder = cloudKitRecord[ckGroceryItem.hasReminder] as! Bool
         self.isRepeatedItem = cloudKitRecord[ckGroceryItem.isRepeatedItem] as! Bool
+        self.repetitionInterval = cloudKitRecord[ckGroceryItem.repetitionInterval] as! Double 
         self.lastCompletionDate = (cloudKitRecord[ckGroceryItem.lastCompletionDate] as! NSDate)
         self.reminderDate = (cloudKitRecord[ckGroceryItem.reminderDate] as! NSDate)
         self.title = cloudKitRecord[ckGroceryItem.title] as! String
@@ -93,6 +99,7 @@ extension GroceryItem {
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
+        ckRecord[ckGroceryItem.repetitionInterval] = self.repetitionInterval as CKRecordValue
         ckRecord[ckGroceryItem.hasReminder] = self.hasReminder as CKRecordValue
         ckRecord[ckGroceryItem.completionDate] = self.completionDate
         ckRecord[ckGroceryItem.completed] = self.completed as CKRecordValue
@@ -112,6 +119,7 @@ extension GroceryItem {
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
+        ckRecord[ckGroceryItem.repetitionInterval] = self.repetitionInterval as CKRecordValue
         ckRecord[ckGroceryItem.hasReminder] = self.hasReminder as CKRecordValue
         ckRecord[ckGroceryItem.completionDate] = self.completionDate
         ckRecord[ckGroceryItem.completed] = self.completed as CKRecordValue

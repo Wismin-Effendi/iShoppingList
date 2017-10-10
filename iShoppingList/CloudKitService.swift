@@ -82,7 +82,7 @@ class CloudKitService {
             }
         }
 
-          
+  
         func runQueryCKRecordsOperation() {
             
             let predicate: NSPredicate
