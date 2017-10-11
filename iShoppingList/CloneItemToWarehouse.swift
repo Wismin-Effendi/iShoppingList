@@ -43,7 +43,7 @@ class CloneItemToWarehouse {
         warehouseGroceryItem.isRepeatedItem = prototype.isRepeatedItem
         warehouseGroceryItem.repetitionInterval = prototype.repetitionInterval
         warehouseGroceryItem.protoIdentifier = prototype.identifier
-        warehouseGroceryItem.protoCompletionDate = prototype.completionDate
+        warehouseGroceryItem.protoCompletionDate = prototype.completionDate!
         // initialize the rest
         warehouseGroceryItem.identifier = UUID().uuidString
         print("Created item in warehouse with title: \(warehouseGroceryItem.title) for store: \(warehouseGroceryItem.shoppingListTitle) with deliveryDate: \((warehouseGroceryItem.deliveryDate as Date).toString())")
@@ -58,7 +58,7 @@ class CloneItemToWarehouse {
     
     fileprivate func calculateDeliveryDate() -> Date {
         let repetitionInterval = prototype.repetitionInterval
-        let lastCompletionDate = prototype.completionDate as Date
+        let lastCompletionDate = prototype.completionDate! as Date
         let deliveryInterval = deliveryIntervalFrom(repetitionInterval: repetitionInterval)
         return lastCompletionDate + deliveryInterval
     }

@@ -9,12 +9,17 @@
 import UIKit
 import CoreData
 import CloudKit
+import UserNotifications
 import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var controller: UIViewController?
+    
+    var notificationAuthorized: Bool?
+    
     let coreDataStack = CoreDataStack.shared(modelName: CoreDataModel.iShoppingList)
     let cloudKitHelper: CloudKitHelper = CloudKitHelper.sharedInstance
     
@@ -74,22 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         coreDataStack.saveContext()
     }
     
-    // MARK: - Receive Notification 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
-        os_log("Receive notification")
-        
-        let dict = userInfo as! [String: NSObject]
-        
-        guard let notification: CKDatabaseNotification = CKNotification(fromRemoteNotificationDictionary: dict) as?
-            CKDatabaseNotification else { return }
-        
-        cloudKitHelper.fetchChanges(in: notification.databaseScope) {
-            os_log("inside completion handler for fetch changes")
-            completionHandler(.newData)
-        }
-    }
-
+    
     // MARK: - Private
     private func runTransferTodaysItemFromWarehouseToActiveGroceryItems() {
         coreDataStack.performBackgroundTask { (backgroundContext) in
@@ -104,5 +94,83 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Fetch subscriptions
         cloudKitHelper.createDBSubscription()
     }
+    
+    // MARK: - Helper 
+    
+    static func getAppDelegate() -> AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
 }
 
+
+// MARK: - LocalNotification
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    // for forreground notification
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        completionHandler()
+    }
+    
+    func scheduleNotification(at date: Date, identifier: String, title: String, body: String) {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents(in: .current, from: date)
+        let newComponents = DateComponents(calendar: calendar, timeZone: .current, era: components.era, year: components.year, month: components.month, day: components.day, hour: components.hour, minute: components.minute, second: components.second)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: newComponents, repeats: false)
+        
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = UNNotificationSound.default()
+        content.categoryIdentifier = "OverdueItemsCategory"
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [identifier])
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                os_log("Uh oh! We had an error when scheduling notification: %s", log: .default, type: .error, error.localizedDescription)
+            }
+        }
+    }
+}
+
+
+// MARK: - Receive Remote Notification
+
+extension AppDelegate {
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        os_log("Registered for remote notification", log: .default, type: .debug)
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        
+        // Skip Code = 3010 "remote notification not supported in the simulator"
+        guard (error as NSError).code != 3010 else { return }
+        
+        os_log("Remote notification registration failed: %@", log: .default, type: .error, error.localizedDescription)
+        controller?.showAlertWarning(message: "Please login to iCloud for remote data sync.")
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        os_log("Receive notification", log: .default, type: .debug)
+        
+        let dict = userInfo as! [String: NSObject]
+        
+        guard let notification: CKDatabaseNotification = CKNotification(fromRemoteNotificationDictionary: dict) as?
+            CKDatabaseNotification else { return }
+        
+        DispatchQueue.global(qos: .utility).async {[unowned self] in
+            self.cloudKitHelper.fetchChanges(in: notification.databaseScope) {
+                os_log("inside completion handler for fetch changes", log: .default, type: .debug)
+                completionHandler(.newData)
+            }
+        }
+    }
+}

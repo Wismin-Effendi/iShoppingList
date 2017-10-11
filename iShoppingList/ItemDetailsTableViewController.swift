@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 class ItemDetailsTableViewController: UITableViewController {
     
@@ -37,9 +38,14 @@ class ItemDetailsTableViewController: UITableViewController {
     var repeatInterval = "2"
     var repeatIntervalUnit = "Week"
     
+    var reminderDate: Date?
+    
+    var appDelegate = AppDelegate.getAppDelegate()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        appDelegate.controller = self 
         repetitionIntervalPicker.dataSource = self
         repetitionIntervalPicker.delegate = self
         repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
@@ -68,6 +74,9 @@ class ItemDetailsTableViewController: UITableViewController {
         insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: sender.isOn)
     }
     
+    @IBAction func reminderDatePickerValueChange(_ sender: UIDatePicker) {
+        reminderDate = sender.date
+    }
     
     private func insertOrDeleteRow(indexPath: IndexPath, state: Bool) {
         switch state {
@@ -155,7 +164,7 @@ extension ItemDetailsTableViewController {
     
     func persistItemDetails() {
         item.isRepeatedItem = repeatSwitch.isOn
-        item.hasReminder = repeatSwitch.isOn
+        item.hasReminder = reminderSwitch.isOn
         item.reminderDate = datePicker.date as NSDate
         item.localUpdate = NSDate()
         item.needsUpload = true 
@@ -168,6 +177,10 @@ extension ItemDetailsTableViewController {
         }
         // need to check if item was completed and we update the repeatSwitch or repetitionInterval
         synchronizeCloneToWarehouseAction()
+        
+        // set up reminder if needed 
+        setupNotificationForReminderIfNeeded()
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -189,20 +202,36 @@ extension ItemDetailsTableViewController {
         }
     }
     
+    private func setupNotificationForReminderIfNeeded() {
+        let identifier = item.identifier
+        
+        if item.hasReminder {
+            let reminderDate = item.reminderDate! as Date
+            appDelegate.scheduleNotification(at: reminderDate, identifier: identifier, title: "ShoppingItem Reminder", body: item.title)
+        } else {
+            // cancel any pending notification by identifier 
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        }
+    }
+    
     
     fileprivate func populateItemDetails(_ item: GroceryItem) {
         titleLabel.text = item.title
         repeatSwitch.isOn = item.isRepeatedItem
         reminderSwitch.isOn = item.hasReminder
         
-        datePicker.date = item.reminderDate as Date
+        datePicker.date = Date()
+        if let reminderDate = item.reminderDate {
+            datePicker.date = reminderDate as Date
+        }
         
         if item.isRepeatedItem {
             setRepetitionIntervalPicker(from: item.repetitionInterval)
         }
         
         if item.completed {
-            setCompletionDate(item.completionDate as Date)
+            guard let completionDate = item.completionDate else { return }
+            setCompletionDate(completionDate as Date)
         }
     }
     

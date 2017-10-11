@@ -23,9 +23,12 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     var currentItemsFilter = ItemsFilter.todo
     
+    var appDelegate = AppDelegate.getAppDelegate()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        appDelegate.controller = self
         navigationItem.title = storeNameTitle
         let filterItemTitle = UIBarButtonItem(title: ItemsFilter.completed.rawValue, style: .plain, target: self, action: #selector(GroceryItemsTableViewController.filterItems))
         navigationItem.rightBarButtonItem = filterItemTitle
@@ -80,7 +83,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
             cell.model = model
             cell.titleLabel?.text = model.title
             cell.completed = model.completed
-            cell.backgroundColor = UIColor.green
+            cell.backgroundColor = UIColor.hummingbird
             cell.accessoryType = .detailButton
             cell.delegate = strongSelf   // for ItemCellCompletionStateDelegate
             print("Title: \(model.title)")

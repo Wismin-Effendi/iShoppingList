@@ -273,11 +273,17 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="135.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="obT-a2-mER">
+                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="obT-a2-mER">
                                                     <rect key="frame" x="8" y="16" width="359" height="111.5"/>
                                                     <date key="date" timeIntervalSinceReferenceDate="522814378.69633698">
                                                         <!--2017-07-27 02:12:58 +0000-->
                                                     </date>
+                                                    <date key="minimumDate" timeIntervalSinceReferenceDate="528544800">
+                                                        <!--2017-10-01 10:00:00 +0000-->
+                                                    </date>
+                                                    <connections>
+                                                        <action selector="reminderDatePickerValueChange:" destination="sHm-Re-FNM" eventType="valueChanged" id="dBG-7k-Xrg"/>
+                                                    </connections>
                                                 </datePicker>
                                             </subviews>
                                             <constraints>

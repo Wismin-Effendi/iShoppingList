@@ -25,8 +25,11 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     
     var cloudKitHelper: CloudKitHelper!
     
+    var appDelegate = AppDelegate.getAppDelegate()
+    
     override func viewDidLoad()     {
         super.viewDidLoad()
+        appDelegate.controller = self
       //  let nib = UINib(nibName: NibName.shoppingListCell.rawValue, bundle: nil)
       //  tableView.register(nib, forCellReuseIdentifier: CellIdentifier.shoppingList.rawValue)
         populateShoppingLists()
@@ -64,7 +67,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         self.dataSource = TableViewDataSource(cellIdentifier: CellIdentifier.shoppingList.rawValue, tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
             cell.textLabel?.text = model.title
             // cell.hasItems = model.items.count > 0
-            cell.backgroundColor = UIColor.orange
+            cell.backgroundColor = UIColor.seaBuckthorn
             cell.accessoryType = .disclosureIndicator
             cell.coreDataIdentifier = model.identifier 
         }
