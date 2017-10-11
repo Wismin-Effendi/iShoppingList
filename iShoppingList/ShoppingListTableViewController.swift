@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import os.log
 
 class ShoppingListTableViewController: UITableViewController, UITextFieldDelegate {
     
@@ -49,7 +50,9 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     func saveToCloudKit() {
-        cloudKitHelper.savingToCloudKitOnly()
+        cloudKitHelper.savingToCloudKitOnly(completion: {
+            os_log("saving to cloudKit")
+        })
         refreshControl?.endRefreshing()
     }
     

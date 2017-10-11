@@ -32,3 +32,19 @@ enum CellIdentifier: String {
 enum NibName: String {
     case shoppingListCell = "ShoppingListViewCell"
 }
+
+
+public struct Constant {
+    public static let MaxFreeVersionTask: Int = 20
+    public static let DelayBeforeRefetchAfterUpload: Double = 2
+    public static let NumRetryForError4097: Int = 0
+    public static let DelayForRetryError4097: Double = 10
+}
+
+
+extension UserDefaults {
+    public struct Keys {
+        public static let lastSync = "lastSync"
+        public static let nonCKError4097RetryToken = "nonCKError4097RetryToken"
+    }
+}

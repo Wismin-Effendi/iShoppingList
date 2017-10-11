@@ -35,21 +35,30 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.storeName.identifier), storeIdentifier)
         let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItem.pendingDeletion))
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
-        populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
-        filterItemsBy(category: ItemCategory.todo)
         setupRefreshControl()
-        saveToCloudKit()
+        syncToCloudKit()
     }
     
-    func saveToCloudKit() {
-        cloudKitHelper.savingToCloudKitOnly()
-        refreshControl?.endRefreshing()
+    
+    func syncToCloudKit() {
+        coreDataStack.saveContext()
+        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
+            self?.cloudKitHelper.syncToCloudKit {
+                DispatchQueue.main.async {
+                    guard let strongSelf = self else { return }
+                    strongSelf.coreDataStack.saveContext()
+                    strongSelf.coreDataStack.managedObjectContext.reset()
+                    strongSelf.populateGroceryItems(predicate: strongSelf.storeIdentifierAndNotPendingDeletionPredicate)
+                    strongSelf.filterItemsBy(category: ItemCategory.todo)
+                }
+            }
+        }
     }
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Saving to iCloud")
-        refreshControl!.addTarget(self, action: #selector(GroceryItemsTableViewController.saveToCloudKit), for: .valueChanged)
+        refreshControl!.attributedTitle = NSAttributedString(string: "Sync to iCloud")
+        refreshControl!.addTarget(self, action: #selector(GroceryItemsTableViewController.syncToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
     

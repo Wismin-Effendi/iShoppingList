@@ -56,12 +56,12 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
 
 extension GroceryItem {
     
-    convenience init(using cloudKitRecord: CKRecord, backgroundContext: NSManagedObjectContext) {
-        self.init(context: backgroundContext)
+    convenience init(using cloudKitRecord: CKRecord, context: NSManagedObjectContext) {
+        self.init(context: context)
         self.setDefaultValuesForRemoteModify()
         self.identifier = cloudKitRecord[ckGroceryItem.identifier] as! String 
         let ckReference = cloudKitRecord[ckGroceryItem.storeName] as! CKReference
-        self.storeName = CoreDataHelper.sharedInstance.coreDataShoppingListFrom(ckReference: ckReference, backgroundContext: backgroundContext)
+        self.storeName = CoreDataHelper.sharedInstance.coreDataShoppingListFrom(ckReference: ckReference, managedObjectContext: context)
         update(using: cloudKitRecord)
     }
     

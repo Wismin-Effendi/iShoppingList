@@ -180,10 +180,10 @@ class CoreDataUtil {
         }
     }
     
-    public static func updateShoppingListCKMetadata(from cloudKitRecords: [CKRecord], backgroundContext: NSManagedObjectContext) {
+    public static func updateShoppingListCKMetadata(from cloudKitRecords: [CKRecord], managedObjectContext: NSManagedObjectContext) {
         for ckRecord in cloudKitRecords {
             let identifier: String = ckRecord[ckShoppingList.identifier] as! String
-            if let shoppingList = getAShoppingListOf(storeIdentifier: identifier, moc: backgroundContext) {
+            if let shoppingList = getAShoppingListOf(storeIdentifier: identifier, moc: managedObjectContext) {
                 shoppingList.updateCKMetadata(from: ckRecord)
             } else {
                 let title = ckRecord[ckShoppingList.title] as! String
@@ -192,10 +192,10 @@ class CoreDataUtil {
         }
     }
     
-    public static func updateGroceryItemCKMetadata(from cloudKitRecords: [CKRecord], backgroundContext: NSManagedObjectContext) {
+    public static func updateGroceryItemCKMetadata(from cloudKitRecords: [CKRecord], managedObjectContext: NSManagedObjectContext) {
         for ckRecord in cloudKitRecords {
             let identifier: String = ckRecord[ckGroceryItem.identifier] as! String
-            if let groceryItem = getGroceryItem(identifier: identifier, moc: backgroundContext) {
+            if let groceryItem = getGroceryItem(identifier: identifier, moc: managedObjectContext) {
                 groceryItem.updateCKMetadata(from: ckRecord)
             } else {
                 let title = ckRecord[ckGroceryItem.title] as! String
@@ -204,22 +204,22 @@ class CoreDataUtil {
         }
     }
     
-    public static func batchDeleteShoppingListPendingDeletion(backgroundContext: NSManagedObjectContext) {
+    public static func batchDeleteShoppingListPendingDeletion(managedObjectContext: NSManagedObjectContext) {
         let shoppingListFetch: NSFetchRequest<NSFetchRequestResult> = ShoppingList.fetchRequest()
         shoppingListFetch.predicate = Predicates.DeletedShoppingList
-        batchDeleteManagedObject(fetchRequest: shoppingListFetch, backgroundContext: backgroundContext)
+        batchDeleteManagedObject(fetchRequest: shoppingListFetch, managedObjectContext: managedObjectContext)
     }
     
-    public static func batchDeleteGroceryItemPendingDeletion(backgroundContext: NSManagedObjectContext) {
+    public static func batchDeleteGroceryItemPendingDeletion(managedObjectContext: NSManagedObjectContext) {
         let groceryItemFetch: NSFetchRequest<NSFetchRequestResult> = GroceryItem.fetchRequest()
         groceryItemFetch.predicate = Predicates.DeletedGroceryItem
-        batchDeleteManagedObject(fetchRequest: groceryItemFetch, backgroundContext: backgroundContext)
+        batchDeleteManagedObject(fetchRequest: groceryItemFetch, managedObjectContext: managedObjectContext)
     }
     
-    public static func batchDeleteManagedObject(fetchRequest: NSFetchRequest<NSFetchRequestResult>, backgroundContext: NSManagedObjectContext) {
+    public static func batchDeleteManagedObject(fetchRequest: NSFetchRequest<NSFetchRequestResult>, managedObjectContext: NSManagedObjectContext) {
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         batchDeleteRequest.resultType = .resultTypeStatusOnly
-        try! backgroundContext.execute(batchDeleteRequest)
+        try! managedObjectContext.execute(batchDeleteRequest)
     }
     
     public static func createOneSampleShoppingList(title: String, moc: NSManagedObjectContext) {
