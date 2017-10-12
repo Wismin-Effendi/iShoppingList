@@ -10,6 +10,9 @@ import UIKit
 
 class SettingsViewController: UITableViewController {
 
+    @IBOutlet weak var showLicensesButton: UIButton!
+    var showLicenses = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -26,10 +29,24 @@ class SettingsViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func showLicensesTapped(_ sender: UIButton) {
+        showLicenses = !showLicenses
+        if showLicenses {
+            showLicensesButton.setTitle("Hide Licenses", for: .normal)
+        } else {
+            showLicensesButton.setTitle("Show Licenses", for: .normal)
+        }
+        tableView.reloadData()
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        if showLicenses {
+            return 2
+        } else {
+            return 1
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

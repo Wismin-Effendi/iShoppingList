@@ -133,14 +133,56 @@
                                                     <rect key="frame" x="123" y="6" width="129" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <state key="normal" title="Show Licenses"/>
+                                                    <connections>
+                                                        <action selector="showLicensesTapped:" destination="sG7-IY-jmd" eventType="touchUpInside" id="Zk5-a9-EdY"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="N6Z-e8-pTO">
-                                        <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection id="nd1-3o-bil">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="250" id="k5B-qd-FIy">
+                                        <rect key="frame" x="0.0" y="72" width="375" height="250"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="N6Z-e8-pTO" id="cEL-W4-JWc">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="k5B-qd-FIy" id="Est-i2-PhW">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="249.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8sc-ng-7kE">
+                                                    <rect key="frame" x="20" y="20" width="335" height="209.5"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <attributedString key="attributedText">
+                                                        <fragment>
+                                                            <string key="content">Icons designed by Smashicons from Flaticon (CC 3.0 BY)
+
+https://www.flaticon.com/authors/smashicons 
+
+https://creativecommons.org/licenses/by/3.0/us/</string>
+                                                            <attributes>
+                                                                <font key="NSFont" size="18" name="AvenirNext-Regular"/>
+                                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                                                </textView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="8sc-ng-7kE" secondAttribute="trailing" constant="20" id="Hlb-rh-pG4"/>
+                                                <constraint firstItem="8sc-ng-7kE" firstAttribute="top" secondItem="Est-i2-PhW" secondAttribute="top" constant="20" id="ak3-w0-MLZ"/>
+                                                <constraint firstItem="8sc-ng-7kE" firstAttribute="leading" secondItem="Est-i2-PhW" secondAttribute="leading" constant="20" id="lRu-F8-V61"/>
+                                                <constraint firstAttribute="bottom" secondItem="8sc-ng-7kE" secondAttribute="bottom" constant="20" id="uA5-HA-3io"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="kVB-6I-1O8">
+                                        <rect key="frame" x="0.0" y="322" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kVB-6I-1O8" id="6tb-Cz-OYu">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
@@ -154,6 +196,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="rMr-1D-N1C"/>
+                    <connections>
+                        <outlet property="showLicensesButton" destination="6vq-69-5rK" id="y4j-zc-OuJ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fZ2-k0-ECw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
