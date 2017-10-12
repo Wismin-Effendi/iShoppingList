@@ -48,6 +48,7 @@
 		378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97831F23B47F00C526D9 /* TableViewDataSource.swift */; };
 		378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */; };
 		378EE8A21F2CB819008F5669 /* ShoppingListCell..swift in Sources */ = {isa = PBXBuildFile; fileRef = 378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */; };
+		C3AD21631F8FE9E400135A5D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AD21621F8FE9E400135A5D /* SettingsViewController.swift */; };
 		C3CDBAE31F8E9CCF00A54AE4 /* UserNotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAE21F8E9CCF00A54AE4 /* UserNotificationHelper.swift */; };
 		C3CDBAEE1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAEC1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift */; };
 		C3CDBAEF1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAED1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift */; };
@@ -131,6 +132,7 @@
 		378E97831F23B47F00C526D9 /* TableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
 		378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsProvider.swift; sourceTree = "<group>"; };
 		378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListCell..swift; sourceTree = "<group>"; };
+		C3AD21621F8FE9E400135A5D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		C3CDBAE21F8E9CCF00A54AE4 /* UserNotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationHelper.swift; sourceTree = "<group>"; };
 		C3CDBAEC1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GroceryItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		C3CDBAED1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WarehouseGroceryItems+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				3746AC4B1F241DEE00D1B988 /* ShoppingListTableViewController.swift */,
 				3746AC4D1F242EC200D1B988 /* GroceryItemsTableViewController.swift */,
 				3746AD311F2987EB00D1B988 /* ItemDetailsTableViewController.swift */,
+				C3AD21621F8FE9E400135A5D /* SettingsViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 				37760C3C1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift in Sources */,
 				370E9ABB1F2AF204008EF197 /* RepeatedItemCoordinator.swift in Sources */,
 				3746AD2E1F292F0E00D1B988 /* TaskItemCell.swift in Sources */,
+				C3AD21631F8FE9E400135A5D /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

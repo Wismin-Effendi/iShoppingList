@@ -25,7 +25,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
     var managedObjectContext: NSManagedObjectContext!
     
     var cloudKitHelper: CloudKitHelper!
-    
+    var settingButton: UIBarButtonItem!
     var appDelegate = AppDelegate.getAppDelegate()
     
     override func viewDidLoad()     {
@@ -37,6 +37,18 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         setupRefreshControl()
         // show location for MySQL file
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.backgroundColor = UIColor.seaBuckthorn
+        settingButton = UIBarButtonItem(image: #imageLiteral(resourceName: "settings-black"), style: .plain, target: self, action: #selector(ShoppingListTableViewController.settingTapped))
+        navigationItem.rightBarButtonItem = settingButton
+        settingButton.isEnabled = true 
+    }
+    
+    @objc func settingTapped(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "SettingsViewController", sender: nil)
     }
     
     @objc func syncToCloudKit() {
@@ -71,7 +83,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         self.dataSource = TableViewDataSource(cellIdentifier: CellIdentifier.shoppingList.rawValue, tableView: self.tableView, fetchedResultsProvider: self.fetchedResultsProvider) { cell, model in
             cell.textLabel?.text = model.title
             // cell.hasItems = model.items.count > 0
-            cell.backgroundColor = UIColor.seaBuckthorn
+            cell.backgroundColor = UIColor.groupTableViewBackground
             cell.accessoryType = .disclosureIndicator
             cell.coreDataIdentifier = model.identifier 
         }

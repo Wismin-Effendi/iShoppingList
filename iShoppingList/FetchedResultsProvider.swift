@@ -175,6 +175,10 @@ where T: ManagedObjectType & CloudKitConvertible {
             }
         } else {
             // Fallback on earlier versions
+            self.delegate.tableView.reloadData()
+            
+            self.sectionChanges = nil
+            self.itemChanges = nil
         }
     }
 }
