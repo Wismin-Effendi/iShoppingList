@@ -91,6 +91,7 @@
                                     <constraints>
                                         <constraint firstItem="YLj-a8-nDp" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="70" id="0bB-sL-t9A"/>
                                         <constraint firstItem="kjQ-NI-kJu" firstAttribute="leading" secondItem="kg9-ZW-g2O" secondAttribute="leadingMargin" constant="12" id="bK8-08-gfj"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="YLj-a8-nDp" secondAttribute="trailing" constant="80" id="e0D-CP-Idd"/>
                                         <constraint firstItem="YLj-a8-nDp" firstAttribute="centerY" secondItem="kjQ-NI-kJu" secondAttribute="centerY" id="ipQ-6J-Ywe"/>
                                         <constraint firstItem="kjQ-NI-kJu" firstAttribute="centerY" secondItem="kg9-ZW-g2O" secondAttribute="centerY" id="saN-BS-9l1"/>
                                     </constraints>
