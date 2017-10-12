@@ -44,10 +44,10 @@ class CoreDataHelper {
         guard let dotIndex = recordName.characters.index(of: ".") else {
             fatalError("ERROR - RecordID.recordName should contain entity prefix")
         }
-        let entityName = recordName.substring(to: dotIndex)
+        let entityName = recordName[..<dotIndex] // recordName.substring(to: dotIndex)
         let indexAfterDot = recordName.index(dotIndex, offsetBy: 1)
-        let identifier = recordName.substring(from: indexAfterDot)
-        return (entityName: entityName, identifier: identifier)
+        let identifier = recordName[indexAfterDot...] // recordName.substring(from: indexAfterDot)
+        return (entityName: String(entityName), identifier: String(identifier))
     }
     
     func deleteManagedObject(using ckRecordID: CKRecordID, managedObjectContext: NSManagedObjectContext) {

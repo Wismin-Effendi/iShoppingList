@@ -24,19 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let cloudKitHelper: CloudKitHelper = CloudKitHelper.sharedInstance
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        setupCloudKit()
-        application.registerForRemoteNotifications()
-        
-        if let options: NSDictionary = launchOptions as NSDictionary? {
-            let remoteNotification = options[UIApplicationLaunchOptionsKey.remoteNotification]
-            
-            if let notification = remoteNotification {
-                self.application(application, didReceiveRemoteNotification: notification as! [AnyHashable : Any], fetchCompletionHandler: { (result) in
-                    
-                })
-            }
-        }
         
         guard let nc = self.window?.rootViewController as? UINavigationController else {
             fatalError("RootViewController not found")
@@ -50,8 +37,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         shoppingListTVC.managedObjectContext = coreDataStack.managedObjectContext
         shoppingListTVC.cloudKitHelper = cloudKitHelper
         
+        // CloudKit stuff
+        NotificationCenter.default.addObserver(self, selector: #selector(handleCKAccountChange(notification:)), name: .CKAccountChanged, object: nil)
+        
+        checkThenRunCloudKitSetup(application)
+        
+        setupUserNotification()
         return true
     }
+    
+    
+    // MARK: - The rest of application life cycle
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -85,19 +81,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
-    // MARK: - Private
+    // MARK: - Private helper
     private func runTransferTodaysItemFromWarehouseToActiveGroceryItems() {
         coreDataStack.performBackgroundTask { (backgroundContext) in
             RepeatedItemsCoordinator.shared(backgroundContext: backgroundContext).transferTodayItemsToActiveGroceryItems()
         }
     }
     
+    @objc func handleCKAccountChange(notification: NSNotification) {
+        checkThenRunCloudKitSetup()
+    }
+    
+    private func checkThenRunCloudKitSetup(_ application: UIApplication? = nil) {
+        self.cloudKitHelper.checkCKAccountStatus {[unowned self] (accountStatus) in
+            switch accountStatus {
+            case .available:
+                self.setupCloudKit()
+                DispatchQueue.main.async {
+                    os_log("We have valid iCloud account....", log: .default, type: .debug)
+                    application?.registerForRemoteNotifications()
+                }
+            default:
+                self.controller?.showAlertWarning(message: "Sync feature require iCloud account")
+            }
+        }
+    }
+    
     private func setupCloudKit() {
-        // Zones compliance
-        cloudKitHelper.setCustomZonesCompliance()
+        DispatchQueue.global(qos: .utility).async {[unowned self] in
+            self.cloudKitHelper.setupCloudKit()
+        }
+    }
+    
+    private func setupUserNotification() {
+        UserNotificationHelper.requestAuthorization()
+        UNUserNotificationCenter.current().delegate = self
         
-        // Fetch subscriptions
-        cloudKitHelper.createDBSubscription()
+        let snoozeAction15 = UNNotificationAction(identifier: "SnoozeAction15", title: "Snooze 15 mins", options: [])
+        let snoozeAction30 = UNNotificationAction(identifier: "SnoozeAction30", title: "Snooze 30 mins", options: [])
+        let category = UNNotificationCategory(identifier: "OverdueItemCategory", actions: [snoozeAction15, snoozeAction30], intentIdentifiers: [], options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([category])
     }
     
     // MARK: - Helper 
@@ -117,6 +140,27 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        func snoozeSetting(timeInterval: TimeInterval) {
+            let identifier = response.notification.request.identifier
+            let content = response.notification.request.content
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
+            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [identifier])
+            UNUserNotificationCenter.current().add(request) { (error) in
+                if let error = error {
+                    os_log("Uh oh! We has an error in adding user notification", log: .default, type: .error, error.localizedDescription)
+                }
+            }
+        }
+        
+        switch response.actionIdentifier {
+        case "SnoozeAction15":
+            snoozeSetting(timeInterval: (15*60))
+        case "SnoozeAction30":
+            snoozeSetting(timeInterval: (30*60))
+        default: break
+        }
         
         completionHandler()
     }

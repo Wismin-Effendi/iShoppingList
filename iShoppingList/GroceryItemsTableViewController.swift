@@ -35,12 +35,14 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         let storeIdentifierPredicate = NSPredicate(format: "%K == %@", #keyPath(GroceryItem.storeName.identifier), storeIdentifier)
         let notPendingDeletionPredicate = NSPredicate(format: "%K == NO", #keyPath(GroceryItem.pendingDeletion))
         storeIdentifierAndNotPendingDeletionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [storeIdentifierPredicate, notPendingDeletionPredicate])
+
         setupRefreshControl()
-        syncToCloudKit()
+        populateGroceryItems(predicate: storeIdentifierAndNotPendingDeletionPredicate)
+        filterItemsBy(category: ItemCategory.todo)
     }
     
     
-    func syncToCloudKit() {
+    @objc func syncToCloudKit() {
         coreDataStack.saveContext()
         DispatchQueue.global(qos: .userInitiated).async {[weak self] in
             self?.cloudKitHelper.syncToCloudKit {
@@ -53,6 +55,12 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
                 }
             }
         }
+        let delayTime = DispatchTime.now() + Constant.DelayBeforeRefetchAfterUpload
+        DispatchQueue.global().asyncAfter(deadline: delayTime) {[weak self] in
+            DispatchQueue.main.async {
+                self?.refreshControl?.endRefreshing()
+            }
+        }
     }
     
     private func setupRefreshControl() {
@@ -63,7 +71,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     
-    func filterItems(_ sender: UIBarButtonItem) {
+    @objc func filterItems(_ sender: UIBarButtonItem) {
         if let title = sender.title,
             let itemsFilter = ItemsFilter(rawValue: title) {
             switch itemsFilter {
@@ -104,7 +112,7 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
     
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return currentItemsFilter == .todo ?  81 : 0
+        return currentItemsFilter == .todo ?  91 : 0
     }
     
     
@@ -165,9 +173,12 @@ class GroceryItemsTableViewController: UITableViewController, UITextFieldDelegat
         // We only need to set storeName with reference to ShoppingList items, no need to also add groceryItem to ShoppingList item 
         // The CoreData would do that part for us since we have configure inverse relationship
         shoppingList.addToItems(groceryItem)
-        try! self.managedObjectContext.save()
-        self.managedObjectContext.refreshAllObjects()
-    
+
+        do {
+            try self.managedObjectContext.save()
+        } catch let error as NSError {
+            fatalError("Failed to save new Shopping List to core data. \(error.localizedDescription)")
+        }
     }
     
     private func filterItemsBy(category: ItemCategory) {
@@ -222,7 +233,7 @@ extension GroceryItemsTableViewController: UIPopoverPresentationControllerDelega
     }
     
     // MARK: - Helper
-    func dismissPopoverViewController() {
+    @objc func dismissPopoverViewController() {
         self.dismiss(animated: true, completion: nil)
     }
 }

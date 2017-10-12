@@ -37,29 +37,30 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
         setupRefreshControl()
         // show location for MySQL file
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
-        syncToCloudKit()
     }
     
-    func syncToCloudKit() {
-        cloudKitHelper.syncToCloudKit {
-            DispatchQueue.main.async {[unowned self] in
-                self.populateShoppingLists()
-                self.tableView.reloadData()
+    @objc func syncToCloudKit() {
+        coreDataStack.saveContext()
+        DispatchQueue.global(qos: .userInitiated).async {[weak self] in
+            self?.cloudKitHelper.syncToCloudKit {
+                DispatchQueue.main.async {
+                    self?.populateShoppingLists()
+                    self?.tableView.reloadData()
+                }
+            }
+        }
+        let delayTime = DispatchTime.now() + Constant.DelayBeforeRefetchAfterUpload
+        DispatchQueue.global().asyncAfter(deadline: delayTime) {[weak self] in
+            DispatchQueue.main.async {
+                self?.refreshControl?.endRefreshing()
             }
         }
     }
     
-    func saveToCloudKit() {
-        cloudKitHelper.savingToCloudKitOnly(completion: {
-            os_log("saving to cloudKit")
-        })
-        refreshControl?.endRefreshing()
-    }
-    
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl!.attributedTitle = NSAttributedString(string: "Saving to iCloud")
-        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.saveToCloudKit), for: .valueChanged)
+        refreshControl!.attributedTitle = NSAttributedString(string: "Sync to iCloud")
+        refreshControl!.addTarget(self, action: #selector(ShoppingListTableViewController.syncToCloudKit), for: .valueChanged)
         tableView.addSubview(refreshControl!)
     }
 
@@ -81,7 +82,7 @@ class ShoppingListTableViewController: UITableViewController, UITextFieldDelegat
 
     // Mark: TableViewDelegate 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 81
+        return 91
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

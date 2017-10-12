@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="17A405" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13240" systemVersion="" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChangeToken" representedClassName="ChangeToken" syncable="YES">
         <attribute name="previousServerChangeToken" optional="YES" attributeType="Transformable" syncable="YES"/>
     </entity>
@@ -15,9 +15,10 @@
         <attribute name="localUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsUpload" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="pendingDeletion" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="price" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="reminderDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="repetitionInterval" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="storeName" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="items" inverseEntity="ShoppingList" syncable="YES"/>
     </entity>
     <entity name="ShoppingList" representedClassName="ShoppingList" syncable="YES">
@@ -30,21 +31,22 @@
         <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GroceryItem" inverseName="storeName" inverseEntity="GroceryItem" syncable="YES"/>
     </entity>
     <entity name="WarehouseGroceryItems" representedClassName="WarehouseGroceryItems" syncable="YES">
-        <attribute name="deliveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="deliveryDate" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="identifier" attributeType="String" syncable="YES"/>
         <attribute name="isRepeatedItem" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="localUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsUpload" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="price" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="protoCompletionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="protoIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="repetitionInterval" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="shoppingListTitle" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
         <element name="ChangeToken" positionX="-324" positionY="198" width="128" height="60"/>
-        <element name="GroceryItem" positionX="-522" positionY="54" width="128" height="270"/>
+        <element name="GroceryItem" positionX="-522" positionY="54" width="128" height="285"/>
         <element name="ShoppingList" positionX="63" positionY="162" width="128" height="150"/>
-        <element name="WarehouseGroceryItems" positionX="34" positionY="297" width="128" height="195"/>
+        <element name="WarehouseGroceryItems" positionX="34" positionY="297" width="128" height="210"/>
     </elements>
 </model>

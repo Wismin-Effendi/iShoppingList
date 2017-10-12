@@ -12,7 +12,7 @@ import CloudKit
 
 @objc(GroceryItem)
 public class GroceryItem: NSManagedObject, CloudKitConvertible {
-    
+        
     func setDefaultValuesForLocalCreation() {
         self.hasReminder =  false
         self.archived =  false

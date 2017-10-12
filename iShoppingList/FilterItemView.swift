@@ -56,7 +56,7 @@ class FilterItemView: UIView {
         self.addSubview(footerView)
     }
     
-    func segmentedValueChanged(_ sender:UISegmentedControl!)
+    @objc func segmentedValueChanged(_ sender:UISegmentedControl!)
     {
         let index = sender.selectedSegmentIndex
     

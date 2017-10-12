@@ -11,7 +11,6 @@
 		370E9AB91F2AB031008EF197 /* GlobalEnums_and_Struct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AB81F2AB031008EF197 /* GlobalEnums_and_Struct.swift */; };
 		370E9ABB1F2AF204008EF197 /* RepeatedItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9ABA1F2AF204008EF197 /* RepeatedItemCoordinator.swift */; };
 		370E9AD61F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */; };
-		370E9AD71F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */; };
 		370E9AD81F2B786D008EF197 /* GroceryItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AD21F2B786D008EF197 /* GroceryItem+CoreDataClass.swift */; };
 		370E9ADA1F2B786D008EF197 /* ShoppingList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AD41F2B786D008EF197 /* ShoppingList+CoreDataClass.swift */; };
 		370E9ADB1F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9AD51F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift */; };
@@ -19,7 +18,6 @@
 		370E9AE01F2B7C56008EF197 /* CloneItemToWarehouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370E9ADF1F2B7C56008EF197 /* CloneItemToWarehouse.swift */; };
 		372B45841F3D5B65001BD1C7 /* LocalCacheOfCloudKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372B45831F3D5B65001BD1C7 /* LocalCacheOfCloudKitTests.swift */; };
 		372B45861F3F2C9C001BD1C7 /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372B45851F3F2C9C001BD1C7 /* CoreDataHelper.swift */; };
-		372B458A1F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372B45881F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift */; };
 		372B458C1F3F935E001BD1C7 /* Predicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372B458B1F3F935E001BD1C7 /* Predicates.swift */; };
 		3746AC441F23E46500D1B988 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC431F23E46500D1B988 /* CoreDataStack.swift */; };
 		3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746AC471F24094500D1B988 /* AddNewItemView.swift */; };
@@ -35,7 +33,6 @@
 		374CCD9F1F8D9B33000EE69D /* CustomFlatColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374CCD9E1F8D9B33000EE69D /* CustomFlatColors.swift */; };
 		37760C2B1F2F7AD600A3B586 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37760C2A1F2F7AD600A3B586 /* CloudKit.framework */; };
 		37760C2D1F2F7B6C00A3B586 /* CloudKitSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */; };
-		37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */; };
 		37760C321F2FB61900A3B586 /* CloudKitUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C311F2FB61900A3B586 /* CloudKitUtil.swift */; };
 		37760C3B1F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */; };
 		37760C3C1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */; };
@@ -51,6 +48,9 @@
 		378E97841F23B47F00C526D9 /* TableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97831F23B47F00C526D9 /* TableViewDataSource.swift */; };
 		378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */; };
 		378EE8A21F2CB819008F5669 /* ShoppingListCell..swift in Sources */ = {isa = PBXBuildFile; fileRef = 378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */; };
+		C3CDBAE31F8E9CCF00A54AE4 /* UserNotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAE21F8E9CCF00A54AE4 /* UserNotificationHelper.swift */; };
+		C3CDBAEE1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAEC1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift */; };
+		C3CDBAEF1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3CDBAED1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,7 +87,6 @@
 		370E9AB81F2AB031008EF197 /* GlobalEnums_and_Struct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalEnums_and_Struct.swift; sourceTree = "<group>"; };
 		370E9ABA1F2AF204008EF197 /* RepeatedItemCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatedItemCoordinator.swift; sourceTree = "<group>"; };
 		370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WarehouseGroceryItems+CoreDataClass.swift"; sourceTree = "<group>"; };
-		370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WarehouseGroceryItems+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		370E9AD21F2B786D008EF197 /* GroceryItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GroceryItem+CoreDataClass.swift"; sourceTree = "<group>"; };
 		370E9AD41F2B786D008EF197 /* ShoppingList+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShoppingList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		370E9AD51F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShoppingList+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -95,7 +94,6 @@
 		370E9ADF1F2B7C56008EF197 /* CloneItemToWarehouse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloneItemToWarehouse.swift; sourceTree = "<group>"; };
 		372B45831F3D5B65001BD1C7 /* LocalCacheOfCloudKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCacheOfCloudKitTests.swift; sourceTree = "<group>"; };
 		372B45851F3F2C9C001BD1C7 /* CoreDataHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataHelper.swift; sourceTree = "<group>"; };
-		372B45881F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GroceryItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		372B458B1F3F935E001BD1C7 /* Predicates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Predicates.swift; sourceTree = "<group>"; };
 		3746AC431F23E46500D1B988 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		3746AC471F24094500D1B988 /* AddNewItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewItemView.swift; sourceTree = "<group>"; };
@@ -112,7 +110,6 @@
 		37760C291F2F7AD300A3B586 /* iShoppingList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iShoppingList.entitlements; sourceTree = "<group>"; };
 		37760C2A1F2F7AD600A3B586 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		37760C2C1F2F7B6C00A3B586 /* CloudKitSyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitSyncTests.swift; sourceTree = "<group>"; };
-		37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
 		37760C311F2FB61900A3B586 /* CloudKitUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitUtil.swift; sourceTree = "<group>"; };
 		37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataClass.swift"; sourceTree = "<group>"; };
 		37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChangeToken+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -134,6 +131,9 @@
 		378E97831F23B47F00C526D9 /* TableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDataSource.swift; sourceTree = "<group>"; };
 		378E97851F23B54600C526D9 /* FetchedResultsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsProvider.swift; sourceTree = "<group>"; };
 		378EE8A11F2CB819008F5669 /* ShoppingListCell..swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoppingListCell..swift; sourceTree = "<group>"; };
+		C3CDBAE21F8E9CCF00A54AE4 /* UserNotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationHelper.swift; sourceTree = "<group>"; };
+		C3CDBAEC1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GroceryItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		C3CDBAED1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WarehouseGroceryItems+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,7 +186,6 @@
 		37760C2E1F2F7BE000A3B586 /* CloudKit */ = {
 			isa = PBXGroup;
 			children = (
-				37760C2F1F2F7D2500A3B586 /* CloudKitService.swift */,
 				37760C311F2FB61900A3B586 /* CloudKitUtil.swift */,
 				3780F8481F34FD9B00FF4085 /* CloudKitHelper.swift */,
 			);
@@ -196,11 +195,11 @@
 		37760C331F3082DF00A3B586 /* NSManagedObject Subclass */ = {
 			isa = PBXGroup;
 			children = (
-				372B45881F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift */,
+				C3CDBAEC1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift */,
+				C3CDBAED1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift */,
 				37760C391F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift */,
 				37760C3A1F340F0F00A3B586 /* ChangeToken+CoreDataProperties.swift */,
 				370E9AD01F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift */,
-				370E9AD11F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift */,
 				370E9AD21F2B786D008EF197 /* GroceryItem+CoreDataClass.swift */,
 				370E9AD41F2B786D008EF197 /* ShoppingList+CoreDataClass.swift */,
 				370E9AD51F2B786D008EF197 /* ShoppingList+CoreDataProperties.swift */,
@@ -249,6 +248,7 @@
 				372B458B1F3F935E001BD1C7 /* Predicates.swift */,
 				374CCD981F8C8B94000EE69D /* Constants.swift */,
 				374CCD9E1F8D9B33000EE69D /* CustomFlatColors.swift */,
+				C3CDBAE21F8E9CCF00A54AE4 /* UserNotificationHelper.swift */,
 			);
 			name = Helper;
 			sourceTree = "<group>";
@@ -387,12 +387,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = iShinobi;
 				TargetAttributes = {
 					378E974C1F23B2F900C526D9 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = WZFHSP6QD4;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -409,12 +410,14 @@
 					378E97631F23B2F900C526D9 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = WZFHSP6QD4;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 378E974C1F23B2F900C526D9;
 					};
 					378E976E1F23B2F900C526D9 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = WZFHSP6QD4;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 378E974C1F23B2F900C526D9;
 					};
@@ -477,12 +480,11 @@
 				374CCD991F8C8B94000EE69D /* Constants.swift in Sources */,
 				370E9AD61F2B786D008EF197 /* WarehouseGroceryItems+CoreDataClass.swift in Sources */,
 				3746AC441F23E46500D1B988 /* CoreDataStack.swift in Sources */,
-				372B458A1F3F6639001BD1C7 /* GroceryItem+CoreDataProperties.swift in Sources */,
+				C3CDBAEF1F8EF34100A54AE4 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */,
 				370E9AB71F2AA8B1008EF197 /* FilterItemView.swift in Sources */,
 				3746AC4A1F240B8400D1B988 /* Extensions.swift in Sources */,
-				370E9AD71F2B786D008EF197 /* WarehouseGroceryItems+CoreDataProperties.swift in Sources */,
 				370E9ADA1F2B786D008EF197 /* ShoppingList+CoreDataClass.swift in Sources */,
-				37760C301F2F7D2500A3B586 /* CloudKitService.swift in Sources */,
+				C3CDBAEE1F8EF34100A54AE4 /* GroceryItem+CoreDataProperties.swift in Sources */,
 				370E9ADE1F2B7A70008EF197 /* CoreDataUtility.swift in Sources */,
 				3780F8491F34FD9B00FF4085 /* CloudKitHelper.swift in Sources */,
 				3746AD321F2987EB00D1B988 /* ItemDetailsTableViewController.swift in Sources */,
@@ -494,6 +496,7 @@
 				378EE8A21F2CB819008F5669 /* ShoppingListCell..swift in Sources */,
 				3746AC481F24094500D1B988 /* AddNewItemView.swift in Sources */,
 				374CCD9F1F8D9B33000EE69D /* CustomFlatColors.swift in Sources */,
+				C3CDBAE31F8E9CCF00A54AE4 /* UserNotificationHelper.swift in Sources */,
 				374CCD8F1F8C5E6E000EE69D /* RoundedShadowView.swift in Sources */,
 				37760C3B1F340F0F00A3B586 /* ChangeToken+CoreDataClass.swift in Sources */,
 				378E97861F23B54600C526D9 /* FetchedResultsProvider.swift in Sources */,
@@ -574,7 +577,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -582,7 +587,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -625,7 +634,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -633,7 +644,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -670,7 +685,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -685,7 +701,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -700,7 +717,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingListTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iShoppingList.app/iShoppingList";
 			};
 			name = Debug;
@@ -715,7 +733,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingListTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iShoppingList.app/iShoppingList";
 			};
 			name = Release;
@@ -729,7 +748,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingListUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = iShoppingList;
 			};
 			name = Debug;
@@ -743,7 +763,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ninja.pragprog.iShoppingListUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = iShoppingList;
 			};
 			name = Release;

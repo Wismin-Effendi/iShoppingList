@@ -23,8 +23,10 @@ class ItemDetailsTableViewController: UITableViewController {
     @IBOutlet weak var repetitionIntervalPicker: UIPickerView!
     @IBOutlet weak var reminderSwitch: UISwitch!
     @IBOutlet weak var datePicker: UIDatePicker!
-
+    @IBOutlet weak var priceTextField: UITextField!
     @IBOutlet weak var completionDate: UILabel!
+    @IBOutlet weak var moveToActive: UIButton!
+    
     
     var item: GroceryItem!
     
@@ -45,7 +47,8 @@ class ItemDetailsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        appDelegate.controller = self 
+        appDelegate.controller = self
+        priceTextField.delegate = self
         repetitionIntervalPicker.dataSource = self
         repetitionIntervalPicker.delegate = self
         repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
@@ -78,6 +81,10 @@ class ItemDetailsTableViewController: UITableViewController {
         reminderDate = sender.date
     }
     
+    @IBAction func moveToActiveTapped(_ sender: UIButton) {
+        // move this item to active by setting the completed to false
+        item.completed = false
+    }
     private func insertOrDeleteRow(indexPath: IndexPath, state: Bool) {
         switch state {
         case true:
@@ -96,7 +103,7 @@ class ItemDetailsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return item.completed ? 2 : 1
+            return item.completed ? 4 : 2
         case 1:
             return item.isRepeatedItem ?  2 : 1
          case 2:
@@ -162,12 +169,15 @@ extension ItemDetailsTableViewController {
         }
     }
     
-    func persistItemDetails() {
+    @objc func persistItemDetails() {
         item.isRepeatedItem = repeatSwitch.isOn
         item.hasReminder = reminderSwitch.isOn
         item.reminderDate = datePicker.date as NSDate
         item.localUpdate = NSDate()
-        item.needsUpload = true 
+        item.needsUpload = true
+        if let priceText = priceTextField.text {
+           item.price = Double(priceText) ?? 0.0
+        }
         
         // item.repetitionInterval is updated in pickerView delegate
         do {
@@ -219,6 +229,7 @@ extension ItemDetailsTableViewController {
         titleLabel.text = item.title
         repeatSwitch.isOn = item.isRepeatedItem
         reminderSwitch.isOn = item.hasReminder
+        priceTextField.text = String(item.price)
         
         datePicker.date = Date()
         if let reminderDate = item.reminderDate {
@@ -272,6 +283,24 @@ extension ItemDetailsTableViewController {
     }
 }
 
+// MARK: - Text field delegate
+
+extension ItemDetailsTableViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let text = (textField.text ?? "") as NSString
+        let newText = text.replacingCharacters(in: range, with: string)
+        if let regex = try? NSRegularExpression(pattern: "^[0-9]*((\\.)[0-9]*)?$", options: .caseInsensitive) {
+            return regex.numberOfMatches(in: newText, options: .reportProgress, range: NSRange(location: 0, length: (newText as NSString).length)) > 0
+        }
+        return false
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
 
 
 // MARK: - Show or hide details option conditionally

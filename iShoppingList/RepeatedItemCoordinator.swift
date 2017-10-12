@@ -10,20 +10,6 @@ import Foundation
 import CoreData
 
 
-// Note: This should not run on main queue, we should make sure we run on other thread. Need to use performBackgroundTaks of iOS 10 CoreData stack.
-
-// Idea, maybe we don't need to keep checking periodic, too much waste,
-// Better to just create a spare in another Entity with same schema + Date when to move to active Items list
-// As an item is completed, we check if it's a repeated item, if so we clone to new Entity with Execution date field. Everytime app start, we check the warehause for  'clone delivery of the day'  if not empty, we move them to active list. No other processing required. (Ans: Implemented)
-// This way we distribute the processing load and should have not impact on performance. 
-
-// also when we update an item to become repeated, we need to process that item and clone to new Entity (warehouse)
-// 
-// Things no clear yet. What if an item has been cloned (either in warehouse or active items) but then we update and change to no-repeat? (Ans: Implemented)
-// -- I think we need to clean up the warehouse of that item, but if item already in active items list, we should leave them alone. 
-
-
-
 class RepeatedItemsCoordinator {
 
     private var backgroundContext: NSManagedObjectContext!
@@ -91,7 +77,7 @@ class RepeatedItemsCoordinator {
     fileprivate func transferOneItemToActiveGroceryItems(item: WarehouseGroceryItems) {
         let groceryItem = GroceryItem(context: backgroundContext)
         let storeName = item.shoppingListTitle
-        if let shoppingList = CoreDataUtil.getAShoppingListOf(storeName: storeName, moc: backgroundContext) {
+        if let shoppingList = CoreDataUtil.getAShoppingListOf(storeName: storeName!, moc: backgroundContext) {
             shoppingList.addToItems(groceryItem)
             
             // set default first, then override as needed
@@ -102,6 +88,7 @@ class RepeatedItemsCoordinator {
             groceryItem.isRepeatedItem = item.isRepeatedItem
             groceryItem.repetitionInterval = item.repetitionInterval
             groceryItem.lastCompletionDate = item.protoCompletionDate
+            groceryItem.price = item.price
         } else {
             fatalError("Not able to retrieve shoppingList for grocery item")
         }
@@ -113,7 +100,7 @@ class RepeatedItemsCoordinator {
         }
         
         // Delete the proto to avoid confusion when new item completed too. 
-        CoreDataUtil.deleteGroceryItem(identifier: item.protoIdentifier, moc: backgroundContext)
+        CoreDataUtil.deleteGroceryItem(identifier: item.protoIdentifier!, moc: backgroundContext)
         
         // Now delete the WarehouseItem
         backgroundContext.delete(item)

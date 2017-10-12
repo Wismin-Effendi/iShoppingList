@@ -12,15 +12,17 @@ import os.log
 
 class CloudKitUtil {
     
+    static let privateDatabase = CKContainer.default().privateCloudDatabase
+    
     public static func queryCKRecords(recordType: String, recordZoneID: CKRecordZoneID,
                                       predicate: NSPredicate,
                                       completion: @escaping ([CKRecord]?, Error?) -> Void) {
         
-        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        let privateDatabase = CloudKitUtil.privateDatabase
 
         let query = CKQuery(recordType: recordType, predicate: predicate)
         
-        privateDatabase?.perform(query, inZoneWith: recordZoneID, completionHandler: completion)
+        privateDatabase.perform(query, inZoneWith: recordZoneID, completionHandler: completion)
     }
     
     public static func saveOneCKRecord(record: CKRecord, completion: ((Error?) -> ())?) {
@@ -37,7 +39,7 @@ class CloudKitUtil {
     
     public static func saveOrDeleteCKRecords(recordsToSave: [CKRecord]?, recordIDsToDelete: [CKRecordID]?,
     completion: ((Error?) -> ())? )  {
-        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        let privateDatabase = CloudKitUtil.privateDatabase
         
         let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave,
                                                               recordIDsToDelete: recordIDsToDelete)
@@ -56,7 +58,7 @@ class CloudKitUtil {
             completion?(nil)
         }
         
-        privateDatabase?.add(modifyRecordsOperation)
+        privateDatabase.add(modifyRecordsOperation)
     }
     
     public static func queryCKRecordsOperation(recordType: String, recordZoneID: CKRecordZoneID,
@@ -64,7 +66,7 @@ class CloudKitUtil {
                                                recordFetchBlockClosure: @escaping (CKRecord) -> Void,
                                                completion: @escaping () -> Void) {
         
-        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        let privateDatabase = CloudKitUtil.privateDatabase
         
         let query = CKQuery(recordType: recordType, predicate: predicate)
         
@@ -90,7 +92,7 @@ class CloudKitUtil {
             fetchMoreRecords(cursor: cursor)
         }
         
-        privateDatabase?.add(queryRecordsOperation)
+        privateDatabase.add(queryRecordsOperation)
         
         
         func fetchMoreRecords(cursor: CKQueryCursor?) {
@@ -111,7 +113,7 @@ class CloudKitUtil {
     public static func modifyRecords(_ records: [CKRecord]?, andDelete deleteIds: [CKRecordID]?,
                                           completionHandler: @escaping ([CKRecord]?, [CKRecordID]?, Error?) -> Void) {
         
-        let privateDatabase = CloudKitService.sharedInstance.privateDatabase
+        let privateDatabase = CloudKitUtil.privateDatabase
         
         let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: deleteIds)
         op.savePolicy = .allKeys
@@ -143,6 +145,6 @@ class CloudKitUtil {
             completionHandler(savedRecords, deletedRecordIds, returnError)
         }
          
-        privateDatabase?.add(op)
+        privateDatabase.add(op)
     }
 }
