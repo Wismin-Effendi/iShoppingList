@@ -34,6 +34,7 @@ class CoreDataHelper {
                     print("yes, we found the record...")
                     groceryItem.update(using: ckRecord)
             } else{
+                os_log("We are going to create a new grocery item")
                 let _ = GroceryItem.init(using: ckRecord, context: managedObjectContext)
             }
         default: fatalError("We got unexpected type: \(ckRecord.recordType)")

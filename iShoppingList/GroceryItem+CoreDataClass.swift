@@ -17,6 +17,7 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
         self.hasReminder =  false
         self.archived =  false
         self.localUpdate = NSDate()
+        self.price = 0.0
         self.needsUpload = true
         self.pendingDeletion = false
         self.isRepeatedItem = false
@@ -26,6 +27,7 @@ public class GroceryItem: NSManagedObject, CloudKitConvertible {
         self.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         self.reminderDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
         self.lastCompletionDate = Date(timeIntervalSinceReferenceDate: 0) as NSDate
+        
 
     }
     
@@ -75,6 +77,7 @@ extension GroceryItem {
         self.reminderDate = (cloudKitRecord[ckGroceryItem.reminderDate] as! NSDate)
         self.title = cloudKitRecord[ckGroceryItem.title] as! String
         self.localUpdate = (cloudKitRecord[ckGroceryItem.localUpdate] as! NSDate)
+        self.price = (cloudKitRecord[ckGroceryItem.price] as? Double) ?? 0.0
         self.ckMetadata = CloudKitHelper.encodeMetadata(of: cloudKitRecord)
     }
     
@@ -86,7 +89,7 @@ extension GroceryItem {
     
     func managedObjectToNewCKRecord() -> CKRecord {
         guard ckMetadata == nil else {
-            fatalError("CKMetaData exist, this should is not a new CKRecord")
+            fatalError("CKMetaData exist, this should not be a new CKRecord")
         }
         
         let recordZoneID = CKRecordZoneID(zoneName: CloudKitZone.iShoppingListZone.rawValue, ownerName: CKCurrentUserDefaultName)
@@ -96,6 +99,7 @@ extension GroceryItem {
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
         ckRecord[ckGroceryItem.localUpdate] = self.localUpdate
         ckRecord[ckGroceryItem.identifier] = self.identifier as CKRecordValue
+        ckRecord[ckGroceryItem.price] = self.price as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue
@@ -116,6 +120,7 @@ extension GroceryItem {
         ckRecord[ckGroceryItem.title] = self.title as CKRecordValue
         ckRecord[ckGroceryItem.localUpdate] = self.localUpdate
         ckRecord[ckGroceryItem.identifier] = self.identifier as CKRecordValue
+        ckRecord[ckGroceryItem.price] = self.price as CKRecordValue
         ckRecord[ckGroceryItem.reminderDate] = self.reminderDate
         ckRecord[ckGroceryItem.lastCompletionDate] = self.lastCompletionDate
         ckRecord[ckGroceryItem.isRepeatedItem] = self.isRepeatedItem as CKRecordValue

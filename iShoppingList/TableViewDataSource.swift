@@ -38,6 +38,22 @@ UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObject
         self.tableView.deleteRows(at: [indexPath], with: .automatic)
     }
     
+    func fetchedResultsProviderDidUpdate(indexPath: IndexPath) {
+        self.tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    func fetchedResultsProviderDidMove(from: IndexPath, to: IndexPath) {
+        self.tableView.moveRow(at: from, to: to)
+    }
+    
+    func fetchedResultsProviderSectionDidInsert(indexSet: IndexSet) {
+        self.tableView.insertSections(indexSet, with: .automatic)
+    }
+    
+    func fetchedResultsProviderSectionDidDelete(indexSet: IndexSet) {
+        self.tableView.deleteSections(indexSet, with: .automatic)
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.fetchedResultsProvider.numberOfSections()
     }

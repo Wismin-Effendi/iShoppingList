@@ -28,7 +28,7 @@ extension ShoppingList {
     }
     
     func setForLocalDeletion() {
-        self.needsUpload = true
+        self.needsUpload = false
         self.pendingDeletion = true
         self.localUpdate = NSDate()
     }

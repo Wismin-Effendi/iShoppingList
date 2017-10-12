@@ -563,7 +563,7 @@ class CloudKitHelper {
             
             fetchRecordZoneChangesOperation.fetchRecordZoneChangesCompletionBlock = { (error) in
                 guard error == nil else {
-                    os_log("Error fetching zone changes for %s database: %@", databaseTokenKey, error.debugDescription)
+                    os_log("Error fetching zone changes for %@ database: %@", databaseTokenKey, error.debugDescription)
                     
                     self.handlingCKOperationError(of: error!, retryableFunction: WrapperFetchRecordZoneChangesOperation)
                     return
