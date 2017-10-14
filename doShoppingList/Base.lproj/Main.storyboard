@@ -9,17 +9,22 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="AvenirNext.ttc">
+            <string>AvenirNext-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Shopping Lists-->
         <scene sceneID="FQP-aQ-ec2">
             <objects>
-                <tableViewController id="BRW-dz-645" customClass="ShoppingListTableViewController" customModule="iShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="BRW-dz-645" customClass="ShoppingListTableViewController" customModule="doShoppingList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="f2V-Rj-rqT">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ShoppingListTableViewCell" id="XHd-I6-mkv" customClass="ShoppingListCell" customModule="iShoppingList" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ShoppingListTableViewCell" id="XHd-I6-mkv" customClass="ShoppingListCell" customModule="doShoppingList" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XHd-I6-mkv" id="HdH-g1-46b">
@@ -61,13 +66,13 @@
         <!--Grocery Items Table View Controller-->
         <scene sceneID="H2W-c1-Dyx">
             <objects>
-                <tableViewController id="sdG-Zc-glh" customClass="GroceryItemsTableViewController" customModule="iShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="sdG-Zc-glh" customClass="GroceryItemsTableViewController" customModule="doShoppingList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Mqw-u0-9Ge">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="GroceryItemsTableViewCell" id="Oed-nb-3zc" customClass="TaskItemCell" customModule="iShoppingList" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="GroceryItemsTableViewCell" id="Oed-nb-3zc" customClass="TaskItemCell" customModule="doShoppingList" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Oed-nb-3zc" id="kg9-ZW-g2O">
@@ -115,7 +120,7 @@
         <!--Settings View Controller-->
         <scene sceneID="qf2-x1-zbH">
             <objects>
-                <tableViewController id="sG7-IY-jmd" customClass="SettingsViewController" customModule="iShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="sG7-IY-jmd" customClass="SettingsViewController" customModule="doShoppingList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="UK6-Pe-ZIi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -208,7 +213,7 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
         <!--Item Details Table View Controller-->
         <scene sceneID="KFn-dE-192">
             <objects>
-                <tableViewController storyboardIdentifier="ItemDetailsTableViewController" id="sHm-Re-FNM" customClass="ItemDetailsTableViewController" customModule="iShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ItemDetailsTableViewController" id="sHm-Re-FNM" customClass="ItemDetailsTableViewController" customModule="doShoppingList" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="mOT-XE-svz">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -249,8 +254,11 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="0.00" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gLl-A0-0ho">
-                                                    <rect key="frame" x="198" y="12" width="50" height="30"/>
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="0.00" minimumFontSize="16" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="gLl-A0-0ho">
+                                                    <rect key="frame" x="198" y="12" width="100" height="30"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="7Lw-am-2bY"/>
+                                                    </constraints>
                                                     <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
@@ -266,7 +274,7 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gLl-A0-0ho" secondAttribute="trailing" constant="100" id="HdK-Bk-X28"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gLl-A0-0ho" secondAttribute="trailing" constant="60" id="HdK-Bk-X28"/>
                                                 <constraint firstItem="9CA-Ij-WaH" firstAttribute="baseline" secondItem="EL5-wb-Txs" secondAttribute="baseline" id="TUU-DO-zUI"/>
                                                 <constraint firstItem="EL5-wb-Txs" firstAttribute="leading" secondItem="ESp-VR-OeJ" secondAttribute="leadingMargin" constant="8" id="gGn-ra-XSQ"/>
                                                 <constraint firstItem="9CA-Ij-WaH" firstAttribute="leading" secondItem="EL5-wb-Txs" secondAttribute="trailing" constant="113" id="k5f-fM-Vg8"/>
@@ -289,16 +297,16 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="07/27/2017  1:00PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iZt-ac-2Wl">
-                                                    <rect key="frame" x="183" y="15" width="184" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="07/27/2017  1:00PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="13" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iZt-ac-2Wl">
+                                                    <rect key="frame" x="159" y="16.5" width="208" height="20.5"/>
+                                                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="LI9-3u-IFW" firstAttribute="centerY" secondItem="Ukg-cA-AXG" secondAttribute="centerY" id="DrN-2d-puY"/>
-                                                <constraint firstItem="iZt-ac-2Wl" firstAttribute="leading" secondItem="LI9-3u-IFW" secondAttribute="trailing" constant="36" id="ElW-VX-ifj"/>
+                                                <constraint firstItem="iZt-ac-2Wl" firstAttribute="leading" secondItem="LI9-3u-IFW" secondAttribute="trailing" constant="12" id="ElW-VX-ifj"/>
                                                 <constraint firstItem="iZt-ac-2Wl" firstAttribute="baseline" secondItem="LI9-3u-IFW" secondAttribute="baseline" id="IRv-DM-gDt"/>
                                                 <constraint firstAttribute="trailing" secondItem="iZt-ac-2Wl" secondAttribute="trailing" constant="8" id="Meh-Ws-ZUL"/>
                                                 <constraint firstItem="LI9-3u-IFW" firstAttribute="leading" secondItem="Ukg-cA-AXG" secondAttribute="leadingMargin" constant="8" id="Zpt-CB-o93"/>
@@ -465,6 +473,7 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                     <connections>
                         <outlet property="completionDate" destination="iZt-ac-2Wl" id="ZXX-hg-7pG"/>
                         <outlet property="datePicker" destination="obT-a2-mER" id="Laf-5J-I9x"/>
+                        <outlet property="moveToActive" destination="rD5-zS-iwQ" id="FXl-g9-5Ug"/>
                         <outlet property="priceTextField" destination="gLl-A0-0ho" id="8az-xL-W1I"/>
                         <outlet property="reminderSwitch" destination="MhR-hA-hCm" id="fnb-YG-5gI"/>
                         <outlet property="repeatSwitch" destination="UFf-sM-NmM" id="AB3-Ba-cia"/>

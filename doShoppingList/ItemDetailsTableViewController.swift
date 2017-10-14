@@ -13,7 +13,7 @@ import UserNotifications
 class ItemDetailsTableViewController: UITableViewController {
     
     struct IndexPathOfCell {
-        static let completionDate           = IndexPath.init(row: 1, section: 0)
+        static let completionDate           = IndexPath.init(row: 2, section: 0)
         static let repetitionIntervalPicker = IndexPath.init(row: 1, section: 1)
         static let reminderDatePicker       = IndexPath.init(row: 1, section: 2)
     }
@@ -56,7 +56,7 @@ class ItemDetailsTableViewController: UITableViewController {
         
         populateItemDetails(item)
         
-        let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(ItemDetailsTableViewController.persistItemDetails))
+        let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(ItemDetailsTableViewController.saveButtonTapped))
         navigationItem.rightBarButtonItem = saveButton
     }
     
@@ -84,7 +84,15 @@ class ItemDetailsTableViewController: UITableViewController {
     @IBAction func moveToActiveTapped(_ sender: UIButton) {
         // move this item to active by setting the completed to false
         item.completed = false
+        persistItemDetails()
+        
+        UIView.animate(withDuration: 0.4, animations: {[weak self] in
+            self?.moveToActive.frame.size = CGSize.zero
+        }) {[weak self] (completed) in
+            self?.dismiss(animated: true, completion: nil)
+        }
     }
+    
     private func insertOrDeleteRow(indexPath: IndexPath, state: Bool) {
         switch state {
         case true:
@@ -169,7 +177,16 @@ extension ItemDetailsTableViewController {
         }
     }
     
-    @objc func persistItemDetails() {
+    @objc func saveButtonTapped() {
+        persistItemDetails()
+        
+        // set up reminder if needed
+        setupNotificationForReminderIfNeeded()
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func persistItemDetails() {
         item.isRepeatedItem = repeatSwitch.isOn
         item.hasReminder = reminderSwitch.isOn
         item.reminderDate = datePicker.date as NSDate
@@ -187,11 +204,6 @@ extension ItemDetailsTableViewController {
         }
         // need to check if item was completed and we update the repeatSwitch or repetitionInterval
         synchronizeCloneToWarehouseAction()
-        
-        // set up reminder if needed 
-        setupNotificationForReminderIfNeeded()
-        
-        self.dismiss(animated: true, completion: nil)
     }
     
     private func synchronizeCloneToWarehouseAction() {
@@ -249,7 +261,7 @@ extension ItemDetailsTableViewController {
     private func setCompletionDate(_ date: Date) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
+        dateFormatter.timeStyle = .short
         dateFormatter.locale = Locale(identifier: "en_US")
         
         completionDate.text = dateFormatter.string(from: date)
@@ -297,6 +309,10 @@ extension ItemDetailsTableViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let text = textField.text,
+            let price = Float(text) {
+            textField.text = String(format: "%.2f", price)
+        }
         textField.resignFirstResponder()
         return true
     }
