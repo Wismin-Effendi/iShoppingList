@@ -3,7 +3,7 @@
 //  iShoppingList
 //
 //  Created by Wismin Effendi on 7/27/17.
-//  Copyright © 2017 iShinobi. All rights reserved.
+//  Copyright © 2017 Cleancoder.ninja. All rights reserved.
 //
 
 import Foundation

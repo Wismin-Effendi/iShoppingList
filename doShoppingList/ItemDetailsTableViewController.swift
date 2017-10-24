@@ -3,7 +3,7 @@
 //  iShoppingList
 //
 //  Created by Wismin Effendi on 7/26/17.
-//  Copyright © 2017 iShinobi. All rights reserved.
+//  Copyright © 2017 Cleancoder.ninja. All rights reserved.
 //
 
 import UIKit
@@ -70,27 +70,27 @@ class ItemDetailsTableViewController: UITableViewController {
     func handleUIReactively() {
         
         repeatSwitch.rx.value
-            .bind { [unowned self] state in
+            .bind(onNext: { [unowned self] state in
                 self.item.isRepeatedItem = state
                 self.insertOrDeleteRow(indexPath: IndexPathOfCell.repetitionIntervalPicker, state: state)
-            }
+            })
             .disposed(by: disposeBag)
         
         reminderSwitch.rx.value
-            .bind { [unowned self] state in
+            .bind(onNext: { [unowned self] state in
                 self.item.hasReminder = state
                 self.insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: state)
-            }
+            })
             .disposed(by: disposeBag)
         
         datePicker.rx.date
-            .bind { [unowned self] date in
+            .bind(onNext: { [unowned self] date in
                 self.reminderDate = date
-            }
+            })
             .disposed(by: disposeBag)
         
         moveToActive.rx.tap
-            .bind { [unowned self] in
+            .bind(onNext: { [unowned self] in
                 // move this item to active by setting the completed to false
                 self.item.completed = false
                 self.persistItemDetails()
@@ -100,7 +100,8 @@ class ItemDetailsTableViewController: UITableViewController {
                 }) {[weak self] completed in
                     self?.dismiss(animated: true, completion: nil)
                 }
-            }     .disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
         
         priceTextField.rx.text.orEmpty
             .map { text in
