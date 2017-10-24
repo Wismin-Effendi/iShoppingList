@@ -9,6 +9,8 @@
 import UIKit
 import CoreData
 import UserNotifications
+import RxSwift
+import RxCocoa
 
 class ItemDetailsTableViewController: UITableViewController {
     
@@ -44,11 +46,13 @@ class ItemDetailsTableViewController: UITableViewController {
     
     var appDelegate = AppDelegate.getAppDelegate()
     
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         appDelegate.controller = self
-        priceTextField.delegate = self
+       // priceTextField.delegate = self
         repetitionIntervalPicker.dataSource = self
         repetitionIntervalPicker.delegate = self
         repetitionIntervalPicker.selectRow(1, inComponent: 0, animated: true)
@@ -58,40 +62,86 @@ class ItemDetailsTableViewController: UITableViewController {
         
         let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(ItemDetailsTableViewController.saveButtonTapped))
         navigationItem.rightBarButtonItem = saveButton
-    }
-    
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    
-    @IBAction func repeatItemSwitch(_ sender: UISwitch) {
-        item.isRepeatedItem = sender.isOn
-        insertOrDeleteRow(indexPath: IndexPathOfCell.repetitionIntervalPicker, state: sender.isOn)
-    }
-    
-    @IBAction func reminderSwitch(_ sender: UISwitch) {
-        item.hasReminder = sender.isOn
-        insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: sender.isOn)
-    }
-    
-    @IBAction func reminderDatePickerValueChange(_ sender: UIDatePicker) {
-        reminderDate = sender.date
-    }
-    
-    @IBAction func moveToActiveTapped(_ sender: UIButton) {
-        // move this item to active by setting the completed to false
-        item.completed = false
-        persistItemDetails()
         
-        UIView.animate(withDuration: 0.4, animations: {[weak self] in
-            self?.moveToActive.frame.size = CGSize.zero
-        }) {[weak self] (completed) in
-            self?.dismiss(animated: true, completion: nil)
-        }
+        handleUIReactively()
     }
+    
+    
+    func handleUIReactively() {
+        
+        repeatSwitch.rx.value
+            .bind { [unowned self] state in
+                self.item.isRepeatedItem = state
+                self.insertOrDeleteRow(indexPath: IndexPathOfCell.repetitionIntervalPicker, state: state)
+            }
+            .disposed(by: disposeBag)
+        
+        reminderSwitch.rx.value
+            .bind { [unowned self] state in
+                self.item.hasReminder = state
+                self.insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: state)
+            }
+            .disposed(by: disposeBag)
+        
+        datePicker.rx.date
+            .bind { [unowned self] date in
+                self.reminderDate = date
+            }
+            .disposed(by: disposeBag)
+        
+        moveToActive.rx.tap
+            .bind { [unowned self] in
+                // move this item to active by setting the completed to false
+                self.item.completed = false
+                self.persistItemDetails()
+                
+                UIView.animate(withDuration: 0.4, animations: {[weak self] in
+                    self?.moveToActive.frame.size = CGSize.zero
+                }) {[weak self] completed in
+                    self?.dismiss(animated: true, completion: nil)
+                }
+            }     .disposed(by: disposeBag)
+        
+        priceTextField.rx.text
+            .map { text in
+                let newText = (text ?? "") as NSString
+                if let regex = try? NSRegularExpression(pattern: "^[0-9]*((\\.)[0-9]*)?$", options: .caseInsensitive),
+                    regex.numberOfMatches(in: newText as String, options: .reportProgress, range: NSRange(location: 0, length: (newText as NSString).length)) > 0 {
+                    return newText as String
+                }
+                return ""
+            }
+            .bind(to: priceTextField.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+
+    
+//    @IBAction func repeatItemSwitch(_ sender: UISwitch) {
+//        item.isRepeatedItem = sender.isOn
+//        insertOrDeleteRow(indexPath: IndexPathOfCell.repetitionIntervalPicker, state: sender.isOn)
+//    }
+//
+//    @IBAction func reminderSwitch(_ sender: UISwitch) {
+//        item.hasReminder = sender.isOn
+//        insertOrDeleteRow(indexPath: IndexPathOfCell.reminderDatePicker, state: sender.isOn)
+//    }
+//
+//    @IBAction func reminderDatePickerValueChange(_ sender: UIDatePicker) {
+//        reminderDate = sender.date
+//    }
+//
+//    @IBAction func moveToActiveTapped(_ sender: UIButton) {
+//        // move this item to active by setting the completed to false
+//        item.completed = false
+//        persistItemDetails()
+//
+//        UIView.animate(withDuration: 0.4, animations: {[weak self] in
+//            self?.moveToActive.frame.size = CGSize.zero
+//        }) {[weak self] (completed) in
+//            self?.dismiss(animated: true, completion: nil)
+//        }
+//    }
     
     private func insertOrDeleteRow(indexPath: IndexPath, state: Bool) {
         switch state {
@@ -297,26 +347,26 @@ extension ItemDetailsTableViewController {
 
 // MARK: - Text field delegate
 
-extension ItemDetailsTableViewController: UITextFieldDelegate {
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let text = (textField.text ?? "") as NSString
-        let newText = text.replacingCharacters(in: range, with: string)
-        if let regex = try? NSRegularExpression(pattern: "^[0-9]*((\\.)[0-9]*)?$", options: .caseInsensitive) {
-            return regex.numberOfMatches(in: newText, options: .reportProgress, range: NSRange(location: 0, length: (newText as NSString).length)) > 0
-        }
-        return false
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text,
-            let price = Float(text) {
-            textField.text = String(format: "%.2f", price)
-        }
-        textField.resignFirstResponder()
-        return true
-    }
-}
+//extension ItemDetailsTableViewController: UITextFieldDelegate {
+//
+//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+//        let text = (textField.text ?? "") as NSString
+//        let newText = text.replacingCharacters(in: range, with: string)
+//        if let regex = try? NSRegularExpression(pattern: "^[0-9]*((\\.)[0-9]*)?$", options: .caseInsensitive) {
+//            return regex.numberOfMatches(in: newText, options: .reportProgress, range: NSRange(location: 0, length: (newText as NSString).length)) > 0
+//        }
+//        return false
+//    }
+//
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        if let text = textField.text,
+//            let price = Float(text) {
+//            textField.text = String(format: "%.2f", price)
+//        }
+//        textField.resignFirstResponder()
+//        return true
+//    }
+//}
 
 
 // MARK: - Show or hide details option conditionally

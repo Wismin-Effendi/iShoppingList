@@ -5,7 +5,7 @@
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -323,9 +323,6 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rD5-zS-iwQ">
                                                     <rect key="frame" x="66" y="6" width="243" height="38"/>
                                                     <state key="normal" image="moveToActive"/>
-                                                    <connections>
-                                                        <action selector="moveToActiveTapped:" destination="sHm-Re-FNM" eventType="touchUpInside" id="ODd-zY-B4y"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -353,9 +350,6 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UFf-sM-NmM">
                                                     <rect key="frame" x="301" y="10.5" width="51" height="31"/>
-                                                    <connections>
-                                                        <action selector="repeatItemSwitch:" destination="sHm-Re-FNM" eventType="valueChanged" id="ctv-aX-cXF"/>
-                                                    </connections>
                                                 </switch>
                                             </subviews>
                                             <constraints>
@@ -411,9 +405,6 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MhR-hA-hCm">
                                                     <rect key="frame" x="297" y="7" width="51" height="31"/>
-                                                    <connections>
-                                                        <action selector="reminderSwitch:" destination="sHm-Re-FNM" eventType="valueChanged" id="yLj-Ta-nac"/>
-                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Reminder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kdl-7P-YWE">
                                                     <rect key="frame" x="14" y="12" width="112" height="21"/>
@@ -449,9 +440,6 @@ https://creativecommons.org/licenses/by/3.0/us/</string>
                                                     <date key="minimumDate" timeIntervalSinceReferenceDate="528544800">
                                                         <!--2017-10-01 10:00:00 +0000-->
                                                     </date>
-                                                    <connections>
-                                                        <action selector="reminderDatePickerValueChange:" destination="sHm-Re-FNM" eventType="valueChanged" id="dBG-7k-Xrg"/>
-                                                    </connections>
                                                 </datePicker>
                                             </subviews>
                                             <constraints>
