@@ -102,9 +102,9 @@ class ItemDetailsTableViewController: UITableViewController {
                 }
             }     .disposed(by: disposeBag)
         
-        priceTextField.rx.text
+        priceTextField.rx.text.orEmpty
             .map { text in
-                let newText = (text ?? "") as NSString
+                let newText = text as NSString
                 if let regex = try? NSRegularExpression(pattern: "^[0-9]*((\\.)[0-9]*)?$", options: .caseInsensitive),
                     regex.numberOfMatches(in: newText as String, options: .reportProgress, range: NSRange(location: 0, length: (newText as NSString).length)) > 0 {
                     return newText as String
